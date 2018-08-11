@@ -1,24 +1,3 @@
-// ============================================================================
-//
-// Talend Community Edition
-//
-// Copyright (C) 2006-2013 Talend – www.talend.com
-//
-// This library is free software; you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either
-// version 2.1 of the License, or (at your option) any later version.
-//
-// This library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-// Lesser General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-//
-// ============================================================================
 package com.photogroup.app;
 
 import java.io.BufferedReader;
@@ -48,7 +27,7 @@ public class PhotoGroup {
             System.out.println(
                     "-format(-f), optional: Date format of the folder name, default is M.d. Support format by java.text.SimpleDateFormat");
             System.out.println(
-                    "-module(-m), optional: 1 only process photos by EXIF date. 2 process all photos, if the EXIF date does not exist, use file date instead, default is 1");
+                    "-module(-m), optional: 1 only process photos by EXIF date. \n2 process all photos, if the EXIF date does not exist use file date instead.\n3 process all files by the last modified date. default is 1");
             System.exit(0);
         }
         int threshold = 1;
@@ -132,6 +111,10 @@ public class PhotoGroup {
                     dateTime = line.substring(line.indexOf(":") + 1);
                     break;
                 }
+            }
+            if(dateTime == null && module == 3) {
+            	SimpleDateFormat fileDateFormat = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss");
+            	dateTime = fileDateFormat.format(child.lastModified());
             }
             if (dateTime != null) {
 

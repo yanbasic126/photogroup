@@ -2,8 +2,8 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.photogroup</groupId>
-    <artifactId>application</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <artifactId>photogroup</artifactId>
+    <version>0.5</version>
     <name>Photo Group</name>
     <description>move photos by taken date</description>
     <dependencies>
@@ -32,6 +32,7 @@
             </plugin>
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
+                <version>2.6</version>
                 <configuration>
                     <archive>
                         <manifest>
