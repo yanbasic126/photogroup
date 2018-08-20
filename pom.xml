@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.photogroup</groupId>
     <artifactId>photogroup</artifactId>
-    <version>0.5</version>
+    <version>0.6</version>
     <name>Photo Group</name>
     <description>move photos by taken date</description>
     <dependencies>
@@ -21,6 +21,14 @@
     </dependencies>
     <build>
         <sourceDirectory>src</sourceDirectory>
+        <resources>
+	        <resource>
+	        	<directory>resources</directory>
+	            <includes>
+	                <include>jhead.exe</include>
+	            </includes>
+	        </resource>
+	    </resources>
         <plugins>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
