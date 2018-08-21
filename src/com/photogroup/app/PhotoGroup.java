@@ -116,25 +116,6 @@ public class PhotoGroup {
 		for (final File child : listFiles) {
 			if (child.isFile()) {
 
-				// String[] commands = { "jhead.exe", child.getName() };
-				// Runtime rt = Runtime.getRuntime();
-				// Process proc = rt.exec(commands, null, photoFolder);
-				//
-				// InputStream stdin = proc.getInputStream();
-				// InputStreamReader isr = new InputStreamReader(stdin);
-				// BufferedReader br = new BufferedReader(isr);
-				//
-				// String line = null;
-				//
-				// String dateTime = null;
-				//
-				// while ((line = br.readLine()) != null) {
-				// if (line.startsWith("Date/Time")) {
-				// dateTime = line.substring(line.indexOf(":") + 1).trim();
-				// break;
-				// }
-				// }
-
 				exifDateTime.put(child, MetadateReader.dateTaken(child));
 
 				progress++;
@@ -155,31 +136,8 @@ public class PhotoGroup {
 		progress = 0;
 		precent = 0;
 		for (final File file : files) { // files
-			// String[] commands = { "jhead.exe", child.getName() };
-			// Runtime rt = Runtime.getRuntime();
-			// Process proc = rt.exec(commands, null, photoFolder);
-			//
-			// InputStream stdin = proc.getInputStream();
-			// InputStreamReader isr = new InputStreamReader(stdin);
-			// BufferedReader br = new BufferedReader(isr);
-			//
-			// String line = null;
-			//
 			String dateTime = exifDateTime.get(file);
-			//
-			// while ((line = br.readLine()) != null) {
-			// if (line.startsWith("File date") && module == 2) {
-			// dateTime = line.substring(line.indexOf(":") + 1);
-			// }
-			// if (line.startsWith("Date/Time")) {
-			// dateTime = line.substring(line.indexOf(":") + 1);
-			// break;
-			// }
-			// }
 
-			if ("IMG_1605.JPG".equals(file.getName())) {
-				System.out.println(11);
-			}
 			if (dateTime == null && guess) {
 				String upDate = null;
 				String downDate = null;
@@ -219,7 +177,6 @@ public class PhotoGroup {
 							break;
 						}
 					}
-
 				}
 			}
 
@@ -259,15 +216,7 @@ public class PhotoGroup {
 			Map.Entry<String, List<String>> pair = (Entry<String, List<String>>) it.next();
 			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd");
 			Date photoDate = dateFormat.parse(pair.getKey());
-			// Calendar calendar = Calendar.getInstance();
-			// calendar.setTime(folderDate);
-			String folderName = new SimpleDateFormat(format).format(photoDate);// (calendar.get(Calendar.MONTH)
-																				// +
-																				// 1)
-																				// +
-																				// "."
-																				// +
-																				// calendar.get(Calendar.DATE);
+			String folderName = new SimpleDateFormat(format).format(photoDate);
 
 			if (pair.getValue().size() >= threshold) {
 				File dateFolder = new File(photoFolder, folderName);
