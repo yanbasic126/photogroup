@@ -29,9 +29,6 @@
 		<resources>
 			<resource>
 				<directory>resources</directory>
-				<includes>
-					<include>jhead.exe</include>
-				</includes>
 			</resource>
 		</resources>
 		<plugins>
