@@ -7,7 +7,7 @@ import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.photogroup.util.StringSimilarity;
+import com.photogroup.util.PhotoNameUtil;
 
 public class GuessDateHelper {
 
@@ -19,7 +19,7 @@ public class GuessDateHelper {
 
 			@Override
 			public int compare(String o1, String o2) {
-				double similarity = StringSimilarity.similarity(o1, o2);
+				double similarity = PhotoNameUtil.similarity(o1, o2);
 				if (similarity > 0.2) {
 					Matcher m1 = p.matcher(o1);
 					Matcher m2 = p.matcher(o2);
