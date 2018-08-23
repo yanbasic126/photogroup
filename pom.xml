@@ -3,9 +3,11 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.photogroup</groupId>
 	<artifactId>photogroup</artifactId>
-	<version>1.0</version>
+	<version>2.1</version>
 	<name>Photo Group</name>
-	<description>move photos by taken date</description>
+	<description>move photos by taken date
+	2018-8-23: add sort photo before add gps address.
+	</description>
 	<dependencies>
 		<dependency>
 			<groupId>joda-time</groupId>
