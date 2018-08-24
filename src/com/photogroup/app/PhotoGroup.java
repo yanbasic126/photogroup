@@ -1,6 +1,8 @@
 package com.photogroup.app;
 
 import java.io.File;
+import java.io.IOException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -19,13 +21,14 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
-import com.photogroup.util.MetadateReader;
+import com.drew.imaging.ImageProcessingException;
+import com.photogroup.metadata.MetadataReader;
+import com.photogroup.position.PostionHelper;
 import com.photogroup.util.PhotoNameUtil;
-import com.photogroup.util.PostionHelper;
 
 public class PhotoGroup {
 
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args) {
 		if (args.length == 0) {
 			System.out.println("Usage:");
 			System.out.println("--threshold (-t) <arg>, optional: Create a folder by the photos count, default is 1");
@@ -33,21 +36,21 @@ public class PhotoGroup {
 			System.out.println(
 					"--format (-f) <arg>, optional: Date format of the folder name, default is YYYY.M.d. Support format by java.text.SimpleDateFormat");
 			System.out.println(
-					"--module (-m) <arg>, optional: 1 only process photos by EXIF date. \n2 process all photos, if the EXIF date does not exist use last modified date instead.(-g gets higher priority)\n3 process all file types by the last modified date(-g gets higher priority). default is 1");
+					"--module (-m) <arg>, optional: 1 only process photos by EXIF date. \n2 process all photos, if the EXIF date does not exist use last modified date instead.(-g gets higher priority)\n3 process all file types by the last modified date(-g gets higher priority). Default is 3");
 			System.out.println(
-					"--guess (-g), If the photo EXIF data does not exist and it betweens the same taken date pohots which contains EXIF data, will use this date as taken date.");
+					"--guess (-g), If the photo EXIF data does not exist and it betweens the same taken date pohots which contains EXIF data, will use this date as taken date. Default is true");
 			System.out.println(
-					"--gps (-gps), Add address in folder name by GPS data. Require internet access to baidu map API.");
+					"--gps (-gps), Add address in folder name by GPS data. Require internet access to baidu map API. Default is true");
 
 			System.exit(0);
 		}
 		String[] photoTypes = { "PNG", "JPG", "JPEG", "GIF" };
 		int threshold = 1;
 		String photosPath = "";
-		int module = 1;
+		int module = 3;
 		String format = "YYYY.M.d";
-		boolean guess = false;
-		boolean gps = false;
+		boolean guess = true;
+		boolean gps = true;
 		// MM.dd, YYYY.MM.dd, M.d
 		for (int i = 0; i < args.length; i++) {
 			switch (args[i]) {
@@ -130,9 +133,15 @@ public class PhotoGroup {
 		for (final File child : listFiles) {
 			if (child.isFile()) {
 
-				exifDateTime.put(child, MetadateReader.dateTaken(child));
-				if (gps) {
-					exifAddress.put(child, PostionHelper.queryPostion(child));
+				try {
+					exifDateTime.put(child, MetadataReader.dateTaken(child));
+					if (gps) {
+						exifAddress.put(child, PostionHelper.queryPostion(child));
+					}
+				} catch (ImageProcessingException | IOException e) {
+					exifDateTime.put(child, null);
+					System.out.println(child.getName());
+					e.printStackTrace();
 				}
 				progress++;
 
@@ -231,44 +240,48 @@ public class PhotoGroup {
 		while (it.hasNext()) {
 			Map.Entry<String, List<File>> pair = (Entry<String, List<File>>) it.next();
 			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd");
-			Date photoDate = dateFormat.parse(pair.getKey());
-			String folderName = new SimpleDateFormat(format).format(photoDate);
-
-			String addressName = "";
-			Set<String> addressNames = new HashSet<String>();
-			List<File> photos = pair.getValue();
-			Collections.sort(photos, comparator);
-			for (File photo : photos) {
-				if (exifAddress.get(photo) != null) {
-					addressNames.add(exifAddress.get(photo));
-				}
-			}
-			for (String add : addressNames) {
-				if (addressName.length() + add.length() > 128) { // 255
-					break;
-				} else {
-					addressName += add + ",";
-				}
-			}
-			if (addressName.endsWith(",")) {
-				addressName = addressName.substring(0, addressName.length() - 1);
-			}
-			folderName += addressName;
-
-			if (pair.getValue().size() >= threshold) {
-				File dateFolder = new File(photoFolder, folderName);
-				if (!dateFolder.exists()) {
-					dateFolder.mkdir();
-				}
-				for (File photo : pair.getValue()) {
-					if (photo.exists()) {
-						File targetPhoto = new File(dateFolder, photo.getName());
-						photo.renameTo(targetPhoto);
+			try {
+				Date photoDate = dateFormat.parse(pair.getKey());
+				String folderName = new SimpleDateFormat(format).format(photoDate);
+				String addressName = "";
+				Set<String> addressNames = new HashSet<String>();
+				List<File> photos = pair.getValue();
+				Collections.sort(photos, comparator);
+				for (File photo : photos) {
+					if (exifAddress.get(photo) != null) {
+						addressNames.add(exifAddress.get(photo));
 					}
 				}
+				for (String add : addressNames) {
+					if (addressName.length() + add.length() > 128) { // 255
+						break;
+					} else {
+						addressName += add + ",";
+					}
+				}
+				if (addressName.endsWith(",")) {
+					addressName = addressName.substring(0, addressName.length() - 1);
+				}
+				folderName += addressName;
+
+				if (pair.getValue().size() >= threshold) {
+					File dateFolder = new File(photoFolder, folderName);
+					if (!dateFolder.exists()) {
+						dateFolder.mkdir();
+					}
+					for (File photo : pair.getValue()) {
+						if (photo.exists()) {
+							File targetPhoto = new File(dateFolder, photo.getName());
+							photo.renameTo(targetPhoto);
+						}
+					}
+				}
+
+				System.out.println(folderName + " : " + pair.getValue().size());
+			} catch (ParseException e) {
+				e.printStackTrace();
 			}
 
-			System.out.println(folderName + " : " + pair.getValue().size());
 		}
 	}
 

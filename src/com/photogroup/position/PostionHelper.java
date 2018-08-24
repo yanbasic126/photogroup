@@ -1,27 +1,22 @@
-package com.photogroup.util;
+package com.photogroup.position;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.text.SimpleDateFormat;
 
 import com.drew.imaging.ImageProcessingException;
+import com.photogroup.metadata.MetadataReader;
 import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 /**
- * DOC yyi class global comment. Detailled comment <br/>
  * Help http://lbsyun.baidu.com/index.php?title=webapi
  *
  */
@@ -43,7 +38,7 @@ public class PostionHelper {
 			in.close();
 			String str = sb.toString();
 			String subStr = str.substring(str.indexOf('(') + 1, str.indexOf("})") + 1);
-			System.out.println(subStr);
+			// System.out.println(subStr);
 			JSONObject jsonObj = JSONObject.fromObject(subStr);
 			JSONArray poiRegions = (JSONArray) jsonObj.getJSONObject("result").getJSONArray("poiRegions");
 			if (poiRegions.size() > 0) {
@@ -131,7 +126,7 @@ public class PostionHelper {
 	}
 
 	public static String queryPostion(File photo) throws ImageProcessingException, IOException {
-		Double[] gps = MetadateReader.gps(photo);
+		Double[] gps = MetadataReader.gps(photo);
 		if (gps != null && gps.length == 2) {
 
 			double[] postBaidu = convertBaiduCoordinate(gps[1], gps[0]);

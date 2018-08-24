@@ -1,4 +1,4 @@
-package com.photogroup.util;
+package com.photogroup.metadata;
 
 import java.io.File;
 import java.io.IOException;
@@ -9,7 +9,7 @@ import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.Tag;
 
-public class MetadateReader {
+public class MetadataReader {
 	public static String dateTaken(File file) throws ImageProcessingException, IOException {
 		Metadata metadata = ImageMetadataReader.readMetadata(file);
 		for (Directory directory : metadata.getDirectories()) {
@@ -63,7 +63,7 @@ public class MetadateReader {
 		return null;
 	}
 
-	public static Double convertGpsToDegree(String stringDMS, String stringRef) {
+	private static Double convertGpsToDegree(String stringDMS, String stringRef) {
 		double result;
 		String[] split = stringDMS.split("°", 3);
 		String degrees = split[0].trim();
