@@ -30,7 +30,7 @@ public class PostionHelper {
 			URL resjson = new URL("http://api.map.baidu.com/geocoder/v2/?callback=renderReverse&location=" + location
 					+ "&output=json&pois=1&ak=" + "1607e140964c4974ddfd87286ae9d6b7");
 
-			BufferedReader in = new BufferedReader(new InputStreamReader(resjson.openStream()));
+			BufferedReader in = new BufferedReader(new InputStreamReader(resjson.openStream(), "utf-8"));
 			StringBuilder sb = new StringBuilder("");
 			while ((res = in.readLine()) != null) {
 				sb.append(res.trim());
