@@ -10,6 +10,7 @@ import java.net.URL;
 import java.net.URLConnection;
 
 import com.drew.imaging.ImageProcessingException;
+import com.photogroup.app.PhotoGroup;
 import com.photogroup.metadata.MetadataReader;
 import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
 
@@ -22,13 +23,18 @@ import net.sf.json.JSONObject;
  */
 public class PostionHelper {
 
+	private static final String BAIDU_ADDRESS_URL = "http://api.map.baidu.com/geocoder/v2/?callback=renderReverse&location=";
+
+	private static final String BAIDU_ADDRESS_PARAM = "&output=json&pois=1&ak=";
+
+	private static final String BAIDU_COORD_URL = "http://api.map.baidu.com/ag/coord/convert?from=0&to=4&x=";
+
 	private static String getBaiduAddress(double lat, double lon) {
 		String res;
 		String address = null;
 		String location = lat + "," + lon;
 		try {
-			URL resjson = new URL("http://api.map.baidu.com/geocoder/v2/?callback=renderReverse&location=" + location
-					+ "&output=json&pois=1&ak=" + "1607e140964c4974ddfd87286ae9d6b7");
+			URL resjson = new URL(BAIDU_ADDRESS_URL + location + BAIDU_ADDRESS_PARAM + PhotoGroup.BAIDU_API_KEY);
 
 			BufferedReader in = new BufferedReader(new InputStreamReader(resjson.openStream(), "utf-8"));
 			StringBuilder sb = new StringBuilder("");
@@ -67,8 +73,7 @@ public class PostionHelper {
 		URL url = null;
 		URLConnection connection = null;
 		try {
-			url = new URL("http://api.map.baidu.com/ag/coord/convert?from=0&to=4&x=" + String.valueOf(lat) + "&y="
-					+ String.valueOf(lng));
+			url = new URL(BAIDU_COORD_URL + String.valueOf(lat) + "&y=" + String.valueOf(lng));
 			connection = url.openConnection();
 			connection.setConnectTimeout(1000);
 			connection.setReadTimeout(1000);
@@ -77,10 +82,8 @@ public class PostionHelper {
 			out.flush();
 			out.close();
 
-			String sCurrentLine;
-			String sTotalString;
-			sCurrentLine = "";
-			sTotalString = "";
+			String sCurrentLine = "";
+			String sTotalString = "";
 			InputStream l_urlStream;
 			l_urlStream = connection.getInputStream();
 			BufferedReader l_reader = new BufferedReader(new InputStreamReader(l_urlStream));
@@ -121,8 +124,8 @@ public class PostionHelper {
 		// if (result.lastIndexOf('-') > 0) {
 		// result = result.substring(0, result.lastIndexOf('-'));
 		// }
-
-		return result;
+		
+		return UserDefineDirectory.INSTANCE.replace(result);
 	}
 
 	public static String queryPostion(File photo) throws ImageProcessingException, IOException {

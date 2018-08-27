@@ -28,6 +28,8 @@ import com.photogroup.util.PhotoNameUtil;
 
 public class PhotoGroup {
 
+	public static final String BAIDU_API_KEY = "1607e140964c4974ddfd87286ae9d6b7";
+
 	public static void main(String[] args) {
 		if (args.length == 0) {
 			System.out.println("Usage:");
@@ -41,6 +43,8 @@ public class PhotoGroup {
 					"--guess (-g), If the photo EXIF data does not exist and it betweens the same taken date pohots which contains EXIF data, will use this date as taken date. Default is true");
 			System.out.println(
 					"--gps (-gps), Add address in folder name by GPS data. Require internet access to baidu map API. Default is true");
+			System.out.println(
+					"--report (-r), Generate photo process report after running, in the photo directory. Default is true");
 
 			System.exit(0);
 		}
@@ -51,6 +55,7 @@ public class PhotoGroup {
 		String format = "YYYY.M.d";
 		boolean guess = true;
 		boolean gps = true;
+		boolean report = true;
 		// MM.dd, YYYY.MM.dd, M.d
 		for (int i = 0; i < args.length; i++) {
 			switch (args[i]) {
