@@ -3,11 +3,12 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.photogroup</groupId>
 	<artifactId>photogroup</artifactId>
-	<version>2.1.1-SNAPSHOT</version>
+	<version>2.1.2-SNAPSHOT</version>
 	<name>Photo Group</name>
 	<description>move photos by taken date
 	2018-8-23: add sort photo before add gps address.
 	2018-8-24: minor improvements.
+    2018-8-30: add GUI.
 	</description>
 
 	<distributionManagement>

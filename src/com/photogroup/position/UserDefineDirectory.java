@@ -22,7 +22,7 @@ enum UserDefineDirectory {
 
 	private void initMap() throws IOException {
 
-		File directory = new File("user_directory.txt");
+		File directory = new File("custom_name_mapping.txt");
 		if (directory.exists() && directory.canRead()) {
 			directoryMap = new Properties();
 			FileInputStream is = new FileInputStream(directory);
