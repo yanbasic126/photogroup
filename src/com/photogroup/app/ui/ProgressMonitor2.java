@@ -1,6 +1,6 @@
 package com.photogroup.app.ui;
 
-public class ProgressMonitor {
+public class ProgressMonitor2 {
 
     private volatile int progress = 0;
 

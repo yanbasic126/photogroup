@@ -30,6 +30,7 @@ import javax.swing.JProgressBar;
 import javax.swing.JRadioButton;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
+import javax.swing.ProgressMonitor;
 import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.UIManager;
@@ -58,7 +59,7 @@ public class PhotoGroupWindow {
 
     private JButton btnRun;
 
-    private ProgressMonitor runMonitor;
+    private ProgressMonitor progressMonitor;
 
     /**
      * Launch the application.
@@ -132,7 +133,6 @@ public class PhotoGroupWindow {
             public void actionPerformed(ActionEvent e) {
                 String errMsg = validateBeforeRun();
                 if (errMsg == null) {
-
                     doRun();
                 } else {
                     // popup error
@@ -423,33 +423,32 @@ public class PhotoGroupWindow {
             args.add("--gps");
         }
 
-        runMonitor = new ProgressMonitor();
-        PhotoGroup photoGroup = new PhotoGroup();
-        photoGroup.setProgressMonitorForGUI(runMonitor);
-
-        new Thread(new Runnable() {
+        Runnable processPhotoGroup = new Runnable() {
 
             @Override
             public void run() {
-                while (!runMonitor.isDone()) {
-                    // progressBar.setValue(progressBar.getValue()+2);
-                    progressBar.setValue(runMonitor.getProgress());
-                    System.out.println(runMonitor.getProgress());
-                    try {
-                        Thread.sleep(100);
-                    } catch (InterruptedException ex) {
-                        ex.printStackTrace();
-                    }
-                }
+                PhotoGroup.main(args.toArray(new String[0]));
             }
-        }).start();
+
+        };
 
         new Thread(new Runnable() {
 
             @Override
             public void run() {
-                photoGroup.startGrouping(args.toArray(new String[0]));
-                btnRun.setEnabled(true);
+                if (args.size() > 0) {
+                    btnRun.setText("Running");
+                    btnRun.setEnabled(false);
+                    Thread processThread = new Thread(processPhotoGroup);
+                    processThread.start();
+                    try {
+                        processThread.join();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    btnRun.setEnabled(true);
+                    btnRun.setText("Run");
+                }
             }
         }).start();
     }

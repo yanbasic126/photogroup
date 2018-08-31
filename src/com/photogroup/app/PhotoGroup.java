@@ -17,13 +17,14 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 
+import javax.swing.JProgressBar;
+
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
 import com.drew.imaging.ImageProcessingException;
 import com.photogroup.app.ui.PhotoGroupWindow;
-import com.photogroup.app.ui.ProgressMonitor;
 import com.photogroup.metadata.MetadataReader;
 import com.photogroup.position.PostionHelper;
 import com.photogroup.util.PhotoNameUtil;
@@ -32,15 +33,8 @@ public class PhotoGroup {
 
     public static final String BAIDU_API_KEY = "1607e140964c4974ddfd87286ae9d6b7";
 
-    private ProgressMonitor progressMonitor;
+    public void process(String[] args) {
 
-    public void startGrouping(String[] args) {
-
-        if (args.length == 0) {
-            // Start GUI
-            PhotoGroupWindow.main(null);
-            return;
-        }
         String[] photoTypes = { "PNG", "JPG", "JPEG", "GIF" };
         int threshold = 1;
         String photosPath = "";
@@ -137,7 +131,7 @@ public class PhotoGroup {
         int precent = 0;
 
         for (final File child : listFiles) {
-            if (child.isFile()) {
+            if (child.isFile() && !child.isHidden()) {
 
                 try {
                     exifDateTime.put(child, MetadataReader.dateTaken(child));
@@ -238,13 +232,7 @@ public class PhotoGroup {
                 for (int i = 0; i <= String.valueOf(precent).length(); i++) {
                     System.out.print("\b");
                 }
-                if (progressMonitor != null) {
-                    progressMonitor.setProgress(newPrecent);
-                }
             }
-        }
-        if (progressMonitor != null) {
-            progressMonitor.setDone(true);
         }
         System.out.println("");
 
@@ -284,7 +272,7 @@ public class PhotoGroup {
                     for (File photo : pair.getValue()) {
                         if (photo.exists()) {
                             File targetPhoto = new File(dateFolder, photo.getName());
-                            // photo.renameTo(targetPhoto);
+                            photo.renameTo(targetPhoto);
                         }
                     }
                 }
@@ -313,12 +301,15 @@ public class PhotoGroup {
 
     }
 
-    public void setProgressMonitorForGUI(ProgressMonitor monitor) {
-        progressMonitor = monitor;
-    }
-
     public static void main(String[] args) {
-        new PhotoGroup().startGrouping(args);
+        if (args.length == 0) {
+            // Start GUI
+            PhotoGroupWindow.main(args);
+            return;
+        } else {
+            PhotoGroup photoGroup = new PhotoGroup();
+            photoGroup.process(args);
+        }
     }
 
 }
