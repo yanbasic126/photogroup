@@ -62,7 +62,7 @@ public class GroupResultDialog extends JDialog {
     private static final long serialVersionUID = 3873535103100400277L;
 
     private final JPanel contentPanel = new JPanel();
-    
+
     public String action;
 
     /**
@@ -86,8 +86,8 @@ public class GroupResultDialog extends JDialog {
         int x = (int) ((dimension.getWidth() - 600) / 2);
         int y = (int) ((dimension.getHeight() - 500) / 2);
         setModalityType(ModalityType.APPLICATION_MODAL);
-        setBounds(0, 0, 600, 500);
-//        setBounds(x, y, 600, 500);
+        // setBounds(0, 0, 600, 500);
+        setBounds(x, y, 600, 500);
         getContentPane().setLayout(new BorderLayout());
         contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
         getContentPane().add(contentPanel, BorderLayout.CENTER);
@@ -117,6 +117,7 @@ public class GroupResultDialog extends JDialog {
             {
                 JButton okButton = new JButton("OK");
                 okButton.addActionListener(new ActionListener() {
+
                     public void actionPerformed(ActionEvent e) {
                         action = "OK";
                         dispose();
@@ -130,6 +131,7 @@ public class GroupResultDialog extends JDialog {
                 JButton cancelButton = new JButton("Cancel");
                 cancelButton.setActionCommand("Cancel");
                 cancelButton.addActionListener(new ActionListener() {
+
                     public void actionPerformed(ActionEvent e) {
                         action = "Cancel";
                         dispose();
