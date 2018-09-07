@@ -99,62 +99,7 @@
 						</goals>
 					</execution>
 				</executions>
-			</plugin>
-		 <plugin>
-			<groupId>ch.fortysix</groupId>
-			<artifactId>maven-postman-plugin</artifactId>
-			<executions>
-				<execution>
-				
-				<id>send a mail</id>
-				<phase>package</phase>
-				<goals>
-				<goal>send-mail</goal>
-				</goals>
-				<inherited>true</inherited>
-				
-				<configuration>
-					<!-- From Email address -->
-					<from>yanbasic@126.com</from>
-					
-					<!--  Email subject -->
-					<subject>photogroup-${project.version}.jar</subject>
-					
-					<!-- Fail the build if the mail doesnt reach -->
-					<failonerror>true</failonerror>
-					
-					<!-- host -->
-					<mailhost>smtp.126.com</mailhost>
-					<!-- port of the host -->
-					<mailport>25</mailport>
-					<mailssl>false</mailssl>
-					<mailAltConfig>true</mailAltConfig>
-					
-					<!-- Email Authentication(USername and Password) -->
-					<mailuser>yanbasic@126.com</mailuser>
-					<mailpassword>${env.MY_PASSWORD_1}</mailpassword>
-					
-					<receivers>
-						<!-- To Email address -->
-						<receiver>yanbasic@126.com</receiver>
-					</receivers>
-					
-					<fileSets>
-					<fileSet>
-						<!-- Report directory Path -->
-						<directory>target</directory>
-						<includes>
-							<!-- Report file name -->
-							<include>photogroup-${project.version}.jar</include>
-						</includes>
-						<!-- Use Regular Expressions like **/*.html if you want all the html files to send-->
-						</fileSet>
-					</fileSets>				
-				
-				</configuration>
-				</execution>
-			</executions>
-		</plugin>			
+			</plugin>		
 		</plugins>
 	</build>
 	<repositories>
