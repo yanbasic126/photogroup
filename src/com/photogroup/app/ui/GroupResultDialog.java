@@ -27,24 +27,26 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Toolkit;
 import java.io.File;
-import java.net.URL;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTree;
 import javax.swing.border.EmptyBorder;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeCellRenderer;
-import javax.swing.JScrollPane;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 /**
  * DOC yyan class global comment. Detailled comment <br/>
@@ -60,6 +62,8 @@ public class GroupResultDialog extends JDialog {
     private static final long serialVersionUID = 3873535103100400277L;
 
     private final JPanel contentPanel = new JPanel();
+    
+    public String action;
 
     /**
      * Launch the application.
@@ -78,8 +82,12 @@ public class GroupResultDialog extends JDialog {
      * Create the dialog.
      */
     public GroupResultDialog(Map<String, List<File>> groups) {
+        Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
+        int x = (int) ((dimension.getWidth() - 600) / 2);
+        int y = (int) ((dimension.getHeight() - 500) / 2);
         setModalityType(ModalityType.APPLICATION_MODAL);
-        setBounds(100, 100, 762, 501);
+        setBounds(0, 0, 600, 500);
+//        setBounds(x, y, 600, 500);
         getContentPane().setLayout(new BorderLayout());
         contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
         getContentPane().add(contentPanel, BorderLayout.CENTER);
@@ -108,6 +116,12 @@ public class GroupResultDialog extends JDialog {
             getContentPane().add(buttonPane, BorderLayout.SOUTH);
             {
                 JButton okButton = new JButton("OK");
+                okButton.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        action = "OK";
+                        dispose();
+                    }
+                });
                 okButton.setActionCommand("OK");
                 buttonPane.add(okButton);
                 getRootPane().setDefaultButton(okButton);
@@ -115,6 +129,12 @@ public class GroupResultDialog extends JDialog {
             {
                 JButton cancelButton = new JButton("Cancel");
                 cancelButton.setActionCommand("Cancel");
+                cancelButton.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        action = "Cancel";
+                        dispose();
+                    }
+                });
                 buttonPane.add(cancelButton);
             }
         }
@@ -163,13 +183,8 @@ public class GroupResultDialog extends JDialog {
 
         private JLabel label;
 
-        private JPanel panel;
-
         PhotoCellRenderer() {
             label = new JLabel();
-            label.setSize(100, 100);
-            panel = new JPanel();
-            panel.setSize(200, 200);
         }
 
         public Component getTreeCellRendererComponent(JTree tree, Object value, boolean selected, boolean expanded, boolean leaf,
@@ -177,14 +192,14 @@ public class GroupResultDialog extends JDialog {
             Object obj = ((DefaultMutableTreeNode) value).getUserObject();
             if (obj instanceof File) {
                 File image = (File) obj;
-                ImageIcon icon = new ImageIcon(image.getAbsolutePath());
-                label.setIcon(icon);
+                // ImageIcon icon = new ImageIcon(image.getAbsolutePath());
+                // label.setIcon(icon);
                 label.setText(image.getName());
             } else {
-                label.setIcon(null);
+                // label.setIcon(null);
                 label.setText("" + value);
             }
-            return panel;
+            return label;
         }
     }
 }

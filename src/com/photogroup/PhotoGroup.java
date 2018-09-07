@@ -26,7 +26,9 @@ import com.photogroup.groupby.metadata.MetadataReader;
 import com.photogroup.groupby.position.PostionHelper;
 import com.photogroup.util.PhotoNameCompareUtil;
 
-public class PhotoGroup {
+public class PhotoGroup implements Runnable {
+
+    public Object processPrecent = 0;
 
     private String photosPath;
 
@@ -46,7 +48,9 @@ public class PhotoGroup {
 
     private Map<String, List<File>> photoGroup;
 
-    public PhotoGroup(String photosPath, int threshold, int module, String format, boolean guess, boolean gps, boolean report) {
+    public PhotoGroup(Map<String, List<File>> photoGroup, String photosPath, int threshold, int module, String format,
+            boolean guess, boolean gps, boolean report) {
+        this.photoGroup = photoGroup;
         this.photosPath = photosPath;
         this.threshold = threshold;
         this.module = module;
@@ -56,14 +60,18 @@ public class PhotoGroup {
         this.report = report;
 
         photoTypes = new String[] { "PNG", "JPG", "JPEG", "GIF" };
-        photoGroup = new HashMap<String, List<File>>();
     }
 
-    public Map<String, List<File>> getPhotoGroup() {
+    @Override
+    public void run() {
+        createPhotoGroup();
+    }
+
+    private void createPhotoGroup() {
 
         if (photosPath.isEmpty()) {
             System.out.println("Error! Directory is not specified, use -path(-p) to set");
-            return null;
+            return;
         }
 
         DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy:MM:dd HH:mm:ss");
@@ -108,6 +116,9 @@ public class PhotoGroup {
                     System.out.print(precent + "%");
                     for (int i = 0; i <= String.valueOf(precent).length(); i++) {
                         System.out.print("\b");
+                    }
+                    synchronized (processPrecent) {
+                        processPrecent = newPrecent;
                     }
                 }
             }
@@ -240,7 +251,6 @@ public class PhotoGroup {
             }
 
         }
-        return photoGroup;
     }
 
 }

@@ -10,10 +10,12 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import javax.swing.AbstractButton;
 import javax.swing.ButtonGroup;
@@ -378,7 +380,7 @@ public class PhotoGroupWindow {
         panel_3.setLayout(new GridLayout(0, 1, 0, 0));
 
         progressBar = new JProgressBar();
-        progressBar.setValue(35);
+        progressBar.setValue(0);
         panel_3.add(progressBar);
         GridBagConstraints gbc_panel_3 = new GridBagConstraints();
         gbc_panel_3.fill = GridBagConstraints.BOTH;
@@ -425,35 +427,57 @@ public class PhotoGroupWindow {
         // if (chckbxGPS.isSelected()) {
         // args.add("--gps");
         // }
-        Runnable processPhotoGroup = new Runnable() {
+        int threshold = Integer.parseInt(spinnerThreshold.getValue().toString());
 
-            @Override
-            public void run() {
+        HashMap<String, List<File>> photoGroup = new HashMap<String, List<File>>();
 
-            }
-        };
+        PhotoGroup groupThread = new PhotoGroup(photoGroup, textField.getText(), threshold, model2,
+                comboBoxFormat.getSelectedItem().toString(), chckbxGuess.isSelected(), chckbxGPS.isSelected(), false);
+        ExecutorService exe = Executors.newFixedThreadPool(1);
 
         new Thread(new Runnable() {
 
             @Override
             public void run() {
-                btnRun.setText("Running");
-                btnRun.setEnabled(false);
-                int threshold = Integer.parseInt(spinnerThreshold.getValue().toString());
-                PhotoGroup group = new PhotoGroup(textField.getText(), threshold, model2,
-                        comboBoxFormat.getSelectedItem().toString(), chckbxGuess.isSelected(), chckbxGPS.isSelected(), false);
-                Map<String, List<File>> groups = group.getPhotoGroup();
-                try {
-                    GroupResultDialog dialog = new GroupResultDialog(groups);
-                    dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-                    dialog.setVisible(true);
-                } catch (Exception e) {
-                    e.printStackTrace();
+                while (!exe.isTerminated()) {
+                    int precent = Integer.parseInt(groupThread.processPrecent.toString());
+                    progressBar.setValue(precent);
                 }
-                // FileUtil.movePhotos(threshold, textField.getText(), groups);
                 btnRun.setEnabled(true);
-                btnRun.setText("Run");
+                if ("OK".equals(showResultDialog(photoGroup))) {
+                    FileUtil.movePhotos(threshold, textField.getText(), photoGroup);
+                }
             }
         }).start();
+
+        exe.execute(groupThread);
+        exe.shutdown();
+        // new Thread(new Runnable() {
+        //
+        // @Override
+        // public void run() {
+        // btnRun.setText("Running");
+        // btnRun.setEnabled(false);
+        // Map<String, List<File>> groups = group.getPhotoGroup();
+        // try {
+        // GroupResultDialog dialog = new GroupResultDialog(groups);
+        // dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        // dialog.setVisible(true);
+        // } catch (Exception e) {
+        // e.printStackTrace();
+        // }
+        // FileUtil.movePhotos(threshold, textField.getText(), groups);
+        // btnRun.setEnabled(true);
+        // btnRun.setText("Run");
+        // }
+        // }).start();
     }
+
+    private String showResultDialog(Map<String, List<File>> groups) {
+        GroupResultDialog dialog = new GroupResultDialog(groups);
+        dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        dialog.setVisible(true);
+        return dialog.action;
+    }
+
 }

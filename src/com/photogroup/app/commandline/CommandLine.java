@@ -1,6 +1,7 @@
 package com.photogroup.app.commandline;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -78,12 +79,16 @@ public class CommandLine {
                 break;
             }
         }
-
-        Map<String, List<File>> group = new PhotoGroup(photosPath, threshold, module, format, guess, gps, report).getPhotoGroup();
-        FileUtil.movePhotos(threshold, photosPath, group);
+        HashMap<String, List<File>> photoGroup = new HashMap<String, List<File>>();
+        try {
+            Thread thread = new Thread(new PhotoGroup(photoGroup, photosPath, threshold, module, format, guess, gps, report));
+            thread.start();
+            thread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        FileUtil.movePhotos(threshold, photosPath, photoGroup);
     }
-
-
 
     private static void printHelp() {
         System.out.println("Usage:");
