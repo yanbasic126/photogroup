@@ -1,4 +1,4 @@
-package com.photogroup.app;
+package com.photogroup;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,97 +17,53 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 
-import javax.swing.JProgressBar;
-
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
 import com.drew.imaging.ImageProcessingException;
-import com.photogroup.app.ui.PhotoGroupWindow;
-import com.photogroup.metadata.MetadataReader;
-import com.photogroup.position.PostionHelper;
-import com.photogroup.util.PhotoNameUtil;
+import com.photogroup.groupby.metadata.MetadataReader;
+import com.photogroup.groupby.position.PostionHelper;
+import com.photogroup.util.PhotoNameCompareUtil;
 
 public class PhotoGroup {
 
-    public static final String BAIDU_API_KEY = "1607e140964c4974ddfd87286ae9d6b7";
+    private String photosPath;
 
-    public void process(String[] args) {
+    private int threshold;
 
-        String[] photoTypes = { "PNG", "JPG", "JPEG", "GIF" };
-        int threshold = 1;
-        String photosPath = "";
-        int module = 3;
-        String format = "YYYY.M.d";
-        boolean guess = true;
-        boolean gps = true;
-        boolean report = true;
-        // MM.dd, YYYY.MM.dd, M.d
-        for (int i = 0; i < args.length; i++) {
-            switch (args[i]) {
-            case "--threshold":
-                threshold = Integer.parseInt(args[i + 1]);
-                i++;
-                break;
-            case "-t":
-                threshold = Integer.parseInt(args[i + 1]);
-                i++;
-                break;
-            case "--path":
-                photosPath = args[i + 1];
-                i++;
-                break;
-            case "-p":
-                photosPath = args[i + 1];
-                i++;
-                break;
-            case "--module":
-                module = Integer.parseInt(args[i + 1]);
-                i++;
-                break;
-            case "-m":
-                module = Integer.parseInt(args[i + 1]);
-                i++;
-                break;
-            case "--format":
-                format = args[i + 1];
-                i++;
-                break;
-            case "-f":
-                format = args[i + 1];
-                i++;
-                break;
-            case "--guess":
-                guess = true;
-                break;
-            case "-g":
-                guess = true;
-                break;
-            case "--gps":
-                gps = true;
-                break;
-            case "-gps":
-                gps = true;
-                break;
-            case "--help":
-                printHelp();
-                System.exit(0);
-                break;
-            case "-h":
-                printHelp();
-                System.exit(0);
-                break;
-            default:
-                System.out.println("Error! Unsupport parameter: " + args[i]);
-                System.exit(0);
-                break;
-            }
-        }
+    private int module;
+
+    private String format;
+
+    private boolean guess;
+
+    private boolean gps;
+
+    private boolean report;
+
+    private String[] photoTypes;
+
+    private Map<String, List<File>> photoGroup;
+
+    public PhotoGroup(String photosPath, int threshold, int module, String format, boolean guess, boolean gps, boolean report) {
+        this.photosPath = photosPath;
+        this.threshold = threshold;
+        this.module = module;
+        this.format = format;
+        this.guess = guess;
+        this.gps = gps;
+        this.report = report;
+
+        photoTypes = new String[] { "PNG", "JPG", "JPEG", "GIF" };
+        photoGroup = new HashMap<String, List<File>>();
+    }
+
+    public Map<String, List<File>> getPhotoGroup() {
 
         if (photosPath.isEmpty()) {
             System.out.println("Error! Directory is not specified, use -path(-p) to set");
-            System.exit(0);
+            return null;
         }
 
         DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy:MM:dd HH:mm:ss");
@@ -117,7 +73,7 @@ public class PhotoGroup {
 
             @Override
             public int compare(File o1, File o2) {
-                return PhotoNameUtil.compareByName(o1.getName(), o2.getName());
+                return PhotoNameCompareUtil.compareByName(o1.getName(), o2.getName());
             }
         };
         Map<File, String> exifDateTime = new TreeMap<File, String>(comparator);
@@ -167,7 +123,7 @@ public class PhotoGroup {
                 String upDate = null;
                 String downDate = null;
                 for (int up = (int) progress - 1; up >= 0; up--) {
-                    if (!PhotoNameUtil.isSameNamingType(files[up].getName(), file.getName())) {
+                    if (!PhotoNameCompareUtil.isSameNamingType(files[up].getName(), file.getName())) {
                         break;
                     }
                     String exif = exifDateTime.get(files[up]);
@@ -177,7 +133,7 @@ public class PhotoGroup {
                     }
                 }
                 for (int down = (int) progress + 1; down < files.length; down++) {
-                    if (!PhotoNameUtil.isSameNamingType(files[down].getName(), file.getName())) {
+                    if (!PhotoNameCompareUtil.isSameNamingType(files[down].getName(), file.getName())) {
                         break;
                     }
                     String exif = exifDateTime.get(files[down]);
@@ -264,52 +220,27 @@ public class PhotoGroup {
                 }
                 folderName += addressName;
 
-                if (pair.getValue().size() >= threshold) {
-                    File dateFolder = new File(photoFolder, folderName);
-                    if (!dateFolder.exists()) {
-                        dateFolder.mkdir();
-                    }
-                    for (File photo : pair.getValue()) {
-                        if (photo.exists()) {
-                            File targetPhoto = new File(dateFolder, photo.getName());
-                            photo.renameTo(targetPhoto);
-                        }
-                    }
-                }
+                // if (pair.getValue().size() >= threshold) {
+                // File dateFolder = new File(photoFolder, folderName);
+                // if (!dateFolder.exists()) {
+                // dateFolder.mkdir();
+                // }
+                // for (File photo : pair.getValue()) {
+                // if (photo.exists()) {
+                // File targetPhoto = new File(dateFolder, photo.getName());
+                // photo.renameTo(targetPhoto);
+                // }
+                // }
+                // }
 
+                photoGroup.put(folderName, pair.getValue());
                 System.out.println(folderName + " : " + pair.getValue().size());
             } catch (ParseException e) {
                 e.printStackTrace();
             }
 
         }
-    }
-
-    private void printHelp() {
-        System.out.println("Usage:");
-        System.out.println("--threshold (-t) <arg>, optional: Create a folder by the photos count, default is 1");
-        System.out.println("--path (-p) <arg>, REQUIRED: Photo directory, using \".\" for current folder");
-        System.out.println(
-                "--format (-f) <arg>, optional: Date format of the folder name, default is YYYY.M.d. Support format by java.text.SimpleDateFormat");
-        System.out.println(
-                "--module (-m) <arg>, optional: 1 only process photos by EXIF date. \n2 process all photos, if the EXIF date does not exist use last modified date instead.(-g gets higher priority)\n3 process all file types by the last modified date(-g gets higher priority). Default is 3");
-        System.out.println(
-                "--guess (-g), If the photo EXIF data does not exist and it betweens the same taken date pohots which contains EXIF data, will use this date as taken date. Default is true");
-        System.out.println(
-                "--gps (-gps), Add address in folder name by GPS data. Require internet access to baidu map API. Default is true");
-        System.out.println("--report (-r), Generate photo process report after running, in the photo directory. Default is true");
-
-    }
-
-    public static void main(String[] args) {
-        if (args.length == 0) {
-            // Start GUI
-            PhotoGroupWindow.main(args);
-            return;
-        } else {
-            PhotoGroup photoGroup = new PhotoGroup();
-            photoGroup.process(args);
-        }
+        return photoGroup;
     }
 
 }

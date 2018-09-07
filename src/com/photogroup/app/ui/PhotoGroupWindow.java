@@ -11,9 +11,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.AbstractButton;
 import javax.swing.ButtonGroup;
@@ -21,6 +21,7 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -37,7 +38,8 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.TitledBorder;
 
-import com.photogroup.app.PhotoGroup;
+import com.photogroup.PhotoGroup;
+import com.photogroup.util.FileUtil;
 
 public class PhotoGroupWindow {
 
@@ -399,12 +401,12 @@ public class PhotoGroupWindow {
 
     private void doRun() {
         btnRun.setEnabled(false);
-        List<String> args = new ArrayList<String>();
-        args.add("--path");
-        args.add(textField.getText());
-        args.add("--threshold");
-        args.add(spinnerThreshold.getValue().toString());
-        args.add("--module");
+        // List<String> args = new ArrayList<String>();
+        // args.add("--path");
+        // args.add(textField.getText());
+        // args.add("--threshold");
+        // args.add(spinnerThreshold.getValue().toString());
+        // args.add("--module");
         Enumeration<AbstractButton> radios = btnGrpModel.getElements();
         int model = 1;
         do {
@@ -413,42 +415,44 @@ public class PhotoGroupWindow {
             }
             model++;
         } while (radios.hasMoreElements());
-        args.add(String.valueOf(model));
-        args.add("--format");
-        args.add(comboBoxFormat.getSelectedItem().toString());
-        if (chckbxGuess.isSelected()) {
-            args.add("--guess");
-        }
-        if (chckbxGPS.isSelected()) {
-            args.add("--gps");
-        }
-
+        final int model2 = model;
+        // args.add(String.valueOf(model));
+        // args.add("--format");
+        // args.add(comboBoxFormat.getSelectedItem().toString());
+        // if (chckbxGuess.isSelected()) {
+        // args.add("--guess");
+        // }
+        // if (chckbxGPS.isSelected()) {
+        // args.add("--gps");
+        // }
         Runnable processPhotoGroup = new Runnable() {
 
             @Override
             public void run() {
-                PhotoGroup.main(args.toArray(new String[0]));
-            }
 
+            }
         };
 
         new Thread(new Runnable() {
 
             @Override
             public void run() {
-                if (args.size() > 0) {
-                    btnRun.setText("Running");
-                    btnRun.setEnabled(false);
-                    Thread processThread = new Thread(processPhotoGroup);
-                    processThread.start();
-                    try {
-                        processThread.join();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    btnRun.setEnabled(true);
-                    btnRun.setText("Run");
+                btnRun.setText("Running");
+                btnRun.setEnabled(false);
+                int threshold = Integer.parseInt(spinnerThreshold.getValue().toString());
+                PhotoGroup group = new PhotoGroup(textField.getText(), threshold, model2,
+                        comboBoxFormat.getSelectedItem().toString(), chckbxGuess.isSelected(), chckbxGPS.isSelected(), false);
+                Map<String, List<File>> groups = group.getPhotoGroup();
+                try {
+                    GroupResultDialog dialog = new GroupResultDialog(groups);
+                    dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+                    dialog.setVisible(true);
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
+                // FileUtil.movePhotos(threshold, textField.getText(), groups);
+                btnRun.setEnabled(true);
+                btnRun.setText("Run");
             }
         }).start();
     }

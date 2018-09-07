@@ -2,44 +2,47 @@ package com.photogroup.report;
 
 public class ReportModel {
 
-	private String name;
-	private String path;
-	private String tokenDate;
-	private String address;
+    private String name;
 
-	public ReportModel() {
+    private String path;
 
-	}
+    private String tokenDate;
 
-	public String getName() {
-		return name;
-	}
+    private String address;
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public ReportModel() {
 
-	public String getPath() {
-		return path;
-	}
+    }
 
-	public void setPath(String path) {
-		this.path = path;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public String getTokenDate() {
-		return tokenDate;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public void setTokenDate(String tokenDate) {
-		this.tokenDate = tokenDate;
-	}
+    public String getPath() {
+        return path;
+    }
 
-	public String getAddress() {
-		return address;
-	}
+    public void setPath(String path) {
+        this.path = path;
+    }
 
-	public void setAddress(String address) {
-		this.address = address;
-	}
+    public String getTokenDate() {
+        return tokenDate;
+    }
+
+    public void setTokenDate(String tokenDate) {
+        this.tokenDate = tokenDate;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
 }

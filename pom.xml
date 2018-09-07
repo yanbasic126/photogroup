@@ -3,13 +3,15 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.photogroup</groupId>
 	<artifactId>photogroup</artifactId>
-	<version>2.2.0-SNAPSHOT</version>
+	<version>2.2.2-SNAPSHOT</version>
 	<name>Photo Group</name>
 	<description>move photos by taken date
 	2018-8-23: add sort photo before add gps address.
 	2018-8-24: minor improvements.
     2018-8-30: add GUI.
     2018-8-31: Usable GUI.
+    2018-9-4: I18N.
+    2018-9-7: email.
 	</description>
 
 	<distributionManagement>
@@ -57,7 +59,11 @@
 		<sourceDirectory>src</sourceDirectory>
 		<resources>
 			<resource>
-				<directory>resources</directory>
+				<directory>src</directory>
+				<includes>
+					<include>**/*.properties</include>
+					<include>custom_name_mapping.txt</include>
+				</includes>
 			</resource>
 		</resources>
 		<plugins>
@@ -75,7 +81,7 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>com.photogroup.app.PhotoGroup</mainClass>
+							<mainClass>com.photogroup.app.commandline.CommandLine</mainClass>
 						</manifest>
 					</archive>
 					<descriptorRefs>
@@ -94,6 +100,61 @@
 					</execution>
 				</executions>
 			</plugin>
+		 <plugin>
+			<groupId>ch.fortysix</groupId>
+			<artifactId>maven-postman-plugin</artifactId>
+			<executions>
+				<execution>
+				
+				<id>send a mail</id>
+				<phase>package</phase>
+				<goals>
+				<goal>send-mail</goal>
+				</goals>
+				<inherited>true</inherited>
+				
+				<configuration>
+					<!-- From Email address -->
+					<from>yanbasic@126.com</from>
+					
+					<!--  Email subject -->
+					<subject>photogroup-${project.version}.jar</subject>
+					
+					<!-- Fail the build if the mail doesnt reach -->
+					<failonerror>true</failonerror>
+					
+					<!-- host -->
+					<mailhost>smtp.126.com</mailhost>
+					<!-- port of the host -->
+					<mailport>25</mailport>
+					<mailssl>false</mailssl>
+					<mailAltConfig>true</mailAltConfig>
+					
+					<!-- Email Authentication(USername and Password) -->
+					<mailuser>yanbasic@126.com</mailuser>
+					<mailpassword>${env.MY_PASSWORD_1}</mailpassword>
+					
+					<receivers>
+						<!-- To Email address -->
+						<receiver>yanbasic@126.com</receiver>
+					</receivers>
+					
+					<fileSets>
+					<fileSet>
+						<!-- Report directory Path -->
+						<directory>target</directory>
+						<includes>
+							<!-- Report file name -->
+							<include>photogroup-${project.version}.jar</include>
+						</includes>
+						<!-- Use Regular Expressions like **/*.html if you want all the html files to send-->
+						</fileSet>
+					</fileSets>				
+				
+				</configuration>
+				</execution>
+			</executions>
+		</plugin>			
 		</plugins>
 	</build>
 	<repositories>

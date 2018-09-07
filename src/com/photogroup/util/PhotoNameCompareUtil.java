@@ -5,7 +5,7 @@ import java.util.Comparator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class PhotoNameUtil {
+public class PhotoNameCompareUtil {
 
     static final Pattern PATTERN_NUMBER = Pattern.compile("\\d+");
 
