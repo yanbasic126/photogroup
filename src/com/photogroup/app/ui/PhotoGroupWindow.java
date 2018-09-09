@@ -43,6 +43,10 @@ import javax.swing.border.TitledBorder;
 import com.photogroup.PhotoGroup;
 import com.photogroup.util.FileUtil;
 
+/*
+ * Replaced with GroupBrowser
+ */
+@Deprecated
 public class PhotoGroupWindow {
 
     private JFrame frmPhotoGroupGui;
@@ -104,8 +108,8 @@ public class PhotoGroupWindow {
         int y = (int) ((dimension.getHeight() - 350) / 2);
         frmPhotoGroupGui = new JFrame();
         frmPhotoGroupGui.setTitle(Messages.getString("PhotoGroupWindow.0")); //$NON-NLS-1$
-        // frmPhotoGroupGui.setBounds(0, 0, 800, 400);
-        frmPhotoGroupGui.setBounds(x, y, 700, 350);
+        frmPhotoGroupGui.setBounds(0, 0, 800, 400);
+        // frmPhotoGroupGui.setBounds(x, y, 700, 350);
         frmPhotoGroupGui.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frmPhotoGroupGui.getContentPane().setLayout(new GridLayout(1, 0, 0, 0));
 
@@ -445,7 +449,7 @@ public class PhotoGroupWindow {
                 }
                 btnRun.setEnabled(true);
                 if ("OK".equals(showResultDialog(photoGroup))) {
-                    FileUtil.movePhotos(threshold, textField.getText(), photoGroup);
+                    FileUtil.movePhotos(textField.getText(), photoGroup);
                 }
             }
         }).start();

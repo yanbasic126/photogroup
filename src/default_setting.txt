@@ -1,0 +1,6 @@
+threshold:1
+module:3
+format:YYYY.M.d
+guess:true
+gps:true
+report:false

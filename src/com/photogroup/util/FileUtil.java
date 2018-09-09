@@ -6,9 +6,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import com.photogroup.app.SettingStore;
+
 public class FileUtil {
 
-    public static void movePhotos(int threshold, String photosPath, Map<String, List<File>> group) {
+    public static void movePhotos(String photosPath, Map<String, List<File>> group) {
+        int threshold = SettingStore.getSettingStore().getThreshold();
         Iterator<?> it = group.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry<String, List<File>> pair = (Entry<String, List<File>>) it.next();

@@ -1,4 +1,4 @@
-package com.photogroup.app.ui.browser;
+package com.photogroup.app.ui.layout;
 
 import java.awt.Component;
 import java.awt.Container;

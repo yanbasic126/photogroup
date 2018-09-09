@@ -7,6 +7,7 @@ import java.util.Map;
 
 import com.photogroup.PhotoGroup;
 import com.photogroup.app.ui.PhotoGroupWindow;
+import com.photogroup.app.ui.browser.GroupBrowser;
 import com.photogroup.util.FileUtil;
 
 public class CommandLine {
@@ -87,7 +88,7 @@ public class CommandLine {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        FileUtil.movePhotos(threshold, photosPath, photoGroup);
+        FileUtil.movePhotos(photosPath, photoGroup);
     }
 
     private static void printHelp() {
@@ -108,7 +109,8 @@ public class CommandLine {
     public static void main(String[] args) {
         if (args.length == 0) {
             // Start GUI
-            PhotoGroupWindow.main(args);
+            // PhotoGroupWindow.main(null);
+            GroupBrowser.main(null);
             return;
         } else {
             process(args);

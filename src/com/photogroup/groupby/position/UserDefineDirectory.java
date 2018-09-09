@@ -4,6 +4,7 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Properties;
 
@@ -23,12 +24,15 @@ enum UserDefineDirectory {
 
     private void initMap() throws IOException {
 
-        File directory = new File("custom_name_mapping.txt");
-        if (directory.exists() && directory.canRead()) {
+        // File directory = new File("custom_name_mapping.txt");
+        InputStream inputStream = getClass().getClassLoader().getResourceAsStream("custom_name_mapping.txt");
+        if (inputStream != null) {
+            // if (directory.exists() && directory.canRead()) {
             directoryMap = new Properties();
-            FileInputStream is = new FileInputStream(directory);
-            BufferedInputStream in = new BufferedInputStream(is);
-            directoryMap.load(new InputStreamReader(in, "utf-8"));
+            // FileInputStream is = new FileInputStream(directory);
+            // BufferedInputStream in = new BufferedInputStream(is);
+            directoryMap.load(new InputStreamReader(inputStream, "utf-8"));
+            // }
         }
     }
 
