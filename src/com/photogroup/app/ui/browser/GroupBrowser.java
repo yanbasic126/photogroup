@@ -26,7 +26,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import javax.imageio.ImageIO;
-import javax.swing.AbstractButton;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -54,7 +53,6 @@ import com.drew.imaging.jpeg.JpegProcessingException;
 import com.drew.metadata.exif.ExifThumbnailDirectory;
 import com.photogroup.PhotoGroup;
 import com.photogroup.app.SettingStore;
-import com.photogroup.app.ui.GroupResultDialog;
 import com.photogroup.app.ui.Messages;
 import com.photogroup.app.ui.layout.WrapLayout;
 import com.photogroup.util.FileUtil;
