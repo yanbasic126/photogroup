@@ -66,11 +66,16 @@ public class MetadataReader {
 
     private static Double convertGpsToDegree(String stringDMS, String stringRef) {
         double result;
-        String[] split = stringDMS.split("°", 3);
-        String degrees = split[0].trim();
-        String[] ms = split[1].split("'");
-        String minutes = ms[0].trim();
-        String seconds = ms[1].split("\"")[0].trim();
+        // String[] split = stringDMS.split("°");
+        // String degrees = split[0].trim();
+        // String[] ms = split[1].split("'");
+        // String minutes = ms[0].trim();
+        // String seconds = ms[1].split("\"")[0].trim();
+
+        String[] split2 = stringDMS.split(" ");
+        String degrees = split2[0].trim().substring(0, split2[0].trim().length() - 1);
+        String minutes = split2[1].trim().substring(0, split2[1].trim().length() - 1);
+        String seconds = split2[2].trim().substring(0, split2[2].trim().length() - 1);
 
         double decimal = ((Double.valueOf(minutes) * 60) + Double.valueOf(seconds)) / (60 * 60);
         if (stringRef.equals("N") || stringRef.equals("E")) {

@@ -17,8 +17,7 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 /**
- * Help http://lbsyun.baidu.com/index.php?title=webapi
- *
+ * Help http://lbsyun.baidu.com/index.php?title=webapi, https://www.bingmapsportal.com
  */
 public class PostionHelper {
 
@@ -29,6 +28,12 @@ public class PostionHelper {
     private static final String BAIDU_ADDRESS_PARAM = "&output=json&pois=1&ak=";
 
     private static final String BAIDU_COORD_URL = "http://api.map.baidu.com/ag/coord/convert?from=0&to=4&x=";
+
+    private static final String BING_API_KEY = "As7u1lYGlv0-xxLPr2ZrAFlBPwCinH7O3F2EsebbIv6wRwD0ru8K7zvu3vg4kKwP";
+
+    private static final String BING_ADDRESS_URL = "http://dev.virtualearth.net/REST/v1/Locations/";
+
+    private static final String BING_ADDRESS_PARAM = "?o=json&key=";
 
     private static String getBaiduAddress(double lat, double lon) {
         String res;
@@ -66,6 +71,11 @@ public class PostionHelper {
             e.printStackTrace();
         }
         return address;
+    }
+
+    private static String getBingAddress(double lat, double lon) {
+
+        return null;
     }
 
     private static double[] convertBaiduCoordinate(double lat, double lng) {
@@ -113,6 +123,7 @@ public class PostionHelper {
             }
         } catch (Exception e) {
             System.out.println("error: x=" + String.valueOf(lat) + "&y=" + String.valueOf(lng));
+            // http://dev.virtualearth.net/REST/v1/Locations/39.8749,116.44358055555556?o=json&key=As7u1lYGlv0-xxLPr2ZrAFlBPwCinH7O3F2EsebbIv6wRwD0ru8K7zvu3vg4kKwP
         }
         return latlng;
     }

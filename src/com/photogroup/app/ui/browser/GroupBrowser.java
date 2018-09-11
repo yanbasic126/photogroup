@@ -74,7 +74,7 @@ public class GroupBrowser {
     private ImageIcon upIcon;
 
     private ImageIcon downIcon;
-    
+
     private ImageIcon renameIcon;
 
     private JButton btnOpen;
@@ -474,7 +474,7 @@ public class GroupBrowser {
         }
 
         try {
-            if (thumbDirectory != null) {
+            if (thumbDirectory != null && thumbDirectory.getThumbnailData() != null) {
                 InputStream thumbByteStream = new ByteArrayInputStream(thumbDirectory.getThumbnailData());
                 // bufferedImage = ImageIO.read(thumbByteStream);
                 bufferedImage = ImageIO.read(photo);
