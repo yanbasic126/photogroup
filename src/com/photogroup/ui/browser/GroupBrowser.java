@@ -1,6 +1,7 @@
 package com.photogroup.ui.browser;
 
 import java.awt.Color;
+import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
@@ -46,7 +47,10 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 import com.drew.imaging.jpeg.JpegMetadataReader;
 import com.drew.imaging.jpeg.JpegProcessingException;
@@ -172,7 +176,7 @@ public class GroupBrowser {
         gbc_toolBarSetting.gridy = 0;
         panelToolbar.add(toolBarSetting, gbc_toolBarSetting);
 
-        btnOpen = new JButton("Analysis");
+        btnOpen = new JButton("Profile");
 
         try {
             BufferedImage bufferedImage = ImageIO.read(ClassLoader.getSystemResource("icon/publish.png"));
@@ -214,7 +218,7 @@ public class GroupBrowser {
             }
         });
 
-        JButton btnMove = new JButton("Done");
+        JButton btnMove = new JButton("Apply");
 
         try {
             BufferedImage bufferedImage = ImageIO.read(ClassLoader.getSystemResource("icon/upcoming_work.png"));
@@ -231,6 +235,17 @@ public class GroupBrowser {
             }
         });
 
+
+        JButton btnLogs = new JButton("Debug");
+
+        try {
+            BufferedImage bufferedImage = ImageIO.read(ClassLoader.getSystemResource("icon/featured.png"));
+            btnLogs.setIcon(new ImageIcon(bufferedImage));
+        } catch (IOException e) {
+            e.printStackTrace();
+            ExceptionHandler.logError(e.getMessage());
+        }
+        
         JSeparator separator_1 = new JSeparator();
         separator_1.setOrientation(SwingConstants.VERTICAL);
         toolBarSetting.add(separator_1);
@@ -242,6 +257,7 @@ public class GroupBrowser {
         separator.setOrientation(SwingConstants.VERTICAL);
         toolBarSetting.add(separator);
         toolBarSetting.add(btnSetting);
+        toolBarSetting.add(btnLogs);
 
         JPanel panelAddress = new JPanel();
         GridBagConstraints gbc_panelAddress = new GridBagConstraints();
@@ -252,40 +268,59 @@ public class GroupBrowser {
         gbc_panelAddress.gridy = 1;
         frameGroupBrowser.getContentPane().add(panelAddress, gbc_panelAddress);
         GridBagLayout gbl_panelAddress = new GridBagLayout();
-        gbl_panelAddress.columnWidths = new int[] { 30, 86, 79, 0 };
+        gbl_panelAddress.columnWidths = new int[] { 86, 0, 0 };
         gbl_panelAddress.rowHeights = new int[] { 23, 0 };
-        gbl_panelAddress.columnWeights = new double[] { 0.0, 1.0, 0.0, Double.MIN_VALUE };
+        gbl_panelAddress.columnWeights = new double[] { 1.0, 0.0, Double.MIN_VALUE };
         gbl_panelAddress.rowWeights = new double[] { 0.0, Double.MIN_VALUE };
         panelAddress.setLayout(gbl_panelAddress);
 
-        JLabel lblFolder = new JLabel("Photo folder ");
-        GridBagConstraints gbc_lblFolder = new GridBagConstraints();
-        gbc_lblFolder.anchor = GridBagConstraints.WEST;
-        gbc_lblFolder.insets = new Insets(0, 0, 0, 5);
-        gbc_lblFolder.gridx = 0;
-        gbc_lblFolder.gridy = 0;
-        panelAddress.add(lblFolder, gbc_lblFolder);
+        // JLabel lblFolder = new JLabel("Photo folder ");
+        // GridBagConstraints gbc_lblFolder = new GridBagConstraints();
+        // gbc_lblFolder.anchor = GridBagConstraints.WEST;
+        // gbc_lblFolder.insets = new Insets(0, 0, 0, 5);
+        // gbc_lblFolder.gridx = 0;
+        // gbc_lblFolder.gridy = 0;
+        // panelAddress.add(lblFolder, gbc_lblFolder);
 
-        textFieldFolder = new JTextField();
-        textFieldFolder.setText("D:\\OneDrive\\yanyi.talendwfj\\picture\\test");
-        textFieldFolder.addKeyListener(new KeyAdapter() {
+        JButton btnFolder = new JButton();
+        btnFolder.addActionListener(new ActionListener() {
 
             @Override
-            public void keyPressed(KeyEvent e) {
-                if (10 == e.getKeyCode()) {
-                    doRun();
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    File folder = new File(textFieldFolder.getText());
+                    if (folder.exists()) {
+                        Desktop.getDesktop().open(new File(textFieldFolder.getText()));
+                    } else {
+                        JOptionPane.showMessageDialog(frameGroupBrowser, "Folder doesn't exist.", "Folder",
+                                JOptionPane.ERROR_MESSAGE);
+                    }
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                    ExceptionHandler.logError(ex.getMessage());
                 }
             }
+
         });
-        GridBagConstraints gbc_textFieldFolder = new GridBagConstraints();
-        gbc_textFieldFolder.fill = GridBagConstraints.HORIZONTAL;
-        gbc_textFieldFolder.insets = new Insets(0, 0, 0, 5);
-        gbc_textFieldFolder.gridx = 1;
-        gbc_textFieldFolder.gridy = 0;
-        panelAddress.add(textFieldFolder, gbc_textFieldFolder);
-        textFieldFolder.setColumns(10);
+        try {
+            BufferedImage bufferedImage = ImageIO.read(ClassLoader.getSystemResource("icon/Folder.png"));
+            btnFolder.setIcon(new ImageIcon(bufferedImage));
+        } catch (IOException e) {
+            e.printStackTrace();
+            ExceptionHandler.logError(e.getMessage());
+        }
+        GridBagConstraints gbc_btnFolder = new GridBagConstraints();
+        gbc_btnFolder.insets = new Insets(0, 0, 0, 5);
+        gbc_btnFolder.gridx = 1;
+        gbc_btnFolder.gridy = 0;
+
+        int size = (int) btnFolder.getPreferredSize().getHeight();
+        btnFolder.setPreferredSize(new Dimension(size, size));
+        panelAddress.add(btnFolder, gbc_btnFolder);
 
         JButton btnBrowse = new JButton("Browse...");
+        int width = (int) btnBrowse.getPreferredSize().getWidth();
+        btnBrowse.setPreferredSize(new Dimension(width, size));
         btnBrowse.addActionListener(new ActionListener() {
 
             @Override
@@ -311,6 +346,27 @@ public class GroupBrowser {
         gbc_btnBrowse.gridx = 2;
         gbc_btnBrowse.gridy = 0;
         panelAddress.add(btnBrowse, gbc_btnBrowse);
+
+        textFieldFolder = new JTextField();
+        textFieldFolder.setText("");
+        int twidth = (int) textFieldFolder.getPreferredSize().getWidth();
+        textFieldFolder.setPreferredSize(new Dimension(twidth, size));
+        textFieldFolder.addKeyListener(new KeyAdapter() {
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (10 == e.getKeyCode()) {
+                    doRun();
+                }
+            }
+        });
+        GridBagConstraints gbc_textFieldFolder = new GridBagConstraints();
+        gbc_textFieldFolder.fill = GridBagConstraints.HORIZONTAL;
+        gbc_textFieldFolder.insets = new Insets(0, 0, 0, 5);
+        gbc_textFieldFolder.gridx = 0;
+        gbc_textFieldFolder.gridy = 0;
+        panelAddress.add(textFieldFolder, gbc_textFieldFolder);
+        textFieldFolder.setColumns(10);
 
         JPanel panelBrowser = new JPanel();
         GridBagConstraints gbc_panelBrowser = new GridBagConstraints();
@@ -413,13 +469,18 @@ public class GroupBrowser {
         btnExpand.setIcon(downIcon);
         toolBar.add(btnExpand);
 
-        JLabel lblTitle = new JLabel(oneGroup.getKey() + " (" + oneGroup.getValue().size() + ")");
-        toolBar.add(lblTitle);
+        // JLabel lblTitle = new JLabel(oneGroup.getKey() + " (" + oneGroup.getValue().size() + ")");
+        // toolBar.add(lblTitle);
 
-        JButton btnRename = new JButton("Rename");
-        btnRename.setIcon(renameIcon);
-        btnRename.setEnabled(false);
-        toolBar.add(btnRename);
+        JTextField textFieldTitle = new JTextField(oneGroup.getKey());
+        textFieldTitle.setToolTipText(oneGroup.getKey());
+        // textFieldTitle.setEditable(false);
+        toolBar.add(textFieldTitle);
+        textFieldTitle.setBorder(new EmptyBorder(0, 0, 0, 0));
+
+        // JButton btnRename = new JButton("Rename");
+        // btnRename.setIcon(renameIcon);
+        // toolBar.add(btnRename);
 
         JPanel panelFlow = new JPanel();
         WrapLayout wl_panelFlow = new WrapLayout();
@@ -445,6 +506,25 @@ public class GroupBrowser {
                     btnExpand.setIcon(downIcon);
                     panelFlow.setVisible(true);
                 }
+            }
+        });
+
+        textFieldTitle.getDocument().addDocumentListener(new DocumentListener() {
+
+            public void changedUpdate(DocumentEvent e) {
+                // whatever you want
+            }
+
+            public void removeUpdate(DocumentEvent e) {
+                // whatever you want
+            }
+
+            public void insertUpdate(DocumentEvent e) {
+                // whatever you want
+                String originName = textFieldTitle.getToolTipText();
+                photoGroup.put(textFieldTitle.getText(), photoGroup.get(originName));
+                photoGroup.remove(originName);
+                textFieldTitle.setToolTipText(textFieldTitle.getText());
             }
         });
 

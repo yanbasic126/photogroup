@@ -36,6 +36,11 @@ import javax.swing.JPanel;
 import javax.swing.JToolBar;
 import javax.swing.JTree;
 import javax.swing.border.LineBorder;
+import javax.swing.JTextField;
+import javax.swing.DropMode;
+import javax.swing.JFormattedTextField;
+import javax.swing.JTextPane;
+import javax.swing.border.EmptyBorder;
 
 
 /**
@@ -48,6 +53,8 @@ import javax.swing.border.LineBorder;
 public class FlowPanel1 {
 
     private JFrame frame;
+    private JTextField textField;
+    private JTextField txtYfuyfyukfy;
 
     /**
      * Launch the application.
@@ -94,21 +101,19 @@ public class FlowPanel1 {
         
         JPanel panel_1 = new JPanel();
         GridBagConstraints gbc_panel_1 = new GridBagConstraints();
-        gbc_panel_1.insets = new Insets(0, 0, 5, 0);
         gbc_panel_1.anchor = GridBagConstraints.NORTHWEST;
         gbc_panel_1.gridx = 0;
         gbc_panel_1.gridy = 0;
         panel.add(panel_1, gbc_panel_1);
         GridBagLayout gbl_panel_1 = new GridBagLayout();
-        gbl_panel_1.columnWidths = new int[]{0, 0, 0, 0};
+        gbl_panel_1.columnWidths = new int[]{22, 0, 128, 41, 0};
         gbl_panel_1.rowHeights = new int[]{23, 0};
-        gbl_panel_1.columnWeights = new double[]{0.0, 1.0, 0.0, Double.MIN_VALUE};
+        gbl_panel_1.columnWeights = new double[]{0.0, 0.0, 1.0, 0.0, Double.MIN_VALUE};
         gbl_panel_1.rowWeights = new double[]{0.0, Double.MIN_VALUE};
         panel_1.setLayout(gbl_panel_1);
         
         JButton button = new JButton("+");
         GridBagConstraints gbc_button = new GridBagConstraints();
-        gbc_button.anchor = GridBagConstraints.WEST;
         gbc_button.insets = new Insets(0, 0, 0, 5);
         gbc_button.gridx = 0;
         gbc_button.gridy = 0;
@@ -116,16 +121,23 @@ public class FlowPanel1 {
         
         JButton btnTitle = new JButton("title");
         GridBagConstraints gbc_btnTitle = new GridBagConstraints();
-        gbc_btnTitle.fill = GridBagConstraints.HORIZONTAL;
         gbc_btnTitle.insets = new Insets(0, 0, 0, 5);
         gbc_btnTitle.anchor = GridBagConstraints.NORTH;
         gbc_btnTitle.gridx = 1;
         gbc_btnTitle.gridy = 0;
         panel_1.add(btnTitle, gbc_btnTitle);
         
+        textField = new JTextField();
+        GridBagConstraints gbc_textField = new GridBagConstraints();
+        gbc_textField.insets = new Insets(0, 0, 0, 5);
+        gbc_textField.gridx = 2;
+        gbc_textField.gridy = 0;
+        panel_1.add(textField, gbc_textField);
+        textField.setColumns(10);
+        
         JButton btnNewButton = new JButton("Rename");
         GridBagConstraints gbc_btnNewButton = new GridBagConstraints();
-        gbc_btnNewButton.gridx = 2;
+        gbc_btnNewButton.gridx = 3;
         gbc_btnNewButton.gridy = 0;
         panel_1.add(btnNewButton, gbc_btnNewButton);
         
@@ -145,6 +157,12 @@ public class FlowPanel1 {
         
         JLabel lblTitle = new JLabel("titletitletitletitletitletitle");
         toolBar.add(lblTitle);
+        
+        txtYfuyfyukfy = new JTextField();
+        txtYfuyfyukfy.setText("yfuyfyukfy");
+        toolBar.add(txtYfuyfyukfy);
+        txtYfuyfyukfy.setColumns(10);
+        txtYfuyfyukfy.setBorder(new EmptyBorder(0, 0, 0, 0));
         
         JButton btnRename = new JButton("Rename");
         toolBar.add(btnRename);
