@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import com.photogroup.app.SettingStore;
+import com.photogroup.ui.SettingStore;
 
 public class FileUtil {
 

@@ -19,7 +19,7 @@
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 // ============================================================================
-package com.photogroup.app.ui.browser;
+package com.photogroup.ui.dialog;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -27,6 +27,9 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Enumeration;
 
 import javax.swing.AbstractButton;
 import javax.swing.ButtonGroup;
@@ -44,11 +47,8 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 
-import com.photogroup.app.SettingStore;
-import com.photogroup.app.ui.Messages;
-import java.awt.event.ActionListener;
-import java.util.Enumeration;
-import java.awt.event.ActionEvent;
+import com.photogroup.ui.Messages;
+import com.photogroup.ui.SettingStore;
 
 /**
  * DOC yyan class global comment. Detailled comment <br/>

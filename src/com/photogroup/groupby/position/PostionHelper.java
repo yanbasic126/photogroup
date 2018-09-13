@@ -10,6 +10,7 @@ import java.net.URL;
 import java.net.URLConnection;
 
 import com.drew.imaging.ImageProcessingException;
+import com.photogroup.exception.ExceptionHandler;
 import com.photogroup.groupby.metadata.MetadataReader;
 import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
 
@@ -69,6 +70,7 @@ public class PostionHelper {
             }
         } catch (Exception e) {
             e.printStackTrace();
+            ExceptionHandler.logError(e.getMessage());
         }
         return address;
     }
@@ -116,13 +118,13 @@ public class PostionHelper {
                     mapY = new String(Base64.decode(mapY));
                     latlng = new double[] { Double.parseDouble(mapX), Double.parseDouble(mapY) };
                 } else {
-                    System.out.println("error != 0");
+                    ExceptionHandler.logError("error != 0, " + url);
                 }
             } else {
-                System.out.println("String invalid!");
+                ExceptionHandler.logError("String invalid!" + url);
             }
         } catch (Exception e) {
-            System.out.println("error: x=" + String.valueOf(lat) + "&y=" + String.valueOf(lng));
+            ExceptionHandler.logError("error: x=" + String.valueOf(lat) + "&y=" + String.valueOf(lng) + "|" + e.getMessage());
             // http://dev.virtualearth.net/REST/v1/Locations/39.8749,116.44358055555556?o=json&key=As7u1lYGlv0-xxLPr2ZrAFlBPwCinH7O3F2EsebbIv6wRwD0ru8K7zvu3vg4kKwP
         }
         return latlng;

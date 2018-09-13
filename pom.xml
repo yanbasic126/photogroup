@@ -86,7 +86,7 @@
                         <configuration>
                             <archive>
                                 <manifest>
-                                    <mainClass>com.photogroup.app.commandline.CommandLine</mainClass>
+                                    <mainClass>com.photogroup.commandline.CommandLine</mainClass>
                                 </manifest>
                             </archive>
                             <descriptorRefs>

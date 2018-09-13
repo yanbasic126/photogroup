@@ -1,4 +1,4 @@
-package com.photogroup.app.ui;
+package com.photogroup.ui;
 
 import java.util.Locale;
 import java.util.MissingResourceException;

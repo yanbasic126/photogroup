@@ -1,4 +1,4 @@
-package com.photogroup.app.ui.browser;
+package com.photogroup.ui.browser;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -52,9 +52,11 @@ import com.drew.imaging.jpeg.JpegMetadataReader;
 import com.drew.imaging.jpeg.JpegProcessingException;
 import com.drew.metadata.exif.ExifThumbnailDirectory;
 import com.photogroup.PhotoGroup;
-import com.photogroup.app.SettingStore;
-import com.photogroup.app.ui.Messages;
-import com.photogroup.app.ui.layout.WrapLayout;
+import com.photogroup.exception.ExceptionHandler;
+import com.photogroup.ui.Messages;
+import com.photogroup.ui.SettingStore;
+import com.photogroup.ui.dialog.SettingDialog;
+import com.photogroup.ui.layout.WrapLayout;
 import com.photogroup.util.FileUtil;
 
 public class GroupBrowser {
@@ -92,6 +94,7 @@ public class GroupBrowser {
                     GroupBrowser window = new GroupBrowser();
                     window.frameGroupBrowser.setVisible(true);
                 } catch (Exception e) {
+                    ExceptionHandler.logError(e.getMessage());
                     e.printStackTrace();
                 }
             }
@@ -106,6 +109,7 @@ public class GroupBrowser {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e) {
             e.printStackTrace();
+            ExceptionHandler.logError(e.getMessage());
         }
         try {
             BufferedImage documentEmptyImage = ImageIO.read(ClassLoader.getSystemResource("icon/document_empty_64.png"));
@@ -113,8 +117,9 @@ public class GroupBrowser {
             upIcon = new ImageIcon(ImageIO.read(ClassLoader.getSystemResource("icon/Up.png")));
             downIcon = new ImageIcon(ImageIO.read(ClassLoader.getSystemResource("icon/Down.png")));
             renameIcon = new ImageIcon(ImageIO.read(ClassLoader.getSystemResource("icon/Blue_tag.png")));
-        } catch (IOException e1) {
-            e1.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+            ExceptionHandler.logError(e.getMessage());
         }
         initialize();
     }
@@ -172,9 +177,9 @@ public class GroupBrowser {
         try {
             BufferedImage bufferedImage = ImageIO.read(ClassLoader.getSystemResource("icon/publish.png"));
             btnOpen.setIcon(new ImageIcon(bufferedImage));
-        } catch (IOException e1) {
-            // TODO Auto-generated catch block
-            e1.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+            ExceptionHandler.logError(e.getMessage());
         }
 
         btnOpen.addActionListener(new ActionListener() {
@@ -195,8 +200,9 @@ public class GroupBrowser {
         try {
             BufferedImage bufferedImage = ImageIO.read(ClassLoader.getSystemResource("icon/settings.png"));
             btnSetting.setIcon(new ImageIcon(bufferedImage));
-        } catch (IOException e1) {
-            e1.printStackTrace();
+        } catch (IOException e) {
+            ExceptionHandler.logError(e.getMessage());
+            e.printStackTrace();
         }
 
         btnSetting.addActionListener(new ActionListener() {
@@ -213,9 +219,9 @@ public class GroupBrowser {
         try {
             BufferedImage bufferedImage = ImageIO.read(ClassLoader.getSystemResource("icon/upcoming_work.png"));
             btnMove.setIcon(new ImageIcon(bufferedImage));
-        } catch (IOException e1) {
-            // TODO Auto-generated catch block
-            e1.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+            ExceptionHandler.logError(e.getMessage());
         }
 
         btnMove.addActionListener(new ActionListener() {
@@ -469,8 +475,8 @@ public class GroupBrowser {
         try {
             thumbDirectory = JpegMetadataReader.readMetadata(photo).getFirstDirectoryOfType(ExifThumbnailDirectory.class);
         } catch (JpegProcessingException | IOException e) {
-            System.out.println(photo.getAbsolutePath());
             e.printStackTrace();
+            ExceptionHandler.logError(photo.getAbsolutePath() + "|" + e.getMessage());
         }
 
         try {
@@ -482,8 +488,8 @@ public class GroupBrowser {
                 bufferedImage = ImageIO.read(photo);
             }
         } catch (IOException e) {
-            System.out.println(photo.getAbsolutePath());
             e.printStackTrace();
+            ExceptionHandler.logError(photo.getAbsolutePath() + "|" + e.getMessage());
         }
 
         if (bufferedImage != null) {

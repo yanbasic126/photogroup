@@ -1,4 +1,4 @@
-package com.photogroup.app.ui;
+package com.photogroup.ui;
 
 import java.awt.Dimension;
 import java.awt.EventQueue;
@@ -41,6 +41,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.TitledBorder;
 
 import com.photogroup.PhotoGroup;
+import com.photogroup.ui.dialog.GroupResultDialog;
 import com.photogroup.util.FileUtil;
 
 /*

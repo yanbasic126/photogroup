@@ -22,6 +22,7 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
 import com.drew.imaging.ImageProcessingException;
+import com.photogroup.exception.ExceptionHandler;
 import com.photogroup.groupby.metadata.MetadataReader;
 import com.photogroup.groupby.position.PostionHelper;
 import com.photogroup.util.PhotoNameCompareUtil;
@@ -104,8 +105,8 @@ public class PhotoGroup implements Runnable {
                     }
                 } catch (ImageProcessingException | IOException e) {
                     exifDateTime.put(child, null);
-                    System.out.println(child.getName());
                     e.printStackTrace();
+                    ExceptionHandler.logError(child.getName() + "|" + e.getMessage());
                 }
                 progress++;
 
@@ -248,6 +249,7 @@ public class PhotoGroup implements Runnable {
                 System.out.println(folderName + " : " + pair.getValue().size());
             } catch (ParseException e) {
                 e.printStackTrace();
+                ExceptionHandler.logError(e.getMessage());
             }
 
         }

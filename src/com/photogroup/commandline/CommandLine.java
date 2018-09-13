@@ -1,13 +1,12 @@
-package com.photogroup.app.commandline;
+package com.photogroup.commandline;
 
 import java.io.File;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import com.photogroup.PhotoGroup;
-import com.photogroup.app.ui.PhotoGroupWindow;
-import com.photogroup.app.ui.browser.GroupBrowser;
+import com.photogroup.exception.ExceptionHandler;
+import com.photogroup.ui.browser.GroupBrowser;
 import com.photogroup.util.FileUtil;
 
 public class CommandLine {
@@ -87,6 +86,7 @@ public class CommandLine {
             thread.join();
         } catch (InterruptedException e) {
             e.printStackTrace();
+            ExceptionHandler.logError(e.getMessage());
         }
         FileUtil.movePhotos(photosPath, photoGroup);
     }
