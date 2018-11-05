@@ -33,14 +33,11 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import javax.swing.JTree;
-import javax.swing.border.LineBorder;
-import javax.swing.JTextField;
-import javax.swing.DropMode;
-import javax.swing.JFormattedTextField;
-import javax.swing.JTextPane;
 import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
 
 
 /**
@@ -60,17 +57,22 @@ public class FlowPanel1 {
      * Launch the application.
      */
     public static void main(String[] args) {
-        EventQueue.invokeLater(new Runnable() {
-
-            public void run() {
-                try {
-                    FlowPanel1 window = new FlowPanel1();
-                    window.frame.setVisible(true);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
+        if(null instanceof FlowPanel1) {
+            System.out.println(11);
+        }else {
+            System.out.println(22);
+        }
+//        EventQueue.invokeLater(new Runnable() {
+//
+//            public void run() {
+//                try {
+//                    FlowPanel1 window = new FlowPanel1();
+//                    window.frame.setVisible(true);
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        });
     }
 
     /**

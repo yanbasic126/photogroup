@@ -5,6 +5,7 @@ import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
+import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -235,7 +236,6 @@ public class GroupBrowser {
             }
         });
 
-
         JButton btnLogs = new JButton("Debug");
 
         try {
@@ -245,7 +245,7 @@ public class GroupBrowser {
             e.printStackTrace();
             ExceptionHandler.logError(e.getMessage());
         }
-        
+
         JSeparator separator_1 = new JSeparator();
         separator_1.setOrientation(SwingConstants.VERTICAL);
         toolBarSetting.add(separator_1);
@@ -474,13 +474,24 @@ public class GroupBrowser {
 
         JTextField textFieldTitle = new JTextField(oneGroup.getKey());
         textFieldTitle.setToolTipText(oneGroup.getKey());
+        textFieldTitle.setName(oneGroup.getKey());
         // textFieldTitle.setEditable(false);
         toolBar.add(textFieldTitle);
         textFieldTitle.setBorder(new EmptyBorder(0, 0, 0, 0));
 
-        // JButton btnRename = new JButton("Rename");
+        JButton btnRename = new JButton("Rename");
         // btnRename.setIcon(renameIcon);
-        // toolBar.add(btnRename);
+        btnRename.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                String originName = textFieldTitle.getName();
+                photoGroup.put(textFieldTitle.getText(), photoGroup.get(originName));
+                photoGroup.remove(originName);
+                textFieldTitle.setName(textFieldTitle.getText());
+            }
+        });
+
+        toolBar.add(btnRename);
 
         JPanel panelFlow = new JPanel();
         WrapLayout wl_panelFlow = new WrapLayout();
@@ -521,10 +532,10 @@ public class GroupBrowser {
 
             public void insertUpdate(DocumentEvent e) {
                 // whatever you want
-                String originName = textFieldTitle.getToolTipText();
-                photoGroup.put(textFieldTitle.getText(), photoGroup.get(originName));
-                photoGroup.remove(originName);
-                textFieldTitle.setToolTipText(textFieldTitle.getText());
+                // String originName = textFieldTitle.getToolTipText();
+                // photoGroup.put(textFieldTitle.getText(), photoGroup.get(originName));
+                // photoGroup.remove(originName);
+                // textFieldTitle.setToolTipText(textFieldTitle.getText());
             }
         });
 

@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.photogroup</groupId>
     <artifactId>photogroup</artifactId>
-    <version>3.1.0-SNAPSHOT</version>
+    <version>3.1.1-SNAPSHOT</version>
     <name>Photo Group</name>
     <description>move photos by taken date
 	2018-8-23: add sort photo before add gps address.
@@ -13,7 +13,8 @@
     2018-9-4: I18N.
     2018-9-7: email, result dialog.
     2018-9-9: new GUI browser.
-    2018-9-9: new GUI browser useable.</description>
+    2018-9-9: new GUI browser useable.
+    2018-11-5: disable assembly.</description>
 
     <distributionManagement>
         <repository>
@@ -63,6 +64,13 @@
                     <include>report/**</include>
                 </includes>
             </resource>
+            <resource>
+                <directory>resources</directory>
+                <includes>
+                    <include>run-linux.sh</include>
+                    <include>run-windows.bat</include>
+                </includes>
+            </resource>
         </resources>
         <plugins>
             <plugin>
@@ -96,7 +104,7 @@
                             <appendAssemblyId>false</appendAssemblyId>
                         </configuration>
                     </execution>
-                    <execution>
+                    <!-- execution>
                         <id>dist</id>
                         <phase>package</phase>
                         <goals>
@@ -108,7 +116,7 @@
                             </descriptors>
                             <appendAssemblyId>false</appendAssemblyId>
                         </configuration>
-                    </execution>
+                    </execution -->
                 </executions>
             </plugin>
             <plugin>
