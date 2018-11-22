@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.photogroup</groupId>
     <artifactId>photogroup</artifactId>
-    <version>3.1.1-SNAPSHOT</version>
+    <version>3.2.0-SNAPSHOT</version>
     <name>Photo Group</name>
     <description>move photos by taken date
 	2018-8-23: add sort photo before add gps address.
@@ -14,7 +14,8 @@
     2018-9-7: email, result dialog.
     2018-9-9: new GUI browser.
     2018-9-9: new GUI browser useable.
-    2018-11-5: disable assembly.</description>
+    2018-11-5: disable assembly.
+    2018-11-22: add log console.</description>
 
     <distributionManagement>
         <repository>
@@ -60,6 +61,7 @@
                     <include>**/*.properties</include>
                     <include>custom_name_mapping.txt</include>
                     <include>default_setting.txt</include>
+                    <include>version.txt</include>
                     <include>icon/**</include>
                     <include>report/**</include>
                 </includes>
@@ -144,6 +146,7 @@
                                     value="${project.version}" dir="resources">
                                     <include name="run-linux.sh" />
                                 </replace>
+                                <echo file="src/version.txt"><![CDATA[${project.version}]]></echo>
                             </tasks>
                         </configuration>
                         <goals>

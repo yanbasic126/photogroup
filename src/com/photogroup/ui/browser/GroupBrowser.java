@@ -5,7 +5,6 @@ import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -16,9 +15,13 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -42,7 +45,9 @@ import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
@@ -52,6 +57,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.text.DefaultCaret;
 
 import com.drew.imaging.jpeg.JpegMetadataReader;
 import com.drew.imaging.jpeg.JpegProcessingException;
@@ -88,10 +94,27 @@ public class GroupBrowser {
 
     private HashMap<String, List<File>> photoGroup;
 
+    private JTextArea txtDebugLog;
+
+    private JPanel panelDebugLog;
+
+    private JScrollPane scrollPaneDebug;
+
+    private JPanel panelDebug;
+
+    private JPanel panelStatus;
+
+    private static final List<String> systemLogOutput = Collections.synchronizedList(new ArrayList<String>());
+
+    private static boolean systemLogThreadStart = false;
+
+    private PrintStream systemOutRedirect;
+
     /**
      * Launch the application.
      */
     public static void main(String[] args) {
+
         EventQueue.invokeLater(new Runnable() {
 
             public void run() {
@@ -110,6 +133,15 @@ public class GroupBrowser {
      * Create the application.
      */
     public GroupBrowser() {
+        systemOutRedirect = new PrintStream(new ByteArrayOutputStream() {
+
+            @Override
+            public synchronized void write(byte[] b, int off, int len) {
+                systemLogOutput.add(new String(b, off, len));
+            }
+        });
+        System.setErr(systemOutRedirect);
+        System.setOut(systemOutRedirect);
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e) {
@@ -140,19 +172,24 @@ public class GroupBrowser {
         JMenuBar menuBar = new JMenuBar();
         frameGroupBrowser.setJMenuBar(menuBar);
 
-        JMenu mnNewMenu = new JMenu("Help");
-        menuBar.add(mnNewMenu);
+        JMenu mnHelpMenu = new JMenu("Help");
+        menuBar.add(mnHelpMenu);
 
-        JMenuItem mntmNewMenuItem_1 = new JMenuItem("Help");
-        mnNewMenu.add(mntmNewMenuItem_1);
+        JMenuItem mntmHelpItem = new JMenuItem("Help");
+        mnHelpMenu.add(mntmHelpItem);
 
-        JMenuItem mntmNewMenuItem = new JMenuItem("About");
-        mnNewMenu.add(mntmNewMenuItem);
+        JMenuItem mntmAboutItem = new JMenuItem("About");
+        mnHelpMenu.add(mntmAboutItem);
+        String buildVersion = FileUtil.getBuildVersion();
+        if (buildVersion != null) {
+            JMenuItem mntmVersionItem = new JMenuItem(buildVersion);
+            mnHelpMenu.add(mntmVersionItem);
+        }
         GridBagLayout gridBagLayout = new GridBagLayout();
         gridBagLayout.columnWidths = new int[] { 0, 0 };
-        gridBagLayout.rowHeights = new int[] { 0, 0, 0, 0, 0 };
+        gridBagLayout.rowHeights = new int[] { 0, 0, 1, 0, 0 };
         gridBagLayout.columnWeights = new double[] { 1.0, Double.MIN_VALUE };
-        gridBagLayout.rowWeights = new double[] { 0.0, 0.0, 1.0, 0.0, Double.MIN_VALUE };
+        gridBagLayout.rowWeights = new double[] { 0.0, 0.0, 1.0, 0.0, 0.0 };
         frameGroupBrowser.getContentPane().setLayout(gridBagLayout);
 
         JPanel panelToolbar = new JPanel();
@@ -164,15 +201,16 @@ public class GroupBrowser {
         gbc_panelToolbar.gridy = 0;
         frameGroupBrowser.getContentPane().add(panelToolbar, gbc_panelToolbar);
         GridBagLayout gbl_panelToolbar = new GridBagLayout();
-        gbl_panelToolbar.columnWidths = new int[] { 0, 0 };
+        gbl_panelToolbar.columnWidths = new int[] { 0, 0, 0 };
         gbl_panelToolbar.rowHeights = new int[] { 0, 0 };
-        gbl_panelToolbar.columnWeights = new double[] { 0.0, Double.MIN_VALUE };
+        gbl_panelToolbar.columnWeights = new double[] { 0.0, 0.0, Double.MIN_VALUE };
         gbl_panelToolbar.rowWeights = new double[] { 0.0, Double.MIN_VALUE };
         panelToolbar.setLayout(gbl_panelToolbar);
 
         JToolBar toolBarSetting = new JToolBar();
         toolBarSetting.setFloatable(false);
         GridBagConstraints gbc_toolBarSetting = new GridBagConstraints();
+        gbc_toolBarSetting.insets = new Insets(0, 0, 0, 5);
         gbc_toolBarSetting.gridx = 0;
         gbc_toolBarSetting.gridy = 0;
         panelToolbar.add(toolBarSetting, gbc_toolBarSetting);
@@ -195,7 +233,7 @@ public class GroupBrowser {
                     doRun();
                 } else {
                     // popup error
-                    JOptionPane.showMessageDialog(frameGroupBrowser, errMsg, "Run", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(frameGroupBrowser, errMsg, "Profile", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
@@ -219,7 +257,7 @@ public class GroupBrowser {
             }
         });
 
-        JButton btnMove = new JButton("Apply");
+        JButton btnMove = new JButton("Save");
 
         try {
             BufferedImage bufferedImage = ImageIO.read(ClassLoader.getSystemResource("icon/upcoming_work.png"));
@@ -232,11 +270,23 @@ public class GroupBrowser {
         btnMove.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                doSave();
+                if (photoGroup == null) {
+                    // popup error
+                    JOptionPane.showMessageDialog(frameGroupBrowser, "Error! Nothing to save!", "Save",
+                            JOptionPane.ERROR_MESSAGE);
+                } else {
+                    doSave();
+                }
             }
         });
 
-        JButton btnLogs = new JButton("Debug");
+        JToggleButton btnLogs = new JToggleButton("Log");
+        btnLogs.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                panelDebug.setVisible(!panelDebug.isVisible());
+            }
+        });
 
         try {
             BufferedImage bufferedImage = ImageIO.read(ClassLoader.getSystemResource("icon/featured.png"));
@@ -406,9 +456,10 @@ public class GroupBrowser {
         // panelBrowser.add(panelGroupAll, gbc_panelGroupAll);
         panelBrowser.add(scrollPane, gbc_scrollPane);
 
-        JPanel panelStatus = new JPanel();
+        panelStatus = new JPanel();
         GridBagConstraints gbc_panelStatus = new GridBagConstraints();
-        gbc_panelStatus.anchor = GridBagConstraints.SOUTH;
+        gbc_panelStatus.insets = new Insets(0, 0, 5, 0);
+        gbc_panelStatus.anchor = GridBagConstraints.NORTH;
         gbc_panelStatus.fill = GridBagConstraints.HORIZONTAL;
         gbc_panelStatus.gridx = 0;
         gbc_panelStatus.gridy = 3;
@@ -423,11 +474,60 @@ public class GroupBrowser {
         progressBar = new JProgressBar();
         progressBar.setValue(0);
         GridBagConstraints gbc_progressBar = new GridBagConstraints();
-        gbc_progressBar.fill = GridBagConstraints.HORIZONTAL;
-        gbc_progressBar.anchor = GridBagConstraints.NORTH;
+        gbc_progressBar.fill = GridBagConstraints.BOTH;
         gbc_progressBar.gridx = 0;
         gbc_progressBar.gridy = 0;
         panelStatus.add(progressBar, gbc_progressBar);
+
+        panelDebug = new JPanel();
+        GridBagConstraints gbc_panel_2_1 = new GridBagConstraints();
+        gbc_panel_2_1.anchor = GridBagConstraints.NORTH;
+        gbc_panel_2_1.fill = GridBagConstraints.HORIZONTAL;
+        gbc_panel_2_1.gridx = 0;
+        gbc_panel_2_1.gridy = 4;
+        // panel_2.setVisible(false);
+        frameGroupBrowser.getContentPane().add(panelDebug, gbc_panel_2_1);
+        gbc_panel_2_1 = new GridBagConstraints();
+        gbc_panel_2_1.insets = new Insets(0, 0, 5, 0);
+        gbc_panel_2_1.anchor = GridBagConstraints.NORTHWEST;
+        gbc_panel_2_1.gridx = 1;
+        gbc_panel_2_1.gridy = 0;
+        GridBagLayout gbl_panelDebug = new GridBagLayout();
+        gbl_panelDebug.columnWidths = new int[] { 600, 0 };
+        gbl_panelDebug.rowHeights = new int[] { 0 };
+        gbl_panelDebug.columnWeights = new double[] { 1.0, Double.MIN_VALUE };
+        gbl_panelDebug.rowWeights = new double[] { Double.MIN_VALUE };
+        panelDebug.setLayout(gbl_panelDebug);
+
+        panelDebugLog = new JPanel();
+        // panelDebug.add(panel_2, gbc_panel_2_1);
+        GridBagLayout gbl_panelDebugLog = new GridBagLayout();
+        gbl_panelDebugLog.columnWidths = new int[] { 0, 0 };
+        gbl_panelDebugLog.rowHeights = new int[] { 0, 0 };
+        gbl_panelDebugLog.columnWeights = new double[] { 1.0, Double.MIN_VALUE };
+        gbl_panelDebugLog.rowWeights = new double[] { 1.0, Double.MIN_VALUE };
+        panelDebugLog.setLayout(gbl_panelDebugLog);
+
+        scrollPaneDebug = new JScrollPane(panelDebugLog);
+        scrollPaneDebug.setPreferredSize(new Dimension(100, 160));
+        GridBagConstraints gbc_scrollPaneDebug = new GridBagConstraints();
+        gbc_scrollPaneDebug.fill = GridBagConstraints.BOTH;
+        gbc_scrollPaneDebug.gridx = 0;
+        gbc_scrollPaneDebug.gridy = 0;
+        txtDebugLog = new JTextArea();
+        txtDebugLog.setText("");
+        txtDebugLog.setRows(10);
+        DefaultCaret caret = (DefaultCaret) txtDebugLog.getCaret();
+        caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
+        GridBagConstraints gbc_txtDebugLog = new GridBagConstraints();
+        gbc_txtDebugLog.anchor = GridBagConstraints.SOUTH;
+        gbc_txtDebugLog.fill = GridBagConstraints.HORIZONTAL;
+        gbc_txtDebugLog.gridx = 0;
+        gbc_txtDebugLog.gridy = 0;
+        panelDebugLog.add(txtDebugLog, gbc_txtDebugLog);
+        panelDebug.add(scrollPaneDebug, gbc_scrollPaneDebug);
+        panelDebug.setVisible(false);
+
     }
 
     private void createImageGroup(Entry<String, List<File>> oneGroup) {
@@ -646,7 +746,7 @@ public class GroupBrowser {
             errorMsg = "Error! Please select a folder.";
         } else {
             if (!new File(textFieldFolder.getText()).exists()) {
-                errorMsg = "Error! fild does not exist.";
+                errorMsg = "Error! File does not exist.";
             }
         }
         return errorMsg;
@@ -684,6 +784,31 @@ public class GroupBrowser {
                 // }
             }
         }).start();
+
+        if (!systemLogThreadStart) {
+            systemLogThreadStart = true;
+            new Thread(new Runnable() {
+
+                @Override
+                public void run() {
+                    while (true) {
+                        if (txtDebugLog != null && panelDebug.isVisible() && !systemLogOutput.isEmpty()) {
+                            StringBuffer sb = new StringBuffer(txtDebugLog.getText());
+                            for (String s : systemLogOutput) {
+                                sb.append(s);
+                            }
+                            txtDebugLog.setText(sb.toString());
+                            systemLogOutput.clear();
+                        }
+                        try {
+                            Thread.sleep(200);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }).start();
+        }
 
         exe.execute(groupThread);
         exe.shutdown();

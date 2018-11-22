@@ -1,11 +1,18 @@
 package com.photogroup.util;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.swing.JMenuItem;
+
+import com.photogroup.exception.ExceptionHandler;
 import com.photogroup.ui.SettingStore;
 
 public class FileUtil {
@@ -28,5 +35,18 @@ public class FileUtil {
                 }
             }
         }
+    }
+
+    public static String getBuildVersion() {
+        String lineVersion = null;
+        InputStream inputStream = FileUtil.class.getClassLoader().getResourceAsStream("version.txt");
+        if (inputStream != null) {
+            try {
+                lineVersion = new BufferedReader(new InputStreamReader(inputStream)).readLine();
+            } catch (IOException e1) {
+                ExceptionHandler.logError(e1.getMessage());
+            }
+        }
+        return lineVersion;
     }
 }

@@ -1,1 +1,1 @@
-start javaw -jar photogroup-3.1.0-SNAPSHOT.jar
+start javaw -jar photogroup-3.1.1-SNAPSHOT.jar
