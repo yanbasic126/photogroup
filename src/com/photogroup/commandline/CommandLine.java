@@ -103,7 +103,8 @@ public class CommandLine {
                 "--guess (-g), If the photo EXIF data does not exist and it betweens the same taken date pohots which contains EXIF data, will use this date as taken date. Default is true");
         System.out.println(
                 "--gps (-gps), Add address in folder name by GPS data. Require internet access to baidu map API. Default is true");
-        System.out.println("--report (-r), Generate photo process report after running, in the photo directory. Default is true");
+        // System.out.println("--report (-r), Generate photo process report after running, in the photo directory.
+        // Default is true");
     }
 
     public static void main(String[] args) {

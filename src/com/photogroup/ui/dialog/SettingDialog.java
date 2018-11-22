@@ -70,7 +70,7 @@ public class SettingDialog extends JDialog {
 
     private JCheckBox chckbxGPS;
 
-    private JCheckBox chckbxReport;
+    // private JCheckBox chckbxReport;
 
     /**
      * Launch the application.
@@ -277,15 +277,15 @@ public class SettingDialog extends JDialog {
             gbc_lblNewLabel_11.gridy = 5;
             panel_2.add(lblNewLabel_11, gbc_lblNewLabel_11);
 
-            chckbxReport = new JCheckBox();
-            chckbxReport.setSelected(SettingStore.getSettingStore().isReport());
-            GridBagConstraints gbc_chckbxReport = new GridBagConstraints();
-            gbc_chckbxReport.anchor = GridBagConstraints.WEST;
-            gbc_chckbxReport.fill = GridBagConstraints.VERTICAL;
-            gbc_chckbxReport.insets = new Insets(0, 0, 0, 5);
-            gbc_chckbxReport.gridx = 1;
-            gbc_chckbxReport.gridy = 5;
-            panel_2.add(chckbxReport, gbc_chckbxReport);
+            // chckbxReport = new JCheckBox();
+            // chckbxReport.setSelected(SettingStore.getSettingStore().isReport());
+            // GridBagConstraints gbc_chckbxReport = new GridBagConstraints();
+            // gbc_chckbxReport.anchor = GridBagConstraints.WEST;
+            // gbc_chckbxReport.fill = GridBagConstraints.VERTICAL;
+            // gbc_chckbxReport.insets = new Insets(0, 0, 0, 5);
+            // gbc_chckbxReport.gridx = 1;
+            // gbc_chckbxReport.gridy = 5;
+            // panel_2.add(chckbxReport, gbc_chckbxReport);
 
             JLabel lblNewLabel_12 = new JLabel(Messages.getString("PhotoGroupWindow.26")); //$NON-NLS-1$
             GridBagConstraints gbc_lblNewLabel_12 = new GridBagConstraints();
@@ -328,7 +328,7 @@ public class SettingDialog extends JDialog {
                         SettingStore.getSettingStore().setFormat(comboBoxFormat.getSelectedItem().toString());
                         SettingStore.getSettingStore().setGuess(chckbxGuess.isSelected());
                         SettingStore.getSettingStore().setGps(chckbxGPS.isSelected());
-                        SettingStore.getSettingStore().setReport(chckbxReport.isSelected());
+                        // SettingStore.getSettingStore().setReport(chckbxReport.isSelected());
                         dispose();
                     }
                 });
