@@ -91,7 +91,7 @@ public class SettingDialog extends JDialog {
     public SettingDialog() {
 
         setTitle(Messages.getString("SettingDialog.this.title")); //$NON-NLS-1$
-        setBounds(100, 100, 700, 320);
+        setBounds(100, 100, 830, 400);
         getContentPane().setLayout(new BorderLayout());
         contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
         getContentPane().add(contentPanel, BorderLayout.CENTER);

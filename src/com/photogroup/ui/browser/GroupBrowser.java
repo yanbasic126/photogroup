@@ -5,10 +5,12 @@ import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
@@ -22,6 +24,7 @@ import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -52,12 +55,14 @@ import javax.swing.JToolBar;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.plaf.FontUIResource;
 import javax.swing.text.DefaultCaret;
+
+import org.pushingpixels.substance.api.skin.SubstanceGraphiteLookAndFeel;
 
 import com.drew.imaging.jpeg.JpegMetadataReader;
 import com.drew.imaging.jpeg.JpegProcessingException;
@@ -68,13 +73,14 @@ import com.photogroup.ui.Messages;
 import com.photogroup.ui.SettingStore;
 import com.photogroup.ui.dialog.SettingDialog;
 import com.photogroup.ui.layout.WrapLayout;
+import com.photogroup.ui.widget.JTextFieldAddress;
 import com.photogroup.util.FileUtil;
 
 public class GroupBrowser {
 
     private JFrame frameGroupBrowser;
 
-    private JTextField textFieldFolder;
+    private JTextFieldAddress textFieldFolder;
 
     private JProgressBar progressBar;
 
@@ -110,15 +116,30 @@ public class GroupBrowser {
 
     private PrintStream systemOutRedirect;
 
+    private List<JPanel> panelFlowList = new ArrayList<JPanel>();
+
+    private List<JButton> btnExpandList = new ArrayList<JButton>();
+
     /**
      * Launch the application.
      */
     public static void main(String[] args) {
-
+        JFrame.setDefaultLookAndFeelDecorated(true);
+        JDialog.setDefaultLookAndFeelDecorated(true);
+        Font systemFont = new JLabel().getFont();
+        FontUIResource fontRes = new FontUIResource(systemFont.getFontName(), systemFont.getStyle(), systemFont.getSize() + 2);
+        for (Enumeration<Object> keys = UIManager.getDefaults().keys(); keys.hasMoreElements();) {
+            Object key = keys.nextElement();
+            Object value = UIManager.get(key);
+            if (value instanceof FontUIResource) {
+                UIManager.put(key, fontRes);
+            }
+        }
         EventQueue.invokeLater(new Runnable() {
 
             public void run() {
                 try {
+                    UIManager.setLookAndFeel(new SubstanceGraphiteLookAndFeel());
                     GroupBrowser window = new GroupBrowser();
                     window.frameGroupBrowser.setVisible(true);
                 } catch (Exception e) {
@@ -142,12 +163,7 @@ public class GroupBrowser {
         });
         System.setErr(systemOutRedirect);
         System.setOut(systemOutRedirect);
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e) {
-            e.printStackTrace();
-            ExceptionHandler.logError(e.getMessage());
-        }
+
         try {
             BufferedImage documentEmptyImage = ImageIO.read(ClassLoader.getSystemResource("icon/document_empty_64.png"));
             documentEmptyImageIcon = new ImageIcon(documentEmptyImage);
@@ -185,6 +201,37 @@ public class GroupBrowser {
             JMenuItem mntmVersionItem = new JMenuItem(buildVersion);
             mnHelpMenu.add(mntmVersionItem);
         }
+        JMenu mnWindowMenu = new JMenu("Window");
+        menuBar.add(mnWindowMenu);
+
+        JMenuItem mntmExpandItem = new JMenuItem("Expand All");
+        mnWindowMenu.add(mntmExpandItem);
+        mntmExpandItem.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                for (JButton btnExpand : btnExpandList) {
+                    btnExpand.setIcon(downIcon);
+                }
+                for (JPanel panelFlow : panelFlowList) {
+                    panelFlow.setVisible(true);
+                }
+            }
+        });
+
+        JMenuItem mntmCollapseItem = new JMenuItem("Collapse All");
+        mnWindowMenu.add(mntmCollapseItem);
+        mntmCollapseItem.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                for (JButton btnExpand : btnExpandList) {
+                    btnExpand.setIcon(upIcon);
+                }
+                for (JPanel panelFlow : panelFlowList) {
+                    panelFlow.setVisible(false);
+                }
+            }
+        });
+
         GridBagLayout gridBagLayout = new GridBagLayout();
         gridBagLayout.columnWidths = new int[] { 0, 0 };
         gridBagLayout.rowHeights = new int[] { 0, 0, 1, 0, 0 };
@@ -228,13 +275,7 @@ public class GroupBrowser {
         btnOpen.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                String errMsg = validateBeforeRun();
-                if (errMsg == null) {
-                    doRun();
-                } else {
-                    // popup error
-                    JOptionPane.showMessageDialog(frameGroupBrowser, errMsg, "Profile", JOptionPane.ERROR_MESSAGE);
-                }
+                profile();
             }
         });
 
@@ -253,6 +294,7 @@ public class GroupBrowser {
             public void actionPerformed(ActionEvent e) {
                 SettingDialog dialog = new SettingDialog();
                 dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+                dialog.setModal(true);
                 dialog.setVisible(true);
             }
         });
@@ -397,7 +439,7 @@ public class GroupBrowser {
         gbc_btnBrowse.gridy = 0;
         panelAddress.add(btnBrowse, gbc_btnBrowse);
 
-        textFieldFolder = new JTextField();
+        textFieldFolder = new JTextFieldAddress();
         textFieldFolder.setText("");
         int twidth = (int) textFieldFolder.getPreferredSize().getWidth();
         textFieldFolder.setPreferredSize(new Dimension(twidth, size));
@@ -444,7 +486,7 @@ public class GroupBrowser {
         gbl_panelGroupAll.columnWidths = new int[] { 0 };
         gbl_panelGroupAll.rowHeights = new int[] { 0 };
         gbl_panelGroupAll.columnWeights = new double[] { 1.0 };
-        gbl_panelGroupAll.rowWeights = new double[] { 0.0 };
+        gbl_panelGroupAll.rowWeights = new double[] { 0.0, 1.0 };
         panelGroupAll.setLayout(gbl_panelGroupAll);
 
         JScrollPane scrollPane = new JScrollPane(panelGroupAll);
@@ -584,10 +626,10 @@ public class GroupBrowser {
         btnRename.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                String originName = textFieldTitle.getName();
+                String originName = textFieldTitle.getToolTipText();
                 photoGroup.put(textFieldTitle.getText(), photoGroup.get(originName));
                 photoGroup.remove(originName);
-                textFieldTitle.setName(textFieldTitle.getText());
+                textFieldTitle.setToolTipText(textFieldTitle.getText());
             }
         });
 
@@ -619,6 +661,9 @@ public class GroupBrowser {
                 }
             }
         });
+
+        panelFlowList.add(panelFlow);
+        btnExpandList.add(btnExpand);
 
         textFieldTitle.getDocument().addDocumentListener(new DocumentListener() {
 
@@ -752,6 +797,16 @@ public class GroupBrowser {
         return errorMsg;
     }
 
+    private void profile() {
+        String errMsg = validateBeforeRun();
+        if (errMsg == null) {
+            doRun();
+        } else {
+            // popup error
+            JOptionPane.showMessageDialog(frameGroupBrowser, errMsg, "Profile", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
     private void doRun() {
         btnOpen.setEnabled(false);
         photoGroup = new HashMap<String, List<File>>();
@@ -767,18 +822,41 @@ public class GroupBrowser {
             public void run() {
                 while (!exe.isTerminated()) {
                     int precent = Integer.parseInt(groupThread.processPrecent.toString());
-                    progressBar.setValue(precent);
+                    EventQueue.invokeLater(new Runnable() {
+
+                        public void run() {
+                            progressBar.setValue(precent);
+                        }
+                    });
                 }
                 panelGroupAll.removeAll();
                 Iterator<?> it = photoGroup.entrySet().iterator();
                 while (it.hasNext()) {
                     Map.Entry<String, List<File>> pair = (Entry<String, List<File>>) it.next();
-                    createImageGroup(pair);
+                    EventQueue.invokeLater(new Runnable() {
+
+                        public void run() {
+                            createImageGroup(pair);
+                        }
+                    });
                 }
 
-                panelGroupAll.setVisible(false);
-                panelGroupAll.setVisible(true);
-                btnOpen.setEnabled(true);
+                EventQueue.invokeLater(new Runnable() {
+
+                    public void run() {
+                        GridBagLayout panelGroupAllGridBagLayout = (GridBagLayout) panelGroupAll.getLayout();
+                        double[] rowWeights = new double[photoGroup.size()];
+                        for (int i = 0; i < rowWeights.length - 1; i++) {
+                            rowWeights[i] = 0.0;
+                        }
+                        rowWeights[rowWeights.length - 1] = 1.0;
+
+                        panelGroupAllGridBagLayout.rowWeights = rowWeights;
+                        panelGroupAll.setVisible(false);
+                        panelGroupAll.setVisible(true);
+                        btnOpen.setEnabled(true);
+                    }
+                });
                 // if ("OK".equals(showResultDialog(photoGroup))) {
                 // FileUtil.movePhotos(threshold, textField.getText(), photoGroup);
                 // }

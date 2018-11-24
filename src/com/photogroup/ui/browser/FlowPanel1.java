@@ -22,6 +22,9 @@ import java.awt.event.ActionEvent;
 import javax.swing.JTextArea;
 import javax.swing.JTextPane;
 import javax.swing.JScrollPane;
+import javax.swing.JMenuBar;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 
 /**
  * DOC yyan class global comment. Detailled comment <br/>
@@ -80,6 +83,19 @@ public class FlowPanel1 {
         frame.setBounds(100, 100, 776, 560);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.getContentPane().setLayout(new GridLayout(0, 1, 0, 0));
+        
+        JMenuBar menuBar = new JMenuBar();
+        frame.getContentPane().add(menuBar);
+        
+        JMenu mnNewMenu = new JMenu("New menu");
+        menuBar.add(mnNewMenu);
+        
+        JMenuItem mntmNewMenuItem = new JMenuItem("New menu item");
+        mntmNewMenuItem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+            }
+        });
+        mnNewMenu.add(mntmNewMenuItem);
 
         JPanel panel = new JPanel();
         panel.setBorder(new LineBorder(new Color(0, 0, 0)));
@@ -186,16 +202,26 @@ public class FlowPanel1 {
         panel_3.setLayout(gbl_panel_3);
 
         JPanel panel_4 = new JPanel();
-
-        JTree tree = new JTree();
-        panel_4.add(tree);
         JScrollPane scrollPane_1 = new JScrollPane(panel_4);
         GridBagLayout gbl_panel_4 = new GridBagLayout();
         gbl_panel_4.columnWidths = new int[] { 0 };
-        gbl_panel_4.rowHeights = new int[] { 0 };
-        gbl_panel_4.columnWeights = new double[] { Double.MIN_VALUE };
-        gbl_panel_4.rowWeights = new double[] { Double.MIN_VALUE };
+        gbl_panel_4.rowHeights = new int[] { 0, 0, 0 };
+        gbl_panel_4.columnWeights = new double[] { 1.0 };
+        gbl_panel_4.rowWeights = new double[] { 0.0, 1.0, 1.0 };
         panel_4.setLayout(gbl_panel_4);
+        
+        JPanel panel_2 = new JPanel();
+        GridBagConstraints gbc_panel_2 = new GridBagConstraints();
+        gbc_panel_2.fill = GridBagConstraints.BOTH;
+        gbc_panel_2.gridx = 0;
+        gbc_panel_2.gridy = 0;
+        panel_4.add(panel_2, gbc_panel_2);
+        
+        JButton btnNewButton_2 = new JButton("New button");
+        panel_2.add(btnNewButton_2);
+        
+                JTree tree = new JTree();
+                panel_2.add(tree);
         GridBagConstraints gbc_scrollPane_1 = new GridBagConstraints();
         gbc_scrollPane_1.fill = GridBagConstraints.BOTH;
         gbc_scrollPane_1.gridx = 0;

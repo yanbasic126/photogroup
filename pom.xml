@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.photogroup</groupId>
     <artifactId>photogroup</artifactId>
-    <version>3.2.1-SNAPSHOT</version>
+    <version>4.0.0-SNAPSHOT</version>
     <name>Photo Group</name>
     <description>move photos by taken date
     2018-8-23: add sort photo before add gps address.
@@ -16,7 +16,8 @@
     2018-9-9: new GUI browser useable.
     2018-11-5: disable assembly.
     2018-11-22: add log console.
-    2018-11-22: hide report feature.</description>
+    2018-11-22: hide report feature.
+    2018-11-24: new look and feel, bugs fix.</description>
 
     <distributionManagement>
         <repository>
@@ -46,6 +47,11 @@
             <artifactId>metadata-extractor</artifactId>
             <version>2.9.0</version>
             <!-- version>2.11.0</version -->
+        </dependency>
+        <dependency>
+            <groupId>org.pushing-pixels</groupId>
+            <artifactId>radiance-substance</artifactId>
+            <version>1.0.2</version>
         </dependency>
     </dependencies>
     <build>
