@@ -10,7 +10,6 @@ import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
@@ -61,8 +60,6 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.plaf.FontUIResource;
 import javax.swing.text.DefaultCaret;
-
-import org.pushingpixels.substance.api.skin.SubstanceGraphiteLookAndFeel;
 
 import com.drew.imaging.jpeg.JpegMetadataReader;
 import com.drew.imaging.jpeg.JpegProcessingException;
@@ -124,8 +121,8 @@ public class GroupBrowser {
      * Launch the application.
      */
     public static void main(String[] args) {
-        JFrame.setDefaultLookAndFeelDecorated(true);
-        JDialog.setDefaultLookAndFeelDecorated(true);
+        // JFrame.setDefaultLookAndFeelDecorated(true);
+        // JDialog.setDefaultLookAndFeelDecorated(true);
         Font systemFont = new JLabel().getFont();
         FontUIResource fontRes = new FontUIResource(systemFont.getFontName(), systemFont.getStyle(), systemFont.getSize() + 2);
         for (Enumeration<Object> keys = UIManager.getDefaults().keys(); keys.hasMoreElements();) {
@@ -139,7 +136,8 @@ public class GroupBrowser {
 
             public void run() {
                 try {
-                    UIManager.setLookAndFeel(new SubstanceGraphiteLookAndFeel());
+                    // UIManager.setLookAndFeel(new SubstanceGraphiteLookAndFeel());
+                    UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
                     GroupBrowser window = new GroupBrowser();
                     window.frameGroupBrowser.setVisible(true);
                 } catch (Exception e) {
@@ -626,10 +624,12 @@ public class GroupBrowser {
         btnRename.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                String originName = textFieldTitle.getToolTipText();
-                photoGroup.put(textFieldTitle.getText(), photoGroup.get(originName));
-                photoGroup.remove(originName);
-                textFieldTitle.setToolTipText(textFieldTitle.getText());
+                if (!textFieldTitle.getToolTipText().equals(textFieldTitle.getText())) {
+                    String originName = textFieldTitle.getToolTipText();
+                    photoGroup.put(textFieldTitle.getText(), photoGroup.get(originName));
+                    photoGroup.remove(originName);
+                    textFieldTitle.setToolTipText(textFieldTitle.getText());
+                }
             }
         });
 
@@ -821,37 +821,38 @@ public class GroupBrowser {
             @Override
             public void run() {
                 while (!exe.isTerminated()) {
+                    // EventQueue.invokeLater(new Runnable() {
+                    //
+                    // public void run() {
                     int precent = Integer.parseInt(groupThread.processPrecent.toString());
-                    EventQueue.invokeLater(new Runnable() {
-
-                        public void run() {
-                            progressBar.setValue(precent);
-                        }
-                    });
+                    progressBar.setValue(precent);
+                    // }
+                    // });
                 }
                 panelGroupAll.removeAll();
+                // EventQueue.invokeLater(new Runnable() {
+                //
+                // public void run() {
                 Iterator<?> it = photoGroup.entrySet().iterator();
                 while (it.hasNext()) {
                     Map.Entry<String, List<File>> pair = (Entry<String, List<File>>) it.next();
-                    EventQueue.invokeLater(new Runnable() {
-
-                        public void run() {
-                            createImageGroup(pair);
-                        }
-                    });
+                    createImageGroup(pair);
                 }
-
+                // }
+                // });
                 EventQueue.invokeLater(new Runnable() {
 
                     public void run() {
-                        GridBagLayout panelGroupAllGridBagLayout = (GridBagLayout) panelGroupAll.getLayout();
-                        double[] rowWeights = new double[photoGroup.size()];
-                        for (int i = 0; i < rowWeights.length - 1; i++) {
-                            rowWeights[i] = 0.0;
-                        }
-                        rowWeights[rowWeights.length - 1] = 1.0;
+                        if (photoGroup.size() > 1) {
+                            double[] rowWeights = new double[photoGroup.size()];
+                            for (int i = 0; i < rowWeights.length - 1; i++) {
+                                rowWeights[i] = 0.0;
+                            }
+                            rowWeights[rowWeights.length - 1] = 1.0;
 
-                        panelGroupAllGridBagLayout.rowWeights = rowWeights;
+                            GridBagLayout panelGroupAllGridBagLayout = (GridBagLayout) panelGroupAll.getLayout();
+                            panelGroupAllGridBagLayout.rowWeights = rowWeights;
+                        }
                         panelGroupAll.setVisible(false);
                         panelGroupAll.setVisible(true);
                         btnOpen.setEnabled(true);

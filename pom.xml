@@ -17,7 +17,8 @@
     2018-11-5: disable assembly.
     2018-11-22: add log console.
     2018-11-22: hide report feature.
-    2018-11-24: new look and feel, bugs fix.</description>
+    2018-11-24: new look and feel, bugs fix.
+    2018-11-24: revert look and feel.</description>
 
     <distributionManagement>
         <repository>
