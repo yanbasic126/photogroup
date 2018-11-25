@@ -5,7 +5,6 @@ import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
-import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -23,7 +22,6 @@ import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -58,7 +56,6 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import javax.swing.plaf.FontUIResource;
 import javax.swing.text.DefaultCaret;
 
 import com.drew.imaging.jpeg.JpegMetadataReader;
@@ -121,17 +118,18 @@ public class GroupBrowser {
      * Launch the application.
      */
     public static void main(String[] args) {
-        // JFrame.setDefaultLookAndFeelDecorated(true);
-        // JDialog.setDefaultLookAndFeelDecorated(true);
-        Font systemFont = new JLabel().getFont();
-        FontUIResource fontRes = new FontUIResource(systemFont.getFontName(), systemFont.getStyle(), systemFont.getSize() + 2);
-        for (Enumeration<Object> keys = UIManager.getDefaults().keys(); keys.hasMoreElements();) {
-            Object key = keys.nextElement();
-            Object value = UIManager.get(key);
-            if (value instanceof FontUIResource) {
-                UIManager.put(key, fontRes);
-            }
-        }
+        JFrame.setDefaultLookAndFeelDecorated(true);
+        JDialog.setDefaultLookAndFeelDecorated(true);
+        // Font systemFont = new JLabel().getFont();
+        // FontUIResource fontRes = new FontUIResource(systemFont.getFontName(), systemFont.getStyle(),
+        // systemFont.getSize() + 2);
+        // for (Enumeration<Object> keys = UIManager.getDefaults().keys(); keys.hasMoreElements();) {
+        // Object key = keys.nextElement();
+        // Object value = UIManager.get(key);
+        // if (value instanceof FontUIResource) {
+        // UIManager.put(key, fontRes);
+        // }
+        // }
         EventQueue.invokeLater(new Runnable() {
 
             public void run() {
@@ -180,7 +178,7 @@ public class GroupBrowser {
      */
     private void initialize() {
         frameGroupBrowser = new JFrame();
-        frameGroupBrowser.setBounds(100, 100, 700, 500);
+        frameGroupBrowser.setBounds(100, 100, 1000, 700);
         frameGroupBrowser.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frameGroupBrowser.setTitle("Photo Group");
         JMenuBar menuBar = new JMenuBar();

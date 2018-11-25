@@ -1,30 +1,31 @@
 package com.photogroup.ui.browser;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import javax.swing.JTree;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.LineBorder;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import javax.swing.JTextArea;
-import javax.swing.JTextPane;
-import javax.swing.JScrollPane;
-import javax.swing.JMenuBar;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
+import javax.swing.UIManager;
+import javax.swing.plaf.synth.SynthLookAndFeel;
+
+import com.photogroup.ui.lookandfeel.DarkLookAndFeel;
+import com.photogroup.util.FileUtil;
 
 /**
  * DOC yyan class global comment. Detailled comment <br/>
@@ -55,6 +56,15 @@ public class FlowPanel1 {
         } else {
             System.out.println(22);
         }
+        // UIManager.put("ScrollBar.thumb", Color.black);
+        try {
+            SynthLookAndFeel laf = new SynthLookAndFeel();
+            laf.load(FileUtil.class.getClassLoader().getResourceAsStream("DarkSynthTheme.xml"), null);
+            UIManager.setLookAndFeel(laf);
+        } catch (Exception e1) {
+            // TODO Auto-generated catch block
+            e1.printStackTrace();
+        }
         EventQueue.invokeLater(new Runnable() {
 
             public void run() {
@@ -83,22 +93,22 @@ public class FlowPanel1 {
         frame.setBounds(100, 100, 776, 560);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.getContentPane().setLayout(new GridLayout(0, 1, 0, 0));
-        
+
         JMenuBar menuBar = new JMenuBar();
         frame.getContentPane().add(menuBar);
-        
+
         JMenu mnNewMenu = new JMenu("New menu");
         menuBar.add(mnNewMenu);
-        
+
         JMenuItem mntmNewMenuItem = new JMenuItem("New menu item");
         mntmNewMenuItem.addActionListener(new ActionListener() {
+
             public void actionPerformed(ActionEvent e) {
             }
         });
         mnNewMenu.add(mntmNewMenuItem);
 
         JPanel panel = new JPanel();
-        panel.setBorder(new LineBorder(new Color(0, 0, 0)));
         frame.getContentPane().add(panel);
         GridBagLayout gbl_panel = new GridBagLayout();
         gbl_panel.columnWidths = new int[] { 0, 0 };
@@ -162,7 +172,6 @@ public class FlowPanel1 {
 
         JButton btnNewButton_1 = new JButton("+");
         btnNewButton_1.setPreferredSize(new Dimension(30, 30));
-        btnNewButton_1.setBorder(new LineBorder(new Color(0, 0, 0)));
         toolBar.add(btnNewButton_1);
 
         JLabel lblTitle = new JLabel("titletitletitletitletitletitle");
@@ -172,7 +181,7 @@ public class FlowPanel1 {
         txtYfuyfyukfy.setText("yfuyfyukfy");
         toolBar.add(txtYfuyfyukfy);
         txtYfuyfyukfy.setColumns(10);
-        txtYfuyfyukfy.setBorder(new EmptyBorder(0, 0, 0, 0));
+        // txtYfuyfyukfy.setBorder(new EmptyBorder(0, 0, 0, 0));
 
         JButton btnRename = new JButton("Rename");
         btnRename.addActionListener(new ActionListener() {
@@ -209,19 +218,19 @@ public class FlowPanel1 {
         gbl_panel_4.columnWeights = new double[] { 1.0 };
         gbl_panel_4.rowWeights = new double[] { 0.0, 1.0, 1.0 };
         panel_4.setLayout(gbl_panel_4);
-        
+
         JPanel panel_2 = new JPanel();
         GridBagConstraints gbc_panel_2 = new GridBagConstraints();
         gbc_panel_2.fill = GridBagConstraints.BOTH;
         gbc_panel_2.gridx = 0;
         gbc_panel_2.gridy = 0;
         panel_4.add(panel_2, gbc_panel_2);
-        
+
         JButton btnNewButton_2 = new JButton("New button");
         panel_2.add(btnNewButton_2);
-        
-                JTree tree = new JTree();
-                panel_2.add(tree);
+
+        JTree tree = new JTree();
+        panel_2.add(tree);
         GridBagConstraints gbc_scrollPane_1 = new GridBagConstraints();
         gbc_scrollPane_1.fill = GridBagConstraints.BOTH;
         gbc_scrollPane_1.gridx = 0;
