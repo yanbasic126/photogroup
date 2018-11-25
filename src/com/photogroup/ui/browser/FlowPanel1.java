@@ -57,14 +57,7 @@ public class FlowPanel1 {
             System.out.println(22);
         }
         // UIManager.put("ScrollBar.thumb", Color.black);
-        try {
-            SynthLookAndFeel laf = new SynthLookAndFeel();
-            laf.load(FileUtil.class.getClassLoader().getResourceAsStream("DarkSynthTheme.xml"), null);
-            UIManager.setLookAndFeel(laf);
-        } catch (Exception e1) {
-            // TODO Auto-generated catch block
-            e1.printStackTrace();
-        }
+
         EventQueue.invokeLater(new Runnable() {
 
             public void run() {
@@ -82,6 +75,14 @@ public class FlowPanel1 {
      * Create the application.
      */
     public FlowPanel1() {
+        try {
+            SynthLookAndFeel laf = new SynthLookAndFeel();
+            laf.load(getClass().getClassLoader().getResourceAsStream("dark_synth_theme.xml"), this.getClass());
+            UIManager.setLookAndFeel(laf);
+        } catch (Exception e1) {
+            // TODO Auto-generated catch block
+            e1.printStackTrace();
+        }
         initialize();
     }
 

@@ -838,24 +838,26 @@ public class GroupBrowser {
                 }
                 // }
                 // });
-                EventQueue.invokeLater(new Runnable() {
-
-                    public void run() {
-                        if (photoGroup.size() > 1) {
-                            double[] rowWeights = new double[photoGroup.size()];
-                            for (int i = 0; i < rowWeights.length - 1; i++) {
-                                rowWeights[i] = 0.0;
-                            }
-                            rowWeights[rowWeights.length - 1] = 1.0;
-
-                            GridBagLayout panelGroupAllGridBagLayout = (GridBagLayout) panelGroupAll.getLayout();
-                            panelGroupAllGridBagLayout.rowWeights = rowWeights;
-                        }
-                        panelGroupAll.setVisible(false);
-                        panelGroupAll.setVisible(true);
-                        btnOpen.setEnabled(true);
+                // EventQueue.invokeLater(new Runnable() {
+                //
+                // public void run() {
+                double[] rowWeights;
+                if (photoGroup.size() > 1) {
+                    rowWeights = new double[photoGroup.size()];
+                    for (int i = 0; i < rowWeights.length - 1; i++) {
+                        rowWeights[i] = 0.0;
                     }
-                });
+                    rowWeights[rowWeights.length - 1] = 1.0;
+                } else {
+                    rowWeights = new double[] { 1.0 };
+                }
+                GridBagLayout panelGroupAllGridBagLayout = (GridBagLayout) panelGroupAll.getLayout();
+                panelGroupAllGridBagLayout.rowWeights = rowWeights;
+                panelGroupAll.setVisible(false);
+                panelGroupAll.setVisible(true);
+                btnOpen.setEnabled(true);
+                // }
+                // });
                 // if ("OK".equals(showResultDialog(photoGroup))) {
                 // FileUtil.movePhotos(threshold, textField.getText(), photoGroup);
                 // }

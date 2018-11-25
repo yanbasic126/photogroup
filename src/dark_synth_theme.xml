@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<synth>
+	<style id="basicStyle">
+		<font name="Verdana" size="16" />
+		<state>
+			<color value="WHITE" type="BACKGROUND" />
+			<color value="BLACK" type="FOREGROUND" />
+		</state>
+	</style>
+	<style id="buttonStyle">
+		<property key="Button.textShiftOffset" type="integer" value="1" />
+		<insets top="10" left="10" right="10" bottom="10" />
+
+
+		<state value="PRESSED">
+			<color value="#9BC3B1" type="BACKGROUND" />
+
+		</state>
+	</style>
+
+	<style id="button">
+		<opaque value="true" />
+		<font name="Dialog" size="14" />
+		<state>
+			<color value="#4d4d4d" type="BACKGROUND" />
+		</state>
+	</style>
+		<style id="panel">
+		<opaque value="true" />
+		<font name="Dialog" size="12" />
+		<state>
+			<color value="#4d4d4d" type="BACKGROUND" />
+		</state>
+	</style>
+	<bind style="panel" type="region" key="Panel" />
+	  <!-- Scroll bar style -->
+  <style id="scrollBarStyle">
+    <state>
+      <color value="#4d4d4d" type="BACKGROUND"/>
+      <color value="#4d4d4d" type="FOREGROUND"/>
+    </state>
+    </style>
+    <bind style="scrollBarStyle" type="REGION" key="ScrollBar" />
+</synth>
