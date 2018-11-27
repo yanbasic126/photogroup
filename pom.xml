@@ -1,10 +1,10 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.photogroup</groupId>
-    <artifactId>photogroup</artifactId>
+    <groupId>com.lemonphoto</groupId>
+    <artifactId>lemonphoto</artifactId>
     <version>4.0.1-SNAPSHOT</version>
-    <name>Photo Group</name>
+    <name>Lemon Photo</name>
     <description>move photos by taken date
     2018-8-23: add sort photo before add gps address.
     2018-8-24: minor improvements.
@@ -20,7 +20,8 @@
     2018-11-24: new look and feel, bugs fix.
     2018-11-24: revert look and feel.
     2018-11-25: revert look and feel.
-    2018-11-25: layout improvement.</description>
+    2018-11-25: layout improvement.
+    2018-11-27: lemon photo.</description>
 
     <distributionManagement>
         <repository>

@@ -19,17 +19,25 @@ public class ExceptionHandler {
 
     public static void log(String logLevel, Throwable exception) {
         logs.put(logLevel, exception);
+        output(exception.toString());
     }
 
     public static void logError(String message) {
         logs.put(LEVEL_ERROR, message);
+        output(message);
     }
 
     public static void logInfo(String message) {
         logs.put(LEVEL_INFO, message);
+        output(message);
     }
 
     public static void logDebug(String message) {
         logs.put(LEVEL_DEBUG, message);
+        output(message);
+    }
+
+    private static void output(String messgae) {
+        System.out.println(messgae);
     }
 }

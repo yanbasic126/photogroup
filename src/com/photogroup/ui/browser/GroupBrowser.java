@@ -45,10 +45,10 @@ import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
+import javax.swing.JViewport;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
@@ -67,10 +67,13 @@ import com.photogroup.ui.Messages;
 import com.photogroup.ui.SettingStore;
 import com.photogroup.ui.dialog.SettingDialog;
 import com.photogroup.ui.layout.WrapLayout;
+import com.photogroup.ui.widget.JTextAreaLog;
 import com.photogroup.ui.widget.JTextFieldAddress;
 import com.photogroup.util.FileUtil;
 
 public class GroupBrowser {
+
+    private static final int PHOTO_GAP = 2;
 
     private JFrame frameGroupBrowser;
 
@@ -90,11 +93,13 @@ public class GroupBrowser {
 
     private ImageIcon renameIcon;
 
+    private ImageIcon lemonIcon;
+
     private JButton btnOpen;
 
     private HashMap<String, List<File>> photoGroup;
 
-    private JTextArea txtDebugLog;
+    private JTextAreaLog txtDebugLog;
 
     private JPanel panelDebugLog;
 
@@ -161,11 +166,12 @@ public class GroupBrowser {
         System.setOut(systemOutRedirect);
 
         try {
-            BufferedImage documentEmptyImage = ImageIO.read(ClassLoader.getSystemResource("icon/document_empty_64.png"));
+            BufferedImage documentEmptyImage = ImageIO.read(ClassLoader.getSystemResource("icon/file_64.png"));
             documentEmptyImageIcon = new ImageIcon(documentEmptyImage);
-            upIcon = new ImageIcon(ImageIO.read(ClassLoader.getSystemResource("icon/Up.png")));
-            downIcon = new ImageIcon(ImageIO.read(ClassLoader.getSystemResource("icon/Down.png")));
-            renameIcon = new ImageIcon(ImageIO.read(ClassLoader.getSystemResource("icon/Blue_tag.png")));
+            upIcon = new ImageIcon(ImageIO.read(ClassLoader.getSystemResource("icon/down_16.png")));
+            downIcon = new ImageIcon(ImageIO.read(ClassLoader.getSystemResource("icon/up_16.png")));
+            // renameIcon = new ImageIcon(ImageIO.read(ClassLoader.getSystemResource("icon/Blue_tag.png")));
+            lemonIcon = new ImageIcon(ImageIO.read(ClassLoader.getSystemResource("icon/lemon_32.png")));
         } catch (IOException e) {
             e.printStackTrace();
             ExceptionHandler.logError(e.getMessage());
@@ -178,14 +184,16 @@ public class GroupBrowser {
      */
     private void initialize() {
         frameGroupBrowser = new JFrame();
-        frameGroupBrowser.setBounds(100, 100, 1000, 700);
+        frameGroupBrowser.setBounds(100, 100, (PREVIEW_SIZE + PHOTO_GAP) * 5 + 40, 700);
         frameGroupBrowser.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frameGroupBrowser.setTitle("Photo Group");
+        frameGroupBrowser.setTitle("Lemon Photo");
+        frameGroupBrowser.setIconImage(lemonIcon.getImage());
         JMenuBar menuBar = new JMenuBar();
         frameGroupBrowser.setJMenuBar(menuBar);
 
         JMenu mnHelpMenu = new JMenu("Help");
         menuBar.add(mnHelpMenu);
+        // mnHelpMenu.setAccelerator(KeyStroke.getKeyStroke('H', InputEvent.ALT_MASK));
 
         JMenuItem mntmHelpItem = new JMenuItem("Help");
         mnHelpMenu.add(mntmHelpItem);
@@ -195,10 +203,12 @@ public class GroupBrowser {
         String buildVersion = FileUtil.getBuildVersion();
         if (buildVersion != null) {
             JMenuItem mntmVersionItem = new JMenuItem(buildVersion);
+
             mnHelpMenu.add(mntmVersionItem);
         }
         JMenu mnWindowMenu = new JMenu("Window");
         menuBar.add(mnWindowMenu);
+        // mnWindowMenu.setAccelerator(KeyStroke.getKeyStroke('W', InputEvent.ALT_MASK));
 
         JMenuItem mntmExpandItem = new JMenuItem("Expand All");
         mnWindowMenu.add(mntmExpandItem);
@@ -261,7 +271,7 @@ public class GroupBrowser {
         btnOpen = new JButton("Profile");
 
         try {
-            BufferedImage bufferedImage = ImageIO.read(ClassLoader.getSystemResource("icon/publish.png"));
+            BufferedImage bufferedImage = ImageIO.read(ClassLoader.getSystemResource("icon/profile_32.png"));
             btnOpen.setIcon(new ImageIcon(bufferedImage));
         } catch (IOException e) {
             e.printStackTrace();
@@ -278,7 +288,7 @@ public class GroupBrowser {
         JButton btnSetting = new JButton("Setting");
 
         try {
-            BufferedImage bufferedImage = ImageIO.read(ClassLoader.getSystemResource("icon/settings.png"));
+            BufferedImage bufferedImage = ImageIO.read(ClassLoader.getSystemResource("icon/settings_32.png"));
             btnSetting.setIcon(new ImageIcon(bufferedImage));
         } catch (IOException e) {
             ExceptionHandler.logError(e.getMessage());
@@ -291,6 +301,7 @@ public class GroupBrowser {
                 SettingDialog dialog = new SettingDialog();
                 dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
                 dialog.setModal(true);
+                dialog.setIconImage(lemonIcon.getImage());
                 dialog.setVisible(true);
             }
         });
@@ -298,7 +309,7 @@ public class GroupBrowser {
         JButton btnMove = new JButton("Save");
 
         try {
-            BufferedImage bufferedImage = ImageIO.read(ClassLoader.getSystemResource("icon/upcoming_work.png"));
+            BufferedImage bufferedImage = ImageIO.read(ClassLoader.getSystemResource("icon/save_32.png"));
             btnMove.setIcon(new ImageIcon(bufferedImage));
         } catch (IOException e) {
             e.printStackTrace();
@@ -327,7 +338,7 @@ public class GroupBrowser {
         });
 
         try {
-            BufferedImage bufferedImage = ImageIO.read(ClassLoader.getSystemResource("icon/featured.png"));
+            BufferedImage bufferedImage = ImageIO.read(ClassLoader.getSystemResource("icon/debug_32.png"));
             btnLogs.setIcon(new ImageIcon(bufferedImage));
         } catch (IOException e) {
             e.printStackTrace();
@@ -376,12 +387,12 @@ public class GroupBrowser {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    File folder = new File(textFieldFolder.getText());
-                    if (folder.exists()) {
-                        Desktop.getDesktop().open(new File(textFieldFolder.getText()));
+                    String checkFolder = checkFolder();
+                    if (checkFolder == null) {
+                        File folder = new File(textFieldFolder.getText());
+                        Desktop.getDesktop().open(folder);
                     } else {
-                        JOptionPane.showMessageDialog(frameGroupBrowser, "Folder doesn't exist.", "Folder",
-                                JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(frameGroupBrowser, checkFolder, "Folder", JOptionPane.ERROR_MESSAGE);
                     }
                 } catch (IOException ex) {
                     ex.printStackTrace();
@@ -391,7 +402,7 @@ public class GroupBrowser {
 
         });
         try {
-            BufferedImage bufferedImage = ImageIO.read(ClassLoader.getSystemResource("icon/Folder.png"));
+            BufferedImage bufferedImage = ImageIO.read(ClassLoader.getSystemResource("icon/folder_16.png"));
             btnFolder.setIcon(new ImageIcon(bufferedImage));
         } catch (IOException e) {
             e.printStackTrace();
@@ -493,7 +504,8 @@ public class GroupBrowser {
         gbc_scrollPane.gridy = 0;
         // panelBrowser.add(panelGroupAll, gbc_panelGroupAll);
         panelBrowser.add(scrollPane, gbc_scrollPane);
-
+        scrollPane.getVerticalScrollBar().setUnitIncrement(16);
+        
         panelStatus = new JPanel();
         GridBagConstraints gbc_panelStatus = new GridBagConstraints();
         gbc_panelStatus.insets = new Insets(0, 0, 5, 0);
@@ -552,7 +564,7 @@ public class GroupBrowser {
         gbc_scrollPaneDebug.fill = GridBagConstraints.BOTH;
         gbc_scrollPaneDebug.gridx = 0;
         gbc_scrollPaneDebug.gridy = 0;
-        txtDebugLog = new JTextArea();
+        txtDebugLog = new JTextAreaLog();
         txtDebugLog.setText("");
         txtDebugLog.setRows(10);
         DefaultCaret caret = (DefaultCaret) txtDebugLog.getCaret();
@@ -634,8 +646,11 @@ public class GroupBrowser {
         toolBar.add(btnRename);
 
         JPanel panelFlow = new JPanel();
+        panelFlow.setBorder(new EmptyBorder(0, 0, 0, 0));
         WrapLayout wl_panelFlow = new WrapLayout();
         wl_panelFlow.setAlignment(FlowLayout.LEFT);
+        wl_panelFlow.setHgap(PHOTO_GAP);
+        wl_panelFlow.setVgap(PHOTO_GAP);
         panelFlow.setLayout(wl_panelFlow);
         // panelFlow.setBorder(new LineBorder(new Color(0, 0, 0)));
         panelFlow.setBackground(new Color(255, 255, 255));
@@ -693,7 +708,7 @@ public class GroupBrowser {
 
     private void addImagePanel(JPanel panelFlow, File photo) {
         JPanel panel = new JPanel();
-        panel.setBorder(new LineBorder(new Color(0, 0, 0)));
+        // panel.setBorder(new EmptyBorder(0, 0, 0, 0));
         GridBagLayout gbl_panel = new GridBagLayout();
         gbl_panel.columnWidths = new int[] { 0 };
         gbl_panel.rowHeights = new int[] { 23, 23 };
@@ -703,6 +718,7 @@ public class GroupBrowser {
         panelFlow.add(panel);
 
         JLabel labelImg = new JLabel();
+        // labelImg.setBorder(new EmptyBorder(0, 0, 0, 0));
         labelImg.setPreferredSize(new Dimension(PREVIEW_SIZE, PREVIEW_SIZE));
         ExifThumbnailDirectory thumbDirectory = null;
         BufferedImage bufferedImage = null;
@@ -740,6 +756,7 @@ public class GroupBrowser {
         panel.add(labelImg, gbc_label);
 
         JLabel labelName = new JLabel(photo.getName());
+        // labelName.setBorder(new EmptyBorder(0, 0, 0, 0));
         labelName.setToolTipText(photo.getName());
         int height = labelName.getHeight();
         labelName.setPreferredSize(new Dimension(PREVIEW_SIZE, 20));
@@ -784,12 +801,17 @@ public class GroupBrowser {
     }
 
     protected String validateBeforeRun() {
+        String errorMsg = checkFolder();
+        return errorMsg;
+    }
+
+    private String checkFolder() {
         String errorMsg = null;
         if (textFieldFolder.getText().isEmpty()) {
             errorMsg = "Error! Please select a folder.";
         } else {
             if (!new File(textFieldFolder.getText()).exists()) {
-                errorMsg = "Error! File does not exist.";
+                errorMsg = "Error! Folder '" + textFieldFolder.getText() + "' does not exist.";
             }
         }
         return errorMsg;
@@ -828,19 +850,11 @@ public class GroupBrowser {
                     // });
                 }
                 panelGroupAll.removeAll();
-                // EventQueue.invokeLater(new Runnable() {
-                //
-                // public void run() {
                 Iterator<?> it = photoGroup.entrySet().iterator();
                 while (it.hasNext()) {
                     Map.Entry<String, List<File>> pair = (Entry<String, List<File>>) it.next();
                     createImageGroup(pair);
                 }
-                // }
-                // });
-                // EventQueue.invokeLater(new Runnable() {
-                //
-                // public void run() {
                 double[] rowWeights;
                 if (photoGroup.size() > 1) {
                     rowWeights = new double[photoGroup.size()];
@@ -856,6 +870,10 @@ public class GroupBrowser {
                 panelGroupAll.setVisible(false);
                 panelGroupAll.setVisible(true);
                 btnOpen.setEnabled(true);
+                progressBar.setValue(100);
+                // EventQueue.invokeLater(new Runnable() {
+                //
+                // public void run() {
                 // }
                 // });
                 // if ("OK".equals(showResultDialog(photoGroup))) {
