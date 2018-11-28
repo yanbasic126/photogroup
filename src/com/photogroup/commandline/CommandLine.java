@@ -4,8 +4,8 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 
-import com.photogroup.PhotoGroup;
 import com.photogroup.exception.ExceptionHandler;
+import com.photogroup.groupby.PhotoGroup;
 import com.photogroup.ui.browser.GroupBrowser;
 import com.photogroup.util.FileUtil;
 

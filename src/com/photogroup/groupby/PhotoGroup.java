@@ -1,4 +1,4 @@
-package com.photogroup;
+package com.photogroup.groupby;
 
 import java.io.File;
 import java.io.IOException;

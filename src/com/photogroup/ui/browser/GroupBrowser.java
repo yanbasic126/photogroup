@@ -34,7 +34,6 @@ import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -46,14 +45,11 @@ import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
-import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
-import javax.swing.JViewport;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
-import javax.swing.border.LineBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.DefaultCaret;
@@ -61,19 +57,33 @@ import javax.swing.text.DefaultCaret;
 import com.drew.imaging.jpeg.JpegMetadataReader;
 import com.drew.imaging.jpeg.JpegProcessingException;
 import com.drew.metadata.exif.ExifThumbnailDirectory;
-import com.photogroup.PhotoGroup;
 import com.photogroup.exception.ExceptionHandler;
-import com.photogroup.ui.Messages;
+import com.photogroup.groupby.PhotoGroup;
 import com.photogroup.ui.SettingStore;
+import com.photogroup.ui.dialog.AboutAndUpdateDialog;
 import com.photogroup.ui.dialog.SettingDialog;
 import com.photogroup.ui.layout.WrapLayout;
 import com.photogroup.ui.widget.JTextAreaLog;
 import com.photogroup.ui.widget.JTextFieldAddress;
+import com.photogroup.update.UpdateManager;
 import com.photogroup.util.FileUtil;
+import com.photogroup.util.ImageUtil;
 
 public class GroupBrowser {
 
     private static final int PHOTO_GAP = 2;
+
+    private static final int PREVIEW_SIZE = 168;
+
+    private static final List<String> SYSTEM_LOG_OUTPUT = Collections.synchronizedList(new ArrayList<String>());
+
+    private static boolean systemLogThreadStart = false;
+
+    private HashMap<String, List<File>> photoGroup;
+
+    private PrintStream systemOutRedirect;
+
+    private UpdateManager updateManager;
 
     private JFrame frameGroupBrowser;
 
@@ -83,21 +93,29 @@ public class GroupBrowser {
 
     private JPanel panelGroupAll;
 
-    private static int PREVIEW_SIZE = 168;
-
     private ImageIcon documentEmptyImageIcon;
 
-    private ImageIcon upIcon;
-
     private ImageIcon downIcon;
+
+    private ImageIcon upIcon;
 
     private ImageIcon renameIcon;
 
     private ImageIcon lemonIcon;
 
-    private JButton btnOpen;
+    private ImageIcon lemonSmallIcon;
 
-    private HashMap<String, List<File>> photoGroup;
+    private ImageIcon debugIcon;
+
+    private ImageIcon profileIcon;
+
+    private ImageIcon settingIcon;
+
+    private ImageIcon saveIcon;
+
+    private ImageIcon folderIcon;
+
+    private JButton btnOpen;
 
     private JTextAreaLog txtDebugLog;
 
@@ -108,12 +126,6 @@ public class GroupBrowser {
     private JPanel panelDebug;
 
     private JPanel panelStatus;
-
-    private static final List<String> systemLogOutput = Collections.synchronizedList(new ArrayList<String>());
-
-    private static boolean systemLogThreadStart = false;
-
-    private PrintStream systemOutRedirect;
 
     private List<JPanel> panelFlowList = new ArrayList<JPanel>();
 
@@ -159,19 +171,24 @@ public class GroupBrowser {
 
             @Override
             public synchronized void write(byte[] b, int off, int len) {
-                systemLogOutput.add(new String(b, off, len));
+                SYSTEM_LOG_OUTPUT.add(new String(b, off, len));
             }
         });
         System.setErr(systemOutRedirect);
         System.setOut(systemOutRedirect);
 
         try {
-            BufferedImage documentEmptyImage = ImageIO.read(ClassLoader.getSystemResource("icon/file_64.png"));
-            documentEmptyImageIcon = new ImageIcon(documentEmptyImage);
-            upIcon = new ImageIcon(ImageIO.read(ClassLoader.getSystemResource("icon/down_16.png")));
-            downIcon = new ImageIcon(ImageIO.read(ClassLoader.getSystemResource("icon/up_16.png")));
-            // renameIcon = new ImageIcon(ImageIO.read(ClassLoader.getSystemResource("icon/Blue_tag.png")));
-            lemonIcon = new ImageIcon(ImageIO.read(ClassLoader.getSystemResource("icon/lemon_32.png")));
+            documentEmptyImageIcon = ImageUtil.getImageFromSystemResource("icon/file_64.png");
+            downIcon = ImageUtil.getImageFromSystemResource("icon/down_16.png");
+            upIcon = ImageUtil.getImageFromSystemResource("icon/up_16.png");
+            // renameIcon = ImageUtil.getImageIconFromSystemResource("icon/Blue_tag.png");
+            lemonIcon = ImageUtil.getImageFromSystemResource("icon/lemon_32.png");
+            lemonSmallIcon = ImageUtil.getImageFromSystemResource("icon/lemon_16.png");
+            debugIcon = ImageUtil.getImageFromSystemResource("icon/debug_16.png");
+            profileIcon = ImageUtil.getImageFromSystemResource("icon/profile_32.png");
+            settingIcon = ImageUtil.getImageFromSystemResource("icon/settings_32.png");
+            saveIcon = ImageUtil.getImageFromSystemResource("icon/save_32.png");
+            folderIcon = ImageUtil.getImageFromSystemResource("icon/folder_16.png");
         } catch (IOException e) {
             e.printStackTrace();
             ExceptionHandler.logError(e.getMessage());
@@ -184,7 +201,7 @@ public class GroupBrowser {
      */
     private void initialize() {
         frameGroupBrowser = new JFrame();
-        frameGroupBrowser.setBounds(100, 100, (PREVIEW_SIZE + PHOTO_GAP) * 5 + 40, 700);
+        frameGroupBrowser.setBounds(100, 100, (PREVIEW_SIZE + PHOTO_GAP * 2) * 5 + 40, 700);
         frameGroupBrowser.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frameGroupBrowser.setTitle("Lemon Photo");
         frameGroupBrowser.setIconImage(lemonIcon.getImage());
@@ -198,12 +215,35 @@ public class GroupBrowser {
         JMenuItem mntmHelpItem = new JMenuItem("Help");
         mnHelpMenu.add(mntmHelpItem);
 
+        JMenuItem mntmLogItem = new JMenuItem("Show Logs");
+        // mntmLogItem.setIcon(debugIcon);
+        mnHelpMenu.add(mntmLogItem);
+        mntmLogItem.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                if (panelDebug.isVisible()) {
+                    panelDebug.setVisible(false);
+                    mntmLogItem.setText("Show Logs");
+                } else {
+                    panelDebug.setVisible(true);
+                    mntmLogItem.setText("Hide Logs");
+                }
+            }
+        });
+
         JMenuItem mntmAboutItem = new JMenuItem("About");
+        mntmAboutItem.setIcon(lemonSmallIcon);
         mnHelpMenu.add(mntmAboutItem);
+        mntmAboutItem.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                showAboutDialog();
+            }
+        });
+        
         String buildVersion = FileUtil.getBuildVersion();
         if (buildVersion != null) {
             JMenuItem mntmVersionItem = new JMenuItem(buildVersion);
-
             mnHelpMenu.add(mntmVersionItem);
         }
         JMenu mnWindowMenu = new JMenu("Window");
@@ -211,12 +251,13 @@ public class GroupBrowser {
         // mnWindowMenu.setAccelerator(KeyStroke.getKeyStroke('W', InputEvent.ALT_MASK));
 
         JMenuItem mntmExpandItem = new JMenuItem("Expand All");
+        mntmExpandItem.setIcon(upIcon);
         mnWindowMenu.add(mntmExpandItem);
         mntmExpandItem.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
                 for (JButton btnExpand : btnExpandList) {
-                    btnExpand.setIcon(downIcon);
+                    btnExpand.setIcon(upIcon);
                 }
                 for (JPanel panelFlow : panelFlowList) {
                     panelFlow.setVisible(true);
@@ -225,12 +266,13 @@ public class GroupBrowser {
         });
 
         JMenuItem mntmCollapseItem = new JMenuItem("Collapse All");
+        mntmCollapseItem.setIcon(downIcon);
         mnWindowMenu.add(mntmCollapseItem);
         mntmCollapseItem.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
                 for (JButton btnExpand : btnExpandList) {
-                    btnExpand.setIcon(upIcon);
+                    btnExpand.setIcon(downIcon);
                 }
                 for (JPanel panelFlow : panelFlowList) {
                     panelFlow.setVisible(false);
@@ -269,14 +311,7 @@ public class GroupBrowser {
         panelToolbar.add(toolBarSetting, gbc_toolBarSetting);
 
         btnOpen = new JButton("Profile");
-
-        try {
-            BufferedImage bufferedImage = ImageIO.read(ClassLoader.getSystemResource("icon/profile_32.png"));
-            btnOpen.setIcon(new ImageIcon(bufferedImage));
-        } catch (IOException e) {
-            e.printStackTrace();
-            ExceptionHandler.logError(e.getMessage());
-        }
+        btnOpen.setIcon(profileIcon);
 
         btnOpen.addActionListener(new ActionListener() {
 
@@ -286,35 +321,18 @@ public class GroupBrowser {
         });
 
         JButton btnSetting = new JButton("Setting");
-
-        try {
-            BufferedImage bufferedImage = ImageIO.read(ClassLoader.getSystemResource("icon/settings_32.png"));
-            btnSetting.setIcon(new ImageIcon(bufferedImage));
-        } catch (IOException e) {
-            ExceptionHandler.logError(e.getMessage());
-            e.printStackTrace();
-        }
+        btnSetting.setIcon(settingIcon);
 
         btnSetting.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
                 SettingDialog dialog = new SettingDialog();
-                dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-                dialog.setModal(true);
-                dialog.setIconImage(lemonIcon.getImage());
                 dialog.setVisible(true);
             }
         });
 
         JButton btnMove = new JButton("Save");
-
-        try {
-            BufferedImage bufferedImage = ImageIO.read(ClassLoader.getSystemResource("icon/save_32.png"));
-            btnMove.setIcon(new ImageIcon(bufferedImage));
-        } catch (IOException e) {
-            e.printStackTrace();
-            ExceptionHandler.logError(e.getMessage());
-        }
+        btnMove.setIcon(saveIcon);
 
         btnMove.addActionListener(new ActionListener() {
 
@@ -329,21 +347,21 @@ public class GroupBrowser {
             }
         });
 
-        JToggleButton btnLogs = new JToggleButton("Log");
-        btnLogs.addActionListener(new ActionListener() {
+        // JToggleButton btnLogs = new JToggleButton("Log");
+        // btnLogs.addActionListener(new ActionListener() {
+        //
+        // public void actionPerformed(ActionEvent e) {
+        // panelDebug.setVisible(!panelDebug.isVisible());
+        // }
+        // });
 
-            public void actionPerformed(ActionEvent e) {
-                panelDebug.setVisible(!panelDebug.isVisible());
-            }
-        });
-
-        try {
-            BufferedImage bufferedImage = ImageIO.read(ClassLoader.getSystemResource("icon/debug_32.png"));
-            btnLogs.setIcon(new ImageIcon(bufferedImage));
-        } catch (IOException e) {
-            e.printStackTrace();
-            ExceptionHandler.logError(e.getMessage());
-        }
+        // try {
+        // BufferedImage bufferedImage = ImageIO.read(ClassLoader.getSystemResource("icon/debug_32.png"));
+        // btnLogs.setIcon(new ImageIcon(bufferedImage));
+        // } catch (IOException e) {
+        // e.printStackTrace();
+        // ExceptionHandler.logError(e.getMessage());
+        // }
 
         JSeparator separator_1 = new JSeparator();
         separator_1.setOrientation(SwingConstants.VERTICAL);
@@ -356,7 +374,7 @@ public class GroupBrowser {
         separator.setOrientation(SwingConstants.VERTICAL);
         toolBarSetting.add(separator);
         toolBarSetting.add(btnSetting);
-        toolBarSetting.add(btnLogs);
+        // toolBarSetting.add(btnLogs);
 
         JPanel panelAddress = new JPanel();
         GridBagConstraints gbc_panelAddress = new GridBagConstraints();
@@ -401,13 +419,7 @@ public class GroupBrowser {
             }
 
         });
-        try {
-            BufferedImage bufferedImage = ImageIO.read(ClassLoader.getSystemResource("icon/folder_16.png"));
-            btnFolder.setIcon(new ImageIcon(bufferedImage));
-        } catch (IOException e) {
-            e.printStackTrace();
-            ExceptionHandler.logError(e.getMessage());
-        }
+        btnFolder.setIcon(folderIcon);
         GridBagConstraints gbc_btnFolder = new GridBagConstraints();
         gbc_btnFolder.insets = new Insets(0, 0, 0, 5);
         gbc_btnFolder.gridx = 1;
@@ -424,19 +436,7 @@ public class GroupBrowser {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                JFileChooser chooser = new JFileChooser();
-                if (!textFieldFolder.getText().isEmpty()) {
-                    File choicedDir = new File(textFieldFolder.getText());
-                    if (choicedDir.exists()) {
-                        chooser.setCurrentDirectory(choicedDir);
-                    }
-                }
-                chooser.setDialogTitle(Messages.getString("PhotoGroupWindow.6")); //$NON-NLS-1$
-                chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-                chooser.setAcceptAllFileFilterUsed(false);
-                if (chooser.showOpenDialog(frameGroupBrowser) == JFileChooser.APPROVE_OPTION) {
-                    textFieldFolder.setText(chooser.getSelectedFile().getAbsolutePath());
-                }
+                
             }
 
         });
@@ -505,7 +505,7 @@ public class GroupBrowser {
         // panelBrowser.add(panelGroupAll, gbc_panelGroupAll);
         panelBrowser.add(scrollPane, gbc_scrollPane);
         scrollPane.getVerticalScrollBar().setUnitIncrement(16);
-        
+
         panelStatus = new JPanel();
         GridBagConstraints gbc_panelStatus = new GridBagConstraints();
         gbc_panelStatus.insets = new Insets(0, 0, 5, 0);
@@ -580,6 +580,11 @@ public class GroupBrowser {
 
     }
 
+    protected void showAboutDialog() {
+        AboutAndUpdateDialog dialog = new AboutAndUpdateDialog();
+        dialog.setVisible(true);
+    }
+
     private void createImageGroup(Entry<String, List<File>> oneGroup) {
         JPanel panelGroup1 = new JPanel();
         // panelGroup1.setBorder(new LineBorder(new Color(0, 0, 0)));
@@ -616,7 +621,7 @@ public class GroupBrowser {
         panelGroup1.add(toolBar, gbc_toolBar);
 
         JButton btnExpand = new JButton();
-        btnExpand.setIcon(downIcon);
+        btnExpand.setIcon(upIcon);
         toolBar.add(btnExpand);
 
         // JLabel lblTitle = new JLabel(oneGroup.getKey() + " (" + oneGroup.getValue().size() + ")");
@@ -666,10 +671,10 @@ public class GroupBrowser {
 
             public void actionPerformed(ActionEvent e) {
                 if (panelFlow.isVisible()) {
-                    btnExpand.setIcon(upIcon);
+                    btnExpand.setIcon(downIcon);
                     panelFlow.setVisible(false);
                 } else {
-                    btnExpand.setIcon(downIcon);
+                    btnExpand.setIcon(upIcon);
                     panelFlow.setVisible(true);
                 }
             }
@@ -889,13 +894,13 @@ public class GroupBrowser {
                 @Override
                 public void run() {
                     while (true) {
-                        if (txtDebugLog != null && panelDebug.isVisible() && !systemLogOutput.isEmpty()) {
+                        if (txtDebugLog != null && panelDebug.isVisible() && !SYSTEM_LOG_OUTPUT.isEmpty()) {
                             StringBuffer sb = new StringBuffer(txtDebugLog.getText());
-                            for (String s : systemLogOutput) {
+                            for (String s : SYSTEM_LOG_OUTPUT) {
                                 sb.append(s);
                             }
                             txtDebugLog.setText(sb.toString());
-                            systemLogOutput.clear();
+                            SYSTEM_LOG_OUTPUT.clear();
                         }
                         try {
                             Thread.sleep(200);

@@ -124,6 +124,7 @@ public class PostionHelper {
                 ExceptionHandler.logError("String invalid!" + url);
             }
         } catch (Exception e) {
+            e.printStackTrace();
             ExceptionHandler.logError("error: x=" + String.valueOf(lat) + "&y=" + String.valueOf(lng) + "|" + e.getMessage());
             // http://dev.virtualearth.net/REST/v1/Locations/39.8749,116.44358055555556?o=json&key=As7u1lYGlv0-xxLPr2ZrAFlBPwCinH7O3F2EsebbIv6wRwD0ru8K7zvu3vg4kKwP
         }

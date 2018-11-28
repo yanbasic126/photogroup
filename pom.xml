@@ -21,7 +21,8 @@
     2018-11-24: revert look and feel.
     2018-11-25: revert look and feel.
     2018-11-25: layout improvement.
-    2018-11-27: lemon photo.</description>
+    2018-11-27: lemon photo.
+    2018-11-28: update manager.</description>
 
     <distributionManagement>
         <repository>

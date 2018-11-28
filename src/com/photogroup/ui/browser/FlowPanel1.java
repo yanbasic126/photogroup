@@ -24,9 +24,6 @@ import javax.swing.JTree;
 import javax.swing.UIManager;
 import javax.swing.plaf.synth.SynthLookAndFeel;
 
-import com.photogroup.ui.lookandfeel.DarkLookAndFeel;
-import com.photogroup.util.FileUtil;
-
 /**
  * DOC yyan class global comment. Detailled comment <br/>
  *

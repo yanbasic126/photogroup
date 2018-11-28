@@ -1,24 +1,3 @@
-// ============================================================================
-//
-// Talend Community Edition
-//
-// Copyright (C) 2006-2013 Talend – www.talend.com
-//
-// This library is free software; you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either
-// version 2.1 of the License, or (at your option) any later version.
-//
-// This library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-// Lesser General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-//
-// ============================================================================
 package com.photogroup.ui.widget;
 
 import java.awt.datatransfer.Clipboard;
@@ -36,12 +15,6 @@ import javax.swing.JSeparator;
 import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
 
-/**
- * DOC yyi class global comment. Detailled comment <br/>
- *
- * $Id$
- *
- */
 public class JTextAreaLog extends JTextArea implements MouseListener {
 
     private static final long serialVersionUID = -2308615404205560110L;
@@ -73,7 +46,7 @@ public class JTextAreaLog extends JTextArea implements MouseListener {
         pop.add(paste = new JMenuItem("Paste"));
         pasteAndProfile = new JMenuItem("Paste & Profile");
         // pop.add(pasteAndProfile = new JMenuItem("Paste & Profile"));
-        pop.add(delete = new JMenuItem("Delete"));
+        pop.add(delete = new JMenuItem("Clear"));
         pop.add(new JSeparator());
         pop.add(selectAll = new JMenuItem("Select All"));
 

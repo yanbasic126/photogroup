@@ -40,7 +40,7 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.TitledBorder;
 
-import com.photogroup.PhotoGroup;
+import com.photogroup.groupby.PhotoGroup;
 import com.photogroup.ui.dialog.GroupResultDialog;
 import com.photogroup.util.FileUtil;
 

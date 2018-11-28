@@ -1,24 +1,3 @@
-// ============================================================================
-//
-// Talend Community Edition
-//
-// Copyright (C) 2006-2013 Talend – www.talend.com
-//
-// This library is free software; you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either
-// version 2.1 of the License, or (at your option) any later version.
-//
-// This library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-// Lesser General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-//
-// ============================================================================
 package com.photogroup.ui.dialog;
 
 import java.awt.BorderLayout;
@@ -29,11 +8,13 @@ import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 import java.util.Enumeration;
 
 import javax.swing.AbstractButton;
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -49,13 +30,8 @@ import javax.swing.border.TitledBorder;
 
 import com.photogroup.ui.Messages;
 import com.photogroup.ui.SettingStore;
+import com.photogroup.util.ImageUtil;
 
-/**
- * DOC yyan class global comment. Detailled comment <br/>
- *
- * $Id$
- *
- */
 public class SettingDialog extends JDialog {
 
     private final JPanel contentPanel = new JPanel();
@@ -69,6 +45,8 @@ public class SettingDialog extends JDialog {
     private JCheckBox chckbxGuess;
 
     private JCheckBox chckbxGPS;
+
+    private ImageIcon lemonIcon;
 
     // private JCheckBox chckbxReport;
 
@@ -91,6 +69,14 @@ public class SettingDialog extends JDialog {
     public SettingDialog() {
 
         setTitle(Messages.getString("SettingDialog.this.title")); //$NON-NLS-1$
+        try {
+            lemonIcon = ImageUtil.getImageFromSystemResource("icon/lemon_32.png");
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        }
+        setIconImage(lemonIcon.getImage());
+        setModal(true);
+        setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         setBounds(100, 100, 830, 400);
         getContentPane().setLayout(new BorderLayout());
         contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
