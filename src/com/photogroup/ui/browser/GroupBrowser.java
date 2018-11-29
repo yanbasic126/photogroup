@@ -34,6 +34,7 @@ import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -59,6 +60,7 @@ import com.drew.imaging.jpeg.JpegProcessingException;
 import com.drew.metadata.exif.ExifThumbnailDirectory;
 import com.photogroup.exception.ExceptionHandler;
 import com.photogroup.groupby.PhotoGroup;
+import com.photogroup.ui.Messages;
 import com.photogroup.ui.SettingStore;
 import com.photogroup.ui.dialog.AboutAndUpdateDialog;
 import com.photogroup.ui.dialog.SettingDialog;
@@ -432,7 +434,19 @@ public class GroupBrowser {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                JFileChooser chooser = new JFileChooser();
+                if (!textFieldFolder.getText().isEmpty()) {
+                    File choicedDir = new File(textFieldFolder.getText());
+                    if (choicedDir.exists()) {
+                        chooser.setCurrentDirectory(choicedDir);
+                    }
+                }
+                chooser.setDialogTitle(Messages.getString("PhotoGroupWindow.6")); //$NON-NLS-1$
+                chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+                chooser.setAcceptAllFileFilterUsed(false);
+                if (chooser.showOpenDialog(frameGroupBrowser) == JFileChooser.APPROVE_OPTION) {
+                    textFieldFolder.setText(chooser.getSelectedFile().getAbsolutePath());
+                }
             }
 
         });
@@ -579,7 +593,7 @@ public class GroupBrowser {
     protected void showAboutDialog() {
         AboutAndUpdateDialog dialog = new AboutAndUpdateDialog();
         dialog.setLocationRelativeTo(frameGroupBrowser);
-        
+
         dialog.setVisible(true);
     }
 

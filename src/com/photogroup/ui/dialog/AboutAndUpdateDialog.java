@@ -150,15 +150,6 @@ public class AboutAndUpdateDialog extends JDialog {
                     panelInfo.add(lblLemonPhoto, gbc_lblLemonPhoto);
                 }
                 {
-                    JLabel lblCurversion = new JLabel("CurVersion");
-                    GridBagConstraints gbc_lblCurversion = new GridBagConstraints();
-                    gbc_lblCurversion.insets = new Insets(0, 0, 5, 0);
-                    gbc_lblCurversion.gridx = 0;
-                    gbc_lblCurversion.gridy = 1;
-                    panelInfo.add(lblCurversion, gbc_lblCurversion);
-                    lblCurversion.setText(FileUtil.getBuildVersion());
-                }
-                {
                     JPanel panelDownload = new JPanel();
                     GridBagConstraints gbc_panelDownload = new GridBagConstraints();
                     gbc_panelDownload.insets = new Insets(0, 0, 5, 0);
@@ -173,12 +164,21 @@ public class AboutAndUpdateDialog extends JDialog {
                     gbl_panelDownload.rowWeights = new double[]{0.0, Double.MIN_VALUE};
                     panelDownload.setLayout(gbl_panelDownload);
                     {
+                        {
+                            JLabel lblCurversion = new JLabel("CurVersion");
+                            GridBagConstraints gbc_lblCurversion = new GridBagConstraints();
+                            gbc_lblCurversion.insets = new Insets(0, 0, 5, 0);
+                            gbc_lblCurversion.gridx = 1;
+                            gbc_lblCurversion.gridy = 0;
+                            panelDownload.add(lblCurversion, gbc_lblCurversion);
+                            lblCurversion.setText(FileUtil.getBuildVersion());
+                        }
                         btnUpdateAndDownload = new JButton("Checking Update");
                         GridBagConstraints gbc_btnUpdateAndDownload = new GridBagConstraints();
                         gbc_btnUpdateAndDownload.anchor = GridBagConstraints.NORTHWEST;
                         gbc_btnUpdateAndDownload.insets = new Insets(0, 0, 0, 5);
                         gbc_btnUpdateAndDownload.gridx = 1;
-                        gbc_btnUpdateAndDownload.gridy = 0;
+                        gbc_btnUpdateAndDownload.gridy = 1;
                         panelDownload.add(btnUpdateAndDownload, gbc_btnUpdateAndDownload);
                         btnUpdateAndDownload.setEnabled(false);
                         btnUpdateAndDownload.addActionListener(new ActionListener() {
@@ -194,17 +194,16 @@ public class AboutAndUpdateDialog extends JDialog {
                                 chooser.setAcceptAllFileFilterUsed(false);
                                 if (chooser.showOpenDialog(contentPanel) == JFileChooser.APPROVE_OPTION) {
                                     new Thread(new UpdateDownloader(chooser.getSelectedFile().getAbsolutePath())).start();
-                                    new Thread(new UpdateDownloadMonitor(chooser.getSelectedFile().getAbsolutePath())).start();
                                 }
                             }
                         });
                     }
                     {
-                        labelSize = new JLabel("   ");
+                        labelSize = new JLabel();
                         GridBagConstraints gbc_labelSize = new GridBagConstraints();
                         gbc_labelSize.anchor = GridBagConstraints.WEST;
                         gbc_labelSize.gridx = 2;
-                        gbc_labelSize.gridy = 0;
+                        gbc_labelSize.gridy = 1;
                         panelDownload.add(labelSize, gbc_labelSize);
                     }
                 }
@@ -262,6 +261,7 @@ public class AboutAndUpdateDialog extends JDialog {
             String text = btnUpdateAndDownload.getText();
             btnUpdateAndDownload.setEnabled(false);
             btnUpdateAndDownload.setText("Downloading...");
+            new Thread(new DownloadSizeMonitor(targetPath)).start();
             try {
                 FileUtil.download(updateManager.getDownloadURL(), targetPath);
             } catch (IOException e) {
@@ -273,11 +273,11 @@ public class AboutAndUpdateDialog extends JDialog {
         }
     }
 
-    class UpdateDownloadMonitor implements Runnable {
+    class DownloadSizeMonitor implements Runnable {
 
         private String targetPath;
 
-        public UpdateDownloadMonitor(String targetPath) {
+        public DownloadSizeMonitor(String targetPath) {
             this.targetPath = targetPath;
         }
 
@@ -286,15 +286,16 @@ public class AboutAndUpdateDialog extends JDialog {
             File target = new File(targetPath);
             while (btnUpdateAndDownload.getText().equals("Downloading...")) {
                 try {
-                    Thread.sleep(500);
+                    Thread.sleep(200);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
                 if (target.exists()) {
-                    String fileSize = FileUtil.getPrintSize(target.getTotalSpace());
+                    String fileSize = FileUtil.getPrintSize(target.length());
                     labelSize.setText(fileSize);
                 }
             }
+            labelSize.setText("");
         }
     }
 }
