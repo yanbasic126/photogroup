@@ -20,6 +20,8 @@ import javax.swing.border.EmptyBorder;
 
 import com.photogroup.update.UpdateManager;
 import com.photogroup.util.FileUtil;
+import java.awt.Window.Type;
+import java.awt.Dialog.ModalExclusionType;
 
 public class AboutAndUpdateDialog extends JDialog {
 
@@ -28,6 +30,8 @@ public class AboutAndUpdateDialog extends JDialog {
     private UpdateManager updateManager;
 
     private JButton btnUpdateAndDownload;
+
+    private JLabel labelSize;
 
     /**
      * Launch the application.
@@ -46,21 +50,21 @@ public class AboutAndUpdateDialog extends JDialog {
      * Create the dialog.
      */
     public AboutAndUpdateDialog() {
+        setResizable(false);
         setTitle("About Lemon Photo");
         setIconImage(Toolkit.getDefaultToolkit().getImage(AboutAndUpdateDialog.class.getResource("/icon/lemon_16.png")));
         setModal(true);
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-        setBounds(100, 100, 450, 300);
+        setBounds(100, 100, 407, 271);
         GridBagLayout gridBagLayout = new GridBagLayout();
         gridBagLayout.columnWidths = new int[] { 432, 0 };
-        gridBagLayout.rowHeights = new int[] { 228, 25, 0, 0 };
+        gridBagLayout.rowHeights = new int[] { 228, 0 };
         gridBagLayout.columnWeights = new double[] { 0.0, Double.MIN_VALUE };
-        gridBagLayout.rowWeights = new double[] { 0.0, 0.0, 0.0, Double.MIN_VALUE };
+        gridBagLayout.rowWeights = new double[] { 0.0, Double.MIN_VALUE };
         getContentPane().setLayout(gridBagLayout);
         contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
         GridBagConstraints gbc_contentPanel = new GridBagConstraints();
         gbc_contentPanel.fill = GridBagConstraints.BOTH;
-        gbc_contentPanel.insets = new Insets(0, 0, 5, 0);
         gbc_contentPanel.gridx = 0;
         gbc_contentPanel.gridy = 0;
         getContentPane().add(contentPanel, gbc_contentPanel);
@@ -78,9 +82,9 @@ public class AboutAndUpdateDialog extends JDialog {
             gbc_panelParent.gridy = 0;
             contentPanel.add(panelParent, gbc_panelParent);
             GridBagLayout gbl_panelParent = new GridBagLayout();
-            gbl_panelParent.columnWidths = new int[] { 0, 0, 0, 0, 0, 0 };
+            gbl_panelParent.columnWidths = new int[] { 0, 0, 0, 0, 0 };
             gbl_panelParent.rowHeights = new int[] { 0, 0, 0 };
-            gbl_panelParent.columnWeights = new double[] { 0.0, 0.0, 0.0, 1.0, 0.0, Double.MIN_VALUE };
+            gbl_panelParent.columnWeights = new double[] { 0.0, 0.0, 0.0, 1.0, Double.MIN_VALUE };
             gbl_panelParent.rowWeights = new double[] { 0.0, 1.0, Double.MIN_VALUE };
             panelParent.setLayout(gbl_panelParent);
             {
@@ -126,7 +130,6 @@ public class AboutAndUpdateDialog extends JDialog {
             {
                 JPanel panelInfo = new JPanel();
                 GridBagConstraints gbc_panelInfo = new GridBagConstraints();
-                gbc_panelInfo.insets = new Insets(0, 0, 0, 5);
                 gbc_panelInfo.fill = GridBagConstraints.BOTH;
                 gbc_panelInfo.gridx = 3;
                 gbc_panelInfo.gridy = 1;
@@ -134,7 +137,7 @@ public class AboutAndUpdateDialog extends JDialog {
                 GridBagLayout gbl_panelInfo = new GridBagLayout();
                 gbl_panelInfo.columnWidths = new int[] { 0, 0 };
                 gbl_panelInfo.rowHeights = new int[] { 0, 0, 0, 0, 0, 0 };
-                gbl_panelInfo.columnWeights = new double[] { 0.0, Double.MIN_VALUE };
+                gbl_panelInfo.columnWeights = new double[] { 1.0, Double.MIN_VALUE };
                 gbl_panelInfo.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE };
                 panelInfo.setLayout(gbl_panelInfo);
                 {
@@ -156,35 +159,59 @@ public class AboutAndUpdateDialog extends JDialog {
                     lblCurversion.setText(FileUtil.getBuildVersion());
                 }
                 {
-                    btnUpdateAndDownload = new JButton("Checking Update");
-                    GridBagConstraints gbc_btnDownload = new GridBagConstraints();
-                    gbc_btnDownload.insets = new Insets(0, 0, 5, 0);
-                    gbc_btnDownload.gridx = 0;
-                    gbc_btnDownload.gridy = 2;
-                    panelInfo.add(btnUpdateAndDownload, gbc_btnDownload);
-                    btnUpdateAndDownload.setEnabled(false);
-                    btnUpdateAndDownload.addActionListener(new ActionListener() {
+                    JPanel panelDownload = new JPanel();
+                    GridBagConstraints gbc_panelDownload = new GridBagConstraints();
+                    gbc_panelDownload.insets = new Insets(0, 0, 5, 0);
+                    gbc_panelDownload.fill = GridBagConstraints.BOTH;
+                    gbc_panelDownload.gridx = 0;
+                    gbc_panelDownload.gridy = 2;
+                    panelInfo.add(panelDownload, gbc_panelDownload);
+                    GridBagLayout gbl_panelDownload = new GridBagLayout();
+                    gbl_panelDownload.columnWidths = new int[]{79, 127, 12, 0};
+                    gbl_panelDownload.rowHeights = new int[]{25, 0};
+                    gbl_panelDownload.columnWeights = new double[]{0.0, 0.0, 1.0, Double.MIN_VALUE};
+                    gbl_panelDownload.rowWeights = new double[]{0.0, Double.MIN_VALUE};
+                    panelDownload.setLayout(gbl_panelDownload);
+                    {
+                        btnUpdateAndDownload = new JButton("Checking Update");
+                        GridBagConstraints gbc_btnUpdateAndDownload = new GridBagConstraints();
+                        gbc_btnUpdateAndDownload.anchor = GridBagConstraints.NORTHWEST;
+                        gbc_btnUpdateAndDownload.insets = new Insets(0, 0, 0, 5);
+                        gbc_btnUpdateAndDownload.gridx = 1;
+                        gbc_btnUpdateAndDownload.gridy = 0;
+                        panelDownload.add(btnUpdateAndDownload, gbc_btnUpdateAndDownload);
+                        btnUpdateAndDownload.setEnabled(false);
+                        btnUpdateAndDownload.addActionListener(new ActionListener() {
 
-                        public void actionPerformed(ActionEvent e) {
-                            JFileChooser chooser = new JFileChooser();
-                            // chooser.setCurrentDirectory(new File(System.getProperty("user.dir")));
-                            chooser.setSelectedFile(new File(
-                                    System.getProperty("user.dir") + "/lemonphoto-" + updateManager.getLatestVersion() + ".jar"));
-                            chooser.setDialogTitle("Download"); //$NON-NLS-1$
-                            chooser.setDialogType(JFileChooser.SAVE_DIALOG);
-                            chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-                            chooser.setAcceptAllFileFilterUsed(false);
-                            if (chooser.showOpenDialog(contentPanel) == JFileChooser.APPROVE_OPTION) {
-                                new Thread(new UpdateDownloader(chooser.getSelectedFile().getAbsolutePath())).start();
+                            public void actionPerformed(ActionEvent e) {
+                                JFileChooser chooser = new JFileChooser();
+                                // chooser.setCurrentDirectory(new File(System.getProperty("user.dir")));
+                                chooser.setSelectedFile(new File(
+                                        System.getProperty("user.dir") + "/lemonphoto-" + updateManager.getLatestVersion() + ".jar"));
+                                chooser.setDialogTitle("Download"); //$NON-NLS-1$
+                                chooser.setDialogType(JFileChooser.SAVE_DIALOG);
+                                chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+                                chooser.setAcceptAllFileFilterUsed(false);
+                                if (chooser.showOpenDialog(contentPanel) == JFileChooser.APPROVE_OPTION) {
+                                    new Thread(new UpdateDownloader(chooser.getSelectedFile().getAbsolutePath())).start();
+                                    new Thread(new UpdateDownloadMonitor(chooser.getSelectedFile().getAbsolutePath())).start();
+                                }
                             }
-                        }
-                    });
+                        });
+                    }
+                    {
+                        labelSize = new JLabel("   ");
+                        GridBagConstraints gbc_labelSize = new GridBagConstraints();
+                        gbc_labelSize.anchor = GridBagConstraints.WEST;
+                        gbc_labelSize.gridx = 2;
+                        gbc_labelSize.gridy = 0;
+                        panelDownload.add(labelSize, gbc_labelSize);
+                    }
                 }
                 {
                     JLabel lblInformation = new JLabel("Move photos by taken date and address.");
                     GridBagConstraints gbc_lblInformation = new GridBagConstraints();
                     gbc_lblInformation.insets = new Insets(0, 0, 5, 0);
-                    gbc_lblInformation.anchor = GridBagConstraints.WEST;
                     gbc_lblInformation.gridx = 0;
                     gbc_lblInformation.gridy = 3;
                     panelInfo.add(lblInformation, gbc_lblInformation);
@@ -196,32 +223,6 @@ public class AboutAndUpdateDialog extends JDialog {
                     gbc_lblUrl.gridy = 4;
                     panelInfo.add(lblUrl, gbc_lblUrl);
                 }
-            }
-        }
-        {
-            JPanel buttonPane = new JPanel();
-            GridBagConstraints gbc_buttonPane = new GridBagConstraints();
-            gbc_buttonPane.insets = new Insets(0, 0, 5, 0);
-            gbc_buttonPane.anchor = GridBagConstraints.NORTH;
-            gbc_buttonPane.fill = GridBagConstraints.HORIZONTAL;
-            gbc_buttonPane.gridx = 0;
-            gbc_buttonPane.gridy = 1;
-            getContentPane().add(buttonPane, gbc_buttonPane);
-            GridBagLayout gbl_buttonPane = new GridBagLayout();
-            gbl_buttonPane.columnWidths = new int[] { 53, 0 };
-            gbl_buttonPane.rowHeights = new int[] { 25, 0 };
-            gbl_buttonPane.columnWeights = new double[] { 1.0, Double.MIN_VALUE };
-            gbl_buttonPane.rowWeights = new double[] { 0.0, Double.MIN_VALUE };
-            buttonPane.setLayout(gbl_buttonPane);
-            {
-                JButton okButton = new JButton("OK");
-                okButton.setActionCommand("OK");
-                GridBagConstraints gbc_okButton = new GridBagConstraints();
-                gbc_okButton.anchor = GridBagConstraints.NORTH;
-                gbc_okButton.gridx = 0;
-                gbc_okButton.gridy = 0;
-                buttonPane.add(okButton, gbc_okButton);
-                getRootPane().setDefaultButton(okButton);
             }
         }
 
@@ -268,6 +269,31 @@ public class AboutAndUpdateDialog extends JDialog {
             } finally {
                 btnUpdateAndDownload.setEnabled(true);
                 btnUpdateAndDownload.setText(text);
+            }
+        }
+    }
+
+    class UpdateDownloadMonitor implements Runnable {
+
+        private String targetPath;
+
+        public UpdateDownloadMonitor(String targetPath) {
+            this.targetPath = targetPath;
+        }
+
+        @Override
+        public void run() {
+            File target = new File(targetPath);
+            while (btnUpdateAndDownload.getText().equals("Downloading...")) {
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                if (target.exists()) {
+                    String fileSize = FileUtil.getPrintSize(target.getTotalSpace());
+                    labelSize.setText(fileSize);
+                }
             }
         }
     }

@@ -205,47 +205,10 @@ public class GroupBrowser {
         frameGroupBrowser.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frameGroupBrowser.setTitle("Lemon Photo");
         frameGroupBrowser.setIconImage(lemonIcon.getImage());
+        frameGroupBrowser.setLocationRelativeTo(null);
         JMenuBar menuBar = new JMenuBar();
         frameGroupBrowser.setJMenuBar(menuBar);
 
-        JMenu mnHelpMenu = new JMenu("Help");
-        menuBar.add(mnHelpMenu);
-        // mnHelpMenu.setAccelerator(KeyStroke.getKeyStroke('H', InputEvent.ALT_MASK));
-
-        JMenuItem mntmHelpItem = new JMenuItem("Help");
-        mnHelpMenu.add(mntmHelpItem);
-
-        JMenuItem mntmLogItem = new JMenuItem("Show Logs");
-        // mntmLogItem.setIcon(debugIcon);
-        mnHelpMenu.add(mntmLogItem);
-        mntmLogItem.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                if (panelDebug.isVisible()) {
-                    panelDebug.setVisible(false);
-                    mntmLogItem.setText("Show Logs");
-                } else {
-                    panelDebug.setVisible(true);
-                    mntmLogItem.setText("Hide Logs");
-                }
-            }
-        });
-
-        JMenuItem mntmAboutItem = new JMenuItem("About");
-        mntmAboutItem.setIcon(lemonSmallIcon);
-        mnHelpMenu.add(mntmAboutItem);
-        mntmAboutItem.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                showAboutDialog();
-            }
-        });
-        
-        String buildVersion = FileUtil.getBuildVersion();
-        if (buildVersion != null) {
-            JMenuItem mntmVersionItem = new JMenuItem(buildVersion);
-            mnHelpMenu.add(mntmVersionItem);
-        }
         JMenu mnWindowMenu = new JMenu("Window");
         menuBar.add(mnWindowMenu);
         // mnWindowMenu.setAccelerator(KeyStroke.getKeyStroke('W', InputEvent.ALT_MASK));
@@ -277,6 +240,39 @@ public class GroupBrowser {
                 for (JPanel panelFlow : panelFlowList) {
                     panelFlow.setVisible(false);
                 }
+            }
+        });
+
+        JMenu mnHelpMenu = new JMenu("Help");
+        menuBar.add(mnHelpMenu);
+        // mnHelpMenu.setAccelerator(KeyStroke.getKeyStroke('H', InputEvent.ALT_MASK));
+
+        JMenuItem mntmHelpItem = new JMenuItem("Help");
+        mnHelpMenu.add(mntmHelpItem);
+
+        JMenuItem mntmLogItem = new JMenuItem("Show Logs");
+        // mntmLogItem.setIcon(debugIcon);
+        mnHelpMenu.add(mntmLogItem);
+        mntmLogItem.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                if (panelDebug.isVisible()) {
+                    panelDebug.setVisible(false);
+                    mntmLogItem.setText("Show Logs");
+                } else {
+                    panelDebug.setVisible(true);
+                    mntmLogItem.setText("Hide Logs");
+                }
+            }
+        });
+
+        JMenuItem mntmAboutItem = new JMenuItem("About");
+        // mntmAboutItem.setIcon(lemonSmallIcon);
+        mnHelpMenu.add(mntmAboutItem);
+        mntmAboutItem.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                showAboutDialog();
             }
         });
 
@@ -436,7 +432,7 @@ public class GroupBrowser {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                
+
             }
 
         });
@@ -582,6 +578,8 @@ public class GroupBrowser {
 
     protected void showAboutDialog() {
         AboutAndUpdateDialog dialog = new AboutAndUpdateDialog();
+        dialog.setLocationRelativeTo(frameGroupBrowser);
+        
         dialog.setVisible(true);
     }
 
