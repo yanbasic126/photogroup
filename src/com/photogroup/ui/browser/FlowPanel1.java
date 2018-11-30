@@ -1,5 +1,6 @@
 package com.photogroup.ui.browser;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.GridBagConstraints;
@@ -8,6 +9,8 @@ import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -22,6 +25,7 @@ import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import javax.swing.JTree;
 import javax.swing.UIManager;
+import javax.swing.border.LineBorder;
 import javax.swing.plaf.synth.SynthLookAndFeel;
 
 /**
@@ -173,9 +177,17 @@ public class FlowPanel1 {
         toolBar.add(btnNewButton_1);
 
         JLabel lblTitle = new JLabel("titletitletitletitletitletitle");
+        lblTitle.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                System.out.println(111);
+                lblTitle.setBorder(new LineBorder(new Color(123,123,123)));
+            }
+        });
         toolBar.add(lblTitle);
 
         txtYfuyfyukfy = new JTextField();
+        txtYfuyfyukfy.setForeground(UIManager.getColor("Table.selectionBackground"));
         txtYfuyfyukfy.setText("yfuyfyukfy");
         toolBar.add(txtYfuyfyukfy);
         txtYfuyfyukfy.setColumns(10);
@@ -218,6 +230,7 @@ public class FlowPanel1 {
         panel_4.setLayout(gbl_panel_4);
 
         JPanel panel_2 = new JPanel();
+        panel_2.setBackground(UIManager.getColor("Panel.background"));
         GridBagConstraints gbc_panel_2 = new GridBagConstraints();
         gbc_panel_2.fill = GridBagConstraints.BOTH;
         gbc_panel_2.gridx = 0;

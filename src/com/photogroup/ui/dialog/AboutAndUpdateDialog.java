@@ -22,6 +22,7 @@ import com.photogroup.update.UpdateManager;
 import com.photogroup.util.FileUtil;
 import java.awt.Window.Type;
 import java.awt.Dialog.ModalExclusionType;
+import java.awt.Color;
 
 public class AboutAndUpdateDialog extends JDialog {
 
@@ -136,12 +137,13 @@ public class AboutAndUpdateDialog extends JDialog {
                 panelParent.add(panelInfo, gbc_panelInfo);
                 GridBagLayout gbl_panelInfo = new GridBagLayout();
                 gbl_panelInfo.columnWidths = new int[] { 0, 0 };
-                gbl_panelInfo.rowHeights = new int[] { 0, 0, 0, 0, 0, 0 };
+                gbl_panelInfo.rowHeights = new int[] { 0, 0, 0, 0, 0, 0, 0 };
                 gbl_panelInfo.columnWeights = new double[] { 1.0, Double.MIN_VALUE };
-                gbl_panelInfo.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE };
+                gbl_panelInfo.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE };
                 panelInfo.setLayout(gbl_panelInfo);
                 {
                     JLabel lblLemonPhoto = new JLabel("Lemon Photo");
+                    lblLemonPhoto.setForeground(new Color(243, 205, 63));
                     lblLemonPhoto.setFont(new Font("Tahoma", Font.BOLD, 32));
                     GridBagConstraints gbc_lblLemonPhoto = new GridBagConstraints();
                     gbc_lblLemonPhoto.insets = new Insets(0, 0, 5, 0);
@@ -218,9 +220,17 @@ public class AboutAndUpdateDialog extends JDialog {
                 {
                     JLabel lblUrl = new JLabel("https://github.com/yanbasic126/photogroup");
                     GridBagConstraints gbc_lblUrl = new GridBagConstraints();
+                    gbc_lblUrl.insets = new Insets(0, 0, 5, 0);
                     gbc_lblUrl.gridx = 0;
                     gbc_lblUrl.gridy = 4;
                     panelInfo.add(lblUrl, gbc_lblUrl);
+                }
+                {
+                    JLabel lblLicense = new JLabel("License: LGPL");
+                    GridBagConstraints gbc_lblLicense = new GridBagConstraints();
+                    gbc_lblLicense.gridx = 0;
+                    gbc_lblLicense.gridy = 5;
+                    panelInfo.add(lblLicense, gbc_lblLicense);
                 }
             }
         }

@@ -13,6 +13,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -51,6 +53,7 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.DefaultCaret;
@@ -64,6 +67,7 @@ import com.photogroup.ui.Messages;
 import com.photogroup.ui.SettingStore;
 import com.photogroup.ui.dialog.AboutAndUpdateDialog;
 import com.photogroup.ui.dialog.SettingDialog;
+import com.photogroup.ui.dialog.ViewerDialog;
 import com.photogroup.ui.layout.WrapLayout;
 import com.photogroup.ui.widget.JTextAreaLog;
 import com.photogroup.ui.widget.JTextFieldAddress;
@@ -73,11 +77,16 @@ import com.photogroup.util.ImageUtil;
 
 public class GroupBrowser {
 
-    private static final int PHOTO_GAP = 2;
+    private static final int PHOTO_GAP = 1;
 
     private static final int PREVIEW_SIZE = 168;
 
     private static final List<String> SYSTEM_LOG_OUTPUT = Collections.synchronizedList(new ArrayList<String>());
+
+    private static final LineBorder IMAGE_PANEL_BORDER = new LineBorder(UIManager.getColor("Panel.background"), 2);
+
+    private static final LineBorder IMAGE_PANEL_SELECTED_BORDER = new LineBorder(UIManager.getColor("Table.selectionBackground"),
+            2);
 
     private static boolean systemLogThreadStart = false;
 
@@ -128,6 +137,8 @@ public class GroupBrowser {
     private JPanel panelDebug;
 
     private JPanel panelStatus;
+
+    private JPanel panelSelectedImage;
 
     private List<JPanel> panelFlowList = new ArrayList<JPanel>();
 
@@ -207,7 +218,7 @@ public class GroupBrowser {
         frameGroupBrowser.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frameGroupBrowser.setTitle("Lemon Photo");
         frameGroupBrowser.setIconImage(lemonIcon.getImage());
-        frameGroupBrowser.setLocationRelativeTo(null);
+        frameGroupBrowser.setLocationByPlatform(true);
         JMenuBar menuBar = new JMenuBar();
         frameGroupBrowser.setJMenuBar(menuBar);
 
@@ -465,7 +476,7 @@ public class GroupBrowser {
             @Override
             public void keyPressed(KeyEvent e) {
                 if (10 == e.getKeyCode()) {
-                    doRun();
+                    profile();
                 }
             }
         });
@@ -725,7 +736,7 @@ public class GroupBrowser {
 
     private void addImagePanel(JPanel panelFlow, File photo) {
         JPanel panel = new JPanel();
-        // panel.setBorder(new EmptyBorder(0, 0, 0, 0));
+        panel.setBorder(IMAGE_PANEL_BORDER);
         GridBagLayout gbl_panel = new GridBagLayout();
         gbl_panel.columnWidths = new int[] { 0 };
         gbl_panel.rowHeights = new int[] { 23, 23 };
@@ -765,7 +776,21 @@ public class GroupBrowser {
         } else {
             labelImg.setIcon(documentEmptyImageIcon);
         }
+        panel.addMouseListener(new MouseAdapter() {
 
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 1) {
+                    if (panelSelectedImage != null) {
+                        panelSelectedImage.setBorder(IMAGE_PANEL_BORDER);
+                    }
+                    panel.setBorder(IMAGE_PANEL_SELECTED_BORDER);
+                    panelSelectedImage = panel;
+                } else if (e.getClickCount() == 2) {
+                    previewPhoto(photo.getAbsolutePath());
+                }
+            }
+        });
         GridBagConstraints gbc_label = new GridBagConstraints();
         gbc_label.anchor = GridBagConstraints.NORTHWEST;
         gbc_label.gridx = 0;
@@ -949,5 +974,11 @@ public class GroupBrowser {
 
     private void doSave() {
         FileUtil.movePhotos(textFieldFolder.getText(), photoGroup);
+    }
+    
+    private void previewPhoto(String absolutePath) {
+        ViewerDialog dialog = new ViewerDialog(absolutePath);
+        dialog.setLocationByPlatform(true);
+        dialog.setVisible(true);        
     }
 }

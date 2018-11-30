@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.lemonphoto</groupId>
     <artifactId>lemonphoto</artifactId>
-    <version>4.2.0</version>
+    <version>4.2.1</version>
     <name>Lemon Photo</name>
     <description>move photos by taken date
     2018-8-23: add sort photo before add gps address.
@@ -23,7 +23,8 @@
     2018-11-25: layout improvement.
     2018-11-27: lemon photo.
     2018-11-28: update manager.
-    2018-11-29: show size on download.</description>
+    2018-11-29: show size on download.
+    2018-11-30: add a photo viewer.</description>
 
     <distributionManagement>
         <repository>
