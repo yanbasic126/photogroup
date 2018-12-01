@@ -437,7 +437,7 @@ public class PhotoGroupWindow {
         HashMap<String, List<File>> photoGroup = new HashMap<String, List<File>>();
 
         PhotoGroup groupThread = new PhotoGroup(photoGroup, textField.getText(), threshold, model2,
-                comboBoxFormat.getSelectedItem().toString(), chckbxGuess.isSelected(), chckbxGPS.isSelected(), false);
+                comboBoxFormat.getSelectedItem().toString(), chckbxGuess.isSelected(), chckbxGPS.isSelected(), false, false);
         ExecutorService exe = Executors.newFixedThreadPool(1);
 
         new Thread(new Runnable() {

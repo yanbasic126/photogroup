@@ -46,6 +46,8 @@ public class SettingDialog extends JDialog {
 
     private JCheckBox chckbxGPS;
 
+    private JCheckBox chckbxSubfolder;
+
     private ImageIcon lemonIcon;
 
     // private JCheckBox chckbxReport;
@@ -99,9 +101,9 @@ public class SettingDialog extends JDialog {
             panel_2.setBorder(new TitledBorder(Messages.getString("PhotoGroupWindow.7"))); //$NON-NLS-1$
             GridBagLayout gbl_panel_2 = new GridBagLayout();
             gbl_panel_2.columnWidths = new int[] { 0, 0, 0, 5 };
-            gbl_panel_2.rowHeights = new int[] { 30, 30, 30, 30, 30, 30, 0 };
+            gbl_panel_2.rowHeights = new int[] { 30, 30, 30, 30, 30, 30, 0, 0 };
             gbl_panel_2.columnWeights = new double[] { 0.0, 0.0, 1.0, Double.MIN_VALUE };
-            gbl_panel_2.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE };
+            gbl_panel_2.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE };
             panel_2.setLayout(gbl_panel_2);
 
             JLabel lblNewLabel_1 = new JLabel(Messages.getString("PhotoGroupWindow.8")); //$NON-NLS-1$
@@ -258,7 +260,7 @@ public class SettingDialog extends JDialog {
             JLabel lblNewLabel_11 = new JLabel(Messages.getString("PhotoGroupWindow.25")); //$NON-NLS-1$
             GridBagConstraints gbc_lblNewLabel_11 = new GridBagConstraints();
             gbc_lblNewLabel_11.fill = GridBagConstraints.VERTICAL;
-            gbc_lblNewLabel_11.insets = new Insets(0, 0, 0, 5);
+            gbc_lblNewLabel_11.insets = new Insets(0, 0, 5, 5);
             gbc_lblNewLabel_11.gridx = 0;
             gbc_lblNewLabel_11.gridy = 5;
             panel_2.add(lblNewLabel_11, gbc_lblNewLabel_11);
@@ -275,6 +277,7 @@ public class SettingDialog extends JDialog {
 
             JLabel lblNewLabel_12 = new JLabel(Messages.getString("PhotoGroupWindow.26")); //$NON-NLS-1$
             GridBagConstraints gbc_lblNewLabel_12 = new GridBagConstraints();
+            gbc_lblNewLabel_12.insets = new Insets(0, 0, 5, 0);
             gbc_lblNewLabel_12.anchor = GridBagConstraints.WEST;
             gbc_lblNewLabel_12.fill = GridBagConstraints.VERTICAL;
             gbc_lblNewLabel_12.gridx = 2;
@@ -287,6 +290,29 @@ public class SettingDialog extends JDialog {
             gbc_panel_2.gridx = 0;
             gbc_panel_2.gridy = 2;
             panel.add(panel_2, gbc_panel_2);
+
+            JLabel lblIsSubLabel = new JLabel(Messages.getString("SettingDialog.lblIsSubLabel.text")); //$NON-NLS-1$
+            GridBagConstraints gbc_lblNewLabel = new GridBagConstraints();
+            gbc_lblNewLabel.anchor = GridBagConstraints.SOUTH;
+            gbc_lblNewLabel.insets = new Insets(0, 0, 0, 5);
+            gbc_lblNewLabel.gridx = 0;
+            gbc_lblNewLabel.gridy = 6;
+            panel_2.add(lblIsSubLabel, gbc_lblNewLabel);
+
+            chckbxSubfolder = new JCheckBox(""); //$NON-NLS-1$
+            GridBagConstraints gbc_chckbxSubfolderBox = new GridBagConstraints();
+            gbc_chckbxSubfolderBox.anchor = GridBagConstraints.WEST;
+            gbc_chckbxSubfolderBox.insets = new Insets(0, 0, 0, 5);
+            gbc_chckbxSubfolderBox.gridx = 1;
+            gbc_chckbxSubfolderBox.gridy = 6;
+            panel_2.add(chckbxSubfolder, gbc_chckbxSubfolderBox);
+
+            JLabel lblSubfolderLabel = new JLabel(Messages.getString("SettingDialog.lblSubfolderLabel.text")); //$NON-NLS-1$
+            GridBagConstraints gbc_lblNewLabel_13 = new GridBagConstraints();
+            gbc_lblNewLabel_13.anchor = GridBagConstraints.WEST;
+            gbc_lblNewLabel_13.gridx = 2;
+            gbc_lblNewLabel_13.gridy = 6;
+            panel_2.add(lblSubfolderLabel, gbc_lblNewLabel_13);
 
             JPanel panel_3 = new JPanel();
             panel_3.setLayout(new GridLayout(0, 1, 0, 0));
@@ -315,6 +341,7 @@ public class SettingDialog extends JDialog {
                         SettingStore.getSettingStore().setGuess(chckbxGuess.isSelected());
                         SettingStore.getSettingStore().setGps(chckbxGPS.isSelected());
                         // SettingStore.getSettingStore().setReport(chckbxReport.isSelected());
+                        SettingStore.getSettingStore().setIncludeSubFolder(chckbxSubfolder.isSelected());
                         dispose();
                     }
                 });

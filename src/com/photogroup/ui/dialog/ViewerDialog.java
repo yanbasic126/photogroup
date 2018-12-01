@@ -1,5 +1,6 @@
 package com.photogroup.ui.dialog;
 
+import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
@@ -9,6 +10,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
@@ -23,18 +26,33 @@ public class ViewerDialog extends JFrame implements ActionListener {
 
     private boolean componentResizing = false;
 
-    ImageIcon png;
+    ImageIcon photoImage;
 
     public ViewerDialog(String path) {
+        getContentPane().setBackground(new Color(0, 0, 0));
         setTitle(path);
         setIconImage(Toolkit.getDefaultToolkit().getImage(AboutAndUpdateDialog.class.getResource("/icon/lemon_16.png")));
-        png = new ImageIcon(path);
+        getContentPane().addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if ((e.getButton() == 1 && e.getClickCount() == 2) || (e.getButton() == 2 && e.getClickCount() == 1)) {
+                    if (getExtendedState() == JFrame.MAXIMIZED_BOTH) {
+                        setExtendedState(0);
+                    } else {
+                        setExtendedState(getExtendedState() | JFrame.MAXIMIZED_BOTH);
+                    }
+                    return;
+                }
+            }
+        });
+        photoImage = new ImageIcon(path);
         setSize(100, 0);
         this.addComponentListener(new ComponentAdapter() {
 
             @Override
             public void componentResized(ComponentEvent e) {
-                if (png != null) {
+                if (photoImage != null) {
 
                     if (!componentResizing) {
                         new Thread(new ResizeRender()).start();
@@ -73,24 +91,18 @@ public class ViewerDialog extends JFrame implements ActionListener {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            double a = (double) getContentPane().getBounds().getWidth() / (double) png.getImage().getWidth(null);
-            double b = (double) getContentPane().getBounds().getHeight() / (double) png.getImage().getHeight(null);
+            double a = (double) getContentPane().getBounds().getWidth() / (double) photoImage.getImage().getWidth(null);
+            double b = (double) getContentPane().getBounds().getHeight() / (double) photoImage.getImage().getHeight(null);
             double ratio = Math.min(a, b);
 
-            int scaledWidth = (int) (png.getImage().getWidth(null) * ratio);
-            int scaledHeight = (int) (png.getImage().getHeight(null) * ratio);
+            int scaledWidth = (int) (photoImage.getImage().getWidth(null) * ratio);
+            int scaledHeight = (int) (photoImage.getImage().getHeight(null) * ratio);
 
-            Image scaleImage = png.getImage().getScaledInstance(scaledWidth, scaledHeight, Image.SCALE_FAST);
+            Image scaleImage = photoImage.getImage().getScaledInstance(scaledWidth, scaledHeight, Image.SCALE_FAST);
             labelImage.setIcon(new ImageIcon(scaleImage));
 
             componentResizing = false;
         }
-
-    }
-
-    public static void main(String[] args) {
-        ViewerDialog vd = new ViewerDialog("D:\\yyi.talendbj.esb\\picture\\test\\IMG_1224 - Copy - Copy (2).JPG");
-        vd.setVisible(true);
     }
 
     @Override
@@ -102,8 +114,8 @@ public class ViewerDialog extends JFrame implements ActionListener {
         super.setVisible(b);
         double titlebarHeight = getSize().getHeight();
         double baseHeight = 600;
-        double w = (double) png.getIconWidth();
-        double h = (double) png.getIconHeight();
+        double w = (double) photoImage.getIconWidth();
+        double h = (double) photoImage.getIconHeight();
         setSize((int) (w / h * (baseHeight - titlebarHeight)), (int) baseHeight);
     }
 }

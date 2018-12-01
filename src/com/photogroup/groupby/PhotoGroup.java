@@ -2,6 +2,8 @@ package com.photogroup.groupby;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -49,8 +51,10 @@ public class PhotoGroup implements Runnable {
 
     private Map<String, List<File>> photoGroup;
 
+    private boolean subfolder;
+
     public PhotoGroup(Map<String, List<File>> photoGroup, String photosPath, int threshold, int module, String format,
-            boolean guess, boolean gps, boolean report) {
+            boolean guess, boolean gps, boolean report, boolean includeSubFolder) {
         this.photoGroup = photoGroup;
         this.photosPath = photosPath;
         this.threshold = threshold;
@@ -59,6 +63,7 @@ public class PhotoGroup implements Runnable {
         this.guess = guess;
         this.gps = gps;
         this.report = report;
+        this.subfolder = includeSubFolder;
 
         photoTypes = new String[] { "PNG", "JPG", "JPEG", "GIF" };
     }
@@ -91,7 +96,26 @@ public class PhotoGroup implements Runnable {
         final File photoFolder = new File(photosPath);
 
         float progress = 0;
-        File[] listFiles = photoFolder.listFiles();
+
+        File[] listFiles;
+
+        if (subfolder) {
+            List<File> recursiveFiles = new ArrayList<File>();
+            try {
+                Files.find(Paths.get(photosPath), Integer.MAX_VALUE, (filePath, fileAttr) -> fileAttr.isRegularFile())
+                        .forEach(filePath -> {
+                            recursiveFiles.add(new File(filePath.toUri()));
+                        });
+            } catch (IOException e) {
+                e.printStackTrace();
+                ExceptionHandler.logError(e.getMessage());
+            }
+
+            listFiles = recursiveFiles.toArray(new File[] {});
+        } else {
+            listFiles = photoFolder.listFiles();
+        }
+
         float fileCount = listFiles.length;
         int precent = 0;
 

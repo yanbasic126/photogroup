@@ -92,6 +92,7 @@ public class FlowPanel1 {
      */
     private void initialize() {
         frame = new JFrame();
+        frame.setUndecorated(true);
         frame.setBounds(100, 100, 776, 560);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.getContentPane().setLayout(new GridLayout(0, 1, 0, 0));

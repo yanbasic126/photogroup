@@ -19,6 +19,8 @@ public class SettingStore {
 
     private boolean report;
 
+    private boolean includeSubFolder;
+
     private Properties settingMap = null;
 
     private static SettingStore store;
@@ -51,6 +53,7 @@ public class SettingStore {
             guess = Boolean.valueOf(settingMap.getProperty("guess"));
             gps = Boolean.valueOf(settingMap.getProperty("gps"));
             report = Boolean.valueOf(settingMap.getProperty("report"));
+            includeSubFolder = Boolean.valueOf(settingMap.getProperty("subfolder"));
         }
     }
 
@@ -100,6 +103,14 @@ public class SettingStore {
 
     public void setReport(boolean report) {
         this.report = report;
+    }
+
+    public boolean isIncludeSubFolder() {
+        return includeSubFolder;
+    }
+
+    public void setIncludeSubFolder(boolean includeSubFolder) {
+        this.includeSubFolder = includeSubFolder;
     }
 
 }

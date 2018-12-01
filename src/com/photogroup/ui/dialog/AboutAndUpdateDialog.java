@@ -1,5 +1,6 @@
 package com.photogroup.ui.dialog;
 
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -20,9 +21,6 @@ import javax.swing.border.EmptyBorder;
 
 import com.photogroup.update.UpdateManager;
 import com.photogroup.util.FileUtil;
-import java.awt.Window.Type;
-import java.awt.Dialog.ModalExclusionType;
-import java.awt.Color;
 
 public class AboutAndUpdateDialog extends JDialog {
 

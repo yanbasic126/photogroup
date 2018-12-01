@@ -4,3 +4,4 @@ format:YYYY.M.d
 guess:true
 gps:true
 report:false
+subfolder:false

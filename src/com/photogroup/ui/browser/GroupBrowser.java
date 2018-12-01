@@ -126,7 +126,9 @@ public class GroupBrowser {
 
     private ImageIcon folderIcon;
 
-    private JButton btnOpen;
+    private JButton btnProfile;
+
+    private JButton btnSave;
 
     private JTextAreaLog txtDebugLog;
 
@@ -225,24 +227,8 @@ public class GroupBrowser {
         JMenu mnWindowMenu = new JMenu("Window");
         menuBar.add(mnWindowMenu);
         // mnWindowMenu.setAccelerator(KeyStroke.getKeyStroke('W', InputEvent.ALT_MASK));
-
-        JMenuItem mntmExpandItem = new JMenuItem("Expand All");
-        mntmExpandItem.setIcon(upIcon);
-        mnWindowMenu.add(mntmExpandItem);
-        mntmExpandItem.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                for (JButton btnExpand : btnExpandList) {
-                    btnExpand.setIcon(upIcon);
-                }
-                for (JPanel panelFlow : panelFlowList) {
-                    panelFlow.setVisible(true);
-                }
-            }
-        });
-
         JMenuItem mntmCollapseItem = new JMenuItem("Collapse All");
-        mntmCollapseItem.setIcon(downIcon);
+        mntmCollapseItem.setIcon(upIcon);
         mnWindowMenu.add(mntmCollapseItem);
         mntmCollapseItem.addActionListener(new ActionListener() {
 
@@ -252,6 +238,21 @@ public class GroupBrowser {
                 }
                 for (JPanel panelFlow : panelFlowList) {
                     panelFlow.setVisible(false);
+                }
+            }
+        });
+
+        JMenuItem mntmExpandItem = new JMenuItem("Expand All");
+        mntmExpandItem.setIcon(downIcon);
+        mnWindowMenu.add(mntmExpandItem);
+        mntmExpandItem.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                for (JButton btnExpand : btnExpandList) {
+                    btnExpand.setIcon(upIcon);
+                }
+                for (JPanel panelFlow : panelFlowList) {
+                    panelFlow.setVisible(true);
                 }
             }
         });
@@ -319,10 +320,10 @@ public class GroupBrowser {
         gbc_toolBarSetting.gridy = 0;
         panelToolbar.add(toolBarSetting, gbc_toolBarSetting);
 
-        btnOpen = new JButton("Profile");
-        btnOpen.setIcon(profileIcon);
+        btnProfile = new JButton("Profile");
+        btnProfile.setIcon(profileIcon);
 
-        btnOpen.addActionListener(new ActionListener() {
+        btnProfile.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
                 profile();
@@ -340,10 +341,10 @@ public class GroupBrowser {
             }
         });
 
-        JButton btnMove = new JButton("Save");
-        btnMove.setIcon(saveIcon);
-
-        btnMove.addActionListener(new ActionListener() {
+        btnSave = new JButton("Save");
+        btnSave.setIcon(saveIcon);
+        btnSave.setEnabled(false);
+        btnSave.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
                 if (photoGroup == null) {
@@ -376,8 +377,8 @@ public class GroupBrowser {
         separator_1.setOrientation(SwingConstants.VERTICAL);
         toolBarSetting.add(separator_1);
 
-        toolBarSetting.add(btnOpen);
-        toolBarSetting.add(btnMove);
+        toolBarSetting.add(btnProfile);
+        toolBarSetting.add(btnSave);
 
         JSeparator separator = new JSeparator();
         separator.setOrientation(SwingConstants.VERTICAL);
@@ -597,6 +598,7 @@ public class GroupBrowser {
         gbc_txtDebugLog.gridy = 0;
         panelDebugLog.add(txtDebugLog, gbc_txtDebugLog);
         panelDebug.add(scrollPaneDebug, gbc_scrollPaneDebug);
+        scrollPaneDebug.getVerticalScrollBar().setUnitIncrement(16);
         panelDebug.setVisible(false);
 
     }
@@ -862,21 +864,21 @@ public class GroupBrowser {
     private void profile() {
         String errMsg = validateBeforeRun();
         if (errMsg == null) {
-            doRun();
+            doProfile();
         } else {
             // popup error
             JOptionPane.showMessageDialog(frameGroupBrowser, errMsg, "Profile", JOptionPane.ERROR_MESSAGE);
         }
     }
 
-    private void doRun() {
-        btnOpen.setEnabled(false);
+    private void doProfile() {
+        btnProfile.setEnabled(false);
         photoGroup = new HashMap<String, List<File>>();
 
         PhotoGroup groupThread = new PhotoGroup(photoGroup, textFieldFolder.getText(),
                 SettingStore.getSettingStore().getThreshold(), SettingStore.getSettingStore().getModule(),
                 SettingStore.getSettingStore().getFormat(), SettingStore.getSettingStore().isGuess(),
-                SettingStore.getSettingStore().isGps(), SettingStore.getSettingStore().isReport());
+                SettingStore.getSettingStore().isGps(), SettingStore.getSettingStore().isReport(), SettingStore.getSettingStore().isIncludeSubFolder());
         ExecutorService exe = Executors.newFixedThreadPool(1);
         new Thread(new Runnable() {
 
@@ -911,7 +913,10 @@ public class GroupBrowser {
                 panelGroupAllGridBagLayout.rowWeights = rowWeights;
                 panelGroupAll.setVisible(false);
                 panelGroupAll.setVisible(true);
-                btnOpen.setEnabled(true);
+                btnProfile.setEnabled(true);
+                if (photoGroup.size() > 0) {
+                    btnSave.setEnabled(true);
+                }
                 progressBar.setValue(100);
                 // EventQueue.invokeLater(new Runnable() {
                 //
@@ -974,11 +979,12 @@ public class GroupBrowser {
 
     private void doSave() {
         FileUtil.movePhotos(textFieldFolder.getText(), photoGroup);
+        btnSave.setEnabled(false);
     }
-    
+
     private void previewPhoto(String absolutePath) {
         ViewerDialog dialog = new ViewerDialog(absolutePath);
         dialog.setLocationByPlatform(true);
-        dialog.setVisible(true);        
+        dialog.setVisible(true);
     }
 }

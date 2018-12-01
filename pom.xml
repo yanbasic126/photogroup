@@ -24,7 +24,8 @@
     2018-11-27: lemon photo.
     2018-11-28: update manager.
     2018-11-29: show size on download.
-    2018-11-30: add a photo viewer.</description>
+    2018-11-30: add a photo viewer.
+    2018-12-1: enhance photo viewer, support sub folder setting.</description>
 
     <distributionManagement>
         <repository>
