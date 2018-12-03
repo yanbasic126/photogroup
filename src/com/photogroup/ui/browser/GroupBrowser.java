@@ -8,6 +8,7 @@ import java.awt.FlowLayout;
 import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Image;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -58,11 +59,10 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.DefaultCaret;
 
-import com.drew.imaging.jpeg.JpegMetadataReader;
-import com.drew.imaging.jpeg.JpegProcessingException;
-import com.drew.metadata.exif.ExifThumbnailDirectory;
+import com.drew.imaging.ImageProcessingException;
 import com.photogroup.exception.ExceptionHandler;
 import com.photogroup.groupby.PhotoGroup;
+import com.photogroup.groupby.metadata.MetadataReader;
 import com.photogroup.ui.Messages;
 import com.photogroup.ui.SettingStore;
 import com.photogroup.ui.dialog.AboutAndUpdateDialog;
@@ -193,7 +193,6 @@ public class GroupBrowser {
         System.setOut(systemOutRedirect);
 
         try {
-            documentEmptyImageIcon = ImageUtil.getImageFromSystemResource("icon/file_64.png");
             downIcon = ImageUtil.getImageFromSystemResource("icon/down_16.png");
             upIcon = ImageUtil.getImageFromSystemResource("icon/up_16.png");
             // renameIcon = ImageUtil.getImageIconFromSystemResource("icon/Blue_tag.png");
@@ -204,6 +203,11 @@ public class GroupBrowser {
             settingIcon = ImageUtil.getImageFromSystemResource("icon/settings_32.png");
             saveIcon = ImageUtil.getImageFromSystemResource("icon/save_32.png");
             folderIcon = ImageUtil.getImageFromSystemResource("icon/folder_16.png");
+
+            // documentEmptyImageIcon
+            BufferedImage scaleImage = new BufferedImage(PREVIEW_SIZE, PREVIEW_SIZE, Image.SCALE_FAST);
+            scaleImage.getGraphics().drawImage(ImageUtil.getImageFromSystemResource("icon/file_64.png").getImage(), 52, 52, null);
+            documentEmptyImageIcon = new ImageIcon(scaleImage);
         } catch (IOException e) {
             e.printStackTrace();
             ExceptionHandler.logError(e.getMessage());
@@ -728,7 +732,6 @@ public class GroupBrowser {
         });
 
         for (File photo : oneGroup.getValue()) {
-
             addImagePanel(panelFlow, photo);
         }
 
@@ -750,46 +753,52 @@ public class GroupBrowser {
         JLabel labelImg = new JLabel();
         // labelImg.setBorder(new EmptyBorder(0, 0, 0, 0));
         labelImg.setPreferredSize(new Dimension(PREVIEW_SIZE, PREVIEW_SIZE));
-        ExifThumbnailDirectory thumbDirectory = null;
         BufferedImage bufferedImage = null;
-        try {
-            thumbDirectory = JpegMetadataReader.readMetadata(photo).getFirstDirectoryOfType(ExifThumbnailDirectory.class);
-        } catch (JpegProcessingException | IOException e) {
-            e.printStackTrace();
-            ExceptionHandler.logError(photo.getAbsolutePath() + "|" + e.getMessage());
+        byte[] thumbnailData = null;
+        if (SettingStore.getSettingStore().isUseThumbnail()) {
+            try {
+                thumbnailData = MetadataReader.thumbnailData(photo);
+            } catch (ImageProcessingException | IOException e) {
+                e.printStackTrace();
+            }
         }
-
         try {
-            if (thumbDirectory != null && thumbDirectory.getThumbnailData() != null) {
-                InputStream thumbByteStream = new ByteArrayInputStream(thumbDirectory.getThumbnailData());
-                // bufferedImage = ImageIO.read(thumbByteStream);
-                bufferedImage = ImageIO.read(photo);
+            if (thumbnailData != null) {
+                InputStream thumbByteStream = new ByteArrayInputStream(thumbnailData);
+                bufferedImage = ImageIO.read(thumbByteStream);
             } else {
                 bufferedImage = ImageIO.read(photo);
             }
         } catch (IOException e) {
             e.printStackTrace();
-            ExceptionHandler.logError(photo.getAbsolutePath() + "|" + e.getMessage());
         }
-
+        boolean buffered = true;
         if (bufferedImage != null) {
             ImageIcon icon = new ImageIcon(resizeImageToPreviewIPhone(bufferedImage));
             labelImg.setIcon(icon);
         } else {
+            buffered = false;
             labelImg.setIcon(documentEmptyImageIcon);
         }
+        final boolean isImage = buffered;
         panel.addMouseListener(new MouseAdapter() {
 
             @Override
             public void mouseClicked(MouseEvent e) {
-                if (e.getClickCount() == 1) {
-                    if (panelSelectedImage != null) {
-                        panelSelectedImage.setBorder(IMAGE_PANEL_BORDER);
+                if (e.getButton() == 1) {
+                    if (e.getClickCount() == 1) {
+                        if (panelSelectedImage != null) {
+                            panelSelectedImage.setBorder(IMAGE_PANEL_BORDER);
+                        }
+                        panel.setBorder(IMAGE_PANEL_SELECTED_BORDER);
+                        panelSelectedImage = panel;
+                    } else if (e.getClickCount() == 2) {
+                        openToPreview(photo, isImage);
                     }
-                    panel.setBorder(IMAGE_PANEL_SELECTED_BORDER);
-                    panelSelectedImage = panel;
-                } else if (e.getClickCount() == 2) {
-                    previewPhoto(photo.getAbsolutePath());
+                } else if (e.getButton() == 2) {
+                    if (e.getClickCount() == 1) {
+                        openToPreview(photo, isImage);
+                    }
                 }
             }
         });
@@ -878,7 +887,8 @@ public class GroupBrowser {
         PhotoGroup groupThread = new PhotoGroup(photoGroup, textFieldFolder.getText(),
                 SettingStore.getSettingStore().getThreshold(), SettingStore.getSettingStore().getModule(),
                 SettingStore.getSettingStore().getFormat(), SettingStore.getSettingStore().isGuess(),
-                SettingStore.getSettingStore().isGps(), SettingStore.getSettingStore().isReport(), SettingStore.getSettingStore().isIncludeSubFolder());
+                SettingStore.getSettingStore().isGps(), SettingStore.getSettingStore().isReport(),
+                SettingStore.getSettingStore().isIncludeSubFolder());
         ExecutorService exe = Executors.newFixedThreadPool(1);
         new Thread(new Runnable() {
 
@@ -982,9 +992,17 @@ public class GroupBrowser {
         btnSave.setEnabled(false);
     }
 
-    private void previewPhoto(String absolutePath) {
-        ViewerDialog dialog = new ViewerDialog(absolutePath);
-        dialog.setLocationByPlatform(true);
-        dialog.setVisible(true);
+    private void openToPreview(File file, boolean isImage) {
+        if (isImage) {
+            ViewerDialog dialog = new ViewerDialog(file);
+            dialog.setLocationByPlatform(true);
+            dialog.setVisible(true);
+        } else {
+            try {
+                Desktop.getDesktop().open(file);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

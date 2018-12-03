@@ -5,3 +5,4 @@ guess:true
 gps:true
 report:false
 subfolder:false
+ui.use_thumbnail:true

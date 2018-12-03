@@ -21,6 +21,8 @@ public class SettingStore {
 
     private boolean includeSubFolder;
 
+    private boolean uiUseThumbnail;
+
     private Properties settingMap = null;
 
     private static SettingStore store;
@@ -42,7 +44,7 @@ public class SettingStore {
 
     private void initMap() throws IOException {
 
-        InputStream inputStream = getClass().getClassLoader().getResourceAsStream("default_setting.txt");
+        InputStream inputStream = getClass().getClassLoader().getResourceAsStream("default_settings.txt");
         if (inputStream != null) {
             settingMap = new Properties();
             settingMap.load(new InputStreamReader(inputStream, "utf-8"));
@@ -54,6 +56,7 @@ public class SettingStore {
             gps = Boolean.valueOf(settingMap.getProperty("gps"));
             report = Boolean.valueOf(settingMap.getProperty("report"));
             includeSubFolder = Boolean.valueOf(settingMap.getProperty("subfolder"));
+            uiUseThumbnail = Boolean.valueOf(settingMap.getProperty("ui.use_thumbnail"));
         }
     }
 
@@ -111,6 +114,14 @@ public class SettingStore {
 
     public void setIncludeSubFolder(boolean includeSubFolder) {
         this.includeSubFolder = includeSubFolder;
+    }
+
+    public boolean isUseThumbnail() {
+        return uiUseThumbnail;
+    }
+
+    public void setUseThumbnail(boolean uiUseThumbnail) {
+        this.uiUseThumbnail = uiUseThumbnail;
     }
 
 }

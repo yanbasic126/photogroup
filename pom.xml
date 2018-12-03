@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.lemonphoto</groupId>
     <artifactId>lemonphoto</artifactId>
-    <version>4.3.0</version>
+    <version>4.3.1</version>
     <name>Lemon Photo</name>
     <description>move photos by taken date
     2018-8-23: add sort photo before add gps address.
@@ -25,7 +25,8 @@
     2018-11-28: update manager.
     2018-11-29: show size on download.
     2018-11-30: add a photo viewer.
-    2018-12-1: enhance photo viewer, support sub folder setting.</description>
+    2018-12-1: enhance photo viewer, support sub folder setting.
+    2018-12-3: enhance file viewer, orientation</description>
 
     <distributionManagement>
         <repository>
@@ -70,7 +71,7 @@
                 <includes>
                     <include>**/*.properties</include>
                     <include>custom_name_mapping.txt</include>
-                    <include>default_setting.txt</include>
+                    <include>default_settings.txt</include>
                     <include>dark_synth_theme.xml</include>
                     <include>version.txt</include>
                     <include>icon/**</include>

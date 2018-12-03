@@ -50,6 +50,8 @@ public class SettingDialog extends JDialog {
 
     private ImageIcon lemonIcon;
 
+    private JCheckBox chckbxThumbnail;
+
     // private JCheckBox chckbxReport;
 
     /**
@@ -101,9 +103,9 @@ public class SettingDialog extends JDialog {
             panel_2.setBorder(new TitledBorder(Messages.getString("PhotoGroupWindow.7"))); //$NON-NLS-1$
             GridBagLayout gbl_panel_2 = new GridBagLayout();
             gbl_panel_2.columnWidths = new int[] { 0, 0, 0, 5 };
-            gbl_panel_2.rowHeights = new int[] { 30, 30, 30, 30, 30, 30, 0, 0 };
+            gbl_panel_2.rowHeights = new int[] { 30, 30, 30, 30, 30, 30, 30, 30, 30 };
             gbl_panel_2.columnWeights = new double[] { 0.0, 0.0, 1.0, Double.MIN_VALUE };
-            gbl_panel_2.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE };
+            gbl_panel_2.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE };
             panel_2.setLayout(gbl_panel_2);
 
             JLabel lblNewLabel_1 = new JLabel(Messages.getString("PhotoGroupWindow.8")); //$NON-NLS-1$
@@ -294,25 +296,50 @@ public class SettingDialog extends JDialog {
             JLabel lblIsSubLabel = new JLabel(Messages.getString("SettingDialog.lblIsSubLabel.text")); //$NON-NLS-1$
             GridBagConstraints gbc_lblNewLabel = new GridBagConstraints();
             gbc_lblNewLabel.anchor = GridBagConstraints.SOUTH;
-            gbc_lblNewLabel.insets = new Insets(0, 0, 0, 5);
+            gbc_lblNewLabel.insets = new Insets(0, 0, 5, 5);
             gbc_lblNewLabel.gridx = 0;
             gbc_lblNewLabel.gridy = 6;
             panel_2.add(lblIsSubLabel, gbc_lblNewLabel);
 
             chckbxSubfolder = new JCheckBox(""); //$NON-NLS-1$
+            chckbxSubfolder.setSelected(SettingStore.getSettingStore().isIncludeSubFolder());
             GridBagConstraints gbc_chckbxSubfolderBox = new GridBagConstraints();
             gbc_chckbxSubfolderBox.anchor = GridBagConstraints.WEST;
-            gbc_chckbxSubfolderBox.insets = new Insets(0, 0, 0, 5);
+            gbc_chckbxSubfolderBox.insets = new Insets(0, 0, 5, 5);
             gbc_chckbxSubfolderBox.gridx = 1;
             gbc_chckbxSubfolderBox.gridy = 6;
             panel_2.add(chckbxSubfolder, gbc_chckbxSubfolderBox);
 
             JLabel lblSubfolderLabel = new JLabel(Messages.getString("SettingDialog.lblSubfolderLabel.text")); //$NON-NLS-1$
             GridBagConstraints gbc_lblNewLabel_13 = new GridBagConstraints();
+            gbc_lblNewLabel_13.insets = new Insets(0, 0, 5, 0);
             gbc_lblNewLabel_13.anchor = GridBagConstraints.WEST;
             gbc_lblNewLabel_13.gridx = 2;
             gbc_lblNewLabel_13.gridy = 6;
             panel_2.add(lblSubfolderLabel, gbc_lblNewLabel_13);
+
+            JLabel lblUsethumbnail = new JLabel(Messages.getString("SettingDialog.lblUsethumbnail.text")); //$NON-NLS-1$
+            GridBagConstraints gbc_lblUsethumbnail = new GridBagConstraints();
+            gbc_lblUsethumbnail.insets = new Insets(0, 0, 0, 5);
+            gbc_lblUsethumbnail.gridx = 0;
+            gbc_lblUsethumbnail.gridy = 7;
+            panel_2.add(lblUsethumbnail, gbc_lblUsethumbnail);
+
+            chckbxThumbnail = new JCheckBox();
+            chckbxThumbnail.setSelected(SettingStore.getSettingStore().isUseThumbnail());
+            GridBagConstraints gbc_chckbxThumbnail = new GridBagConstraints();
+            gbc_chckbxThumbnail.anchor = GridBagConstraints.WEST;
+            gbc_chckbxThumbnail.insets = new Insets(0, 0, 0, 5);
+            gbc_chckbxThumbnail.gridx = 1;
+            gbc_chckbxThumbnail.gridy = 7;
+            panel_2.add(chckbxThumbnail, gbc_chckbxThumbnail);
+
+            JLabel lblShowThumnail = new JLabel(Messages.getString("SettingDialog.lblShowThumnail.text")); //$NON-NLS-1$
+            GridBagConstraints gbc_lblShowThumnail = new GridBagConstraints();
+            gbc_lblShowThumnail.anchor = GridBagConstraints.WEST;
+            gbc_lblShowThumnail.gridx = 2;
+            gbc_lblShowThumnail.gridy = 7;
+            panel_2.add(lblShowThumnail, gbc_lblShowThumnail);
 
             JPanel panel_3 = new JPanel();
             panel_3.setLayout(new GridLayout(0, 1, 0, 0));
@@ -342,6 +369,7 @@ public class SettingDialog extends JDialog {
                         SettingStore.getSettingStore().setGps(chckbxGPS.isSelected());
                         // SettingStore.getSettingStore().setReport(chckbxReport.isSelected());
                         SettingStore.getSettingStore().setIncludeSubFolder(chckbxSubfolder.isSelected());
+                        SettingStore.getSettingStore().setUseThumbnail(chckbxThumbnail.isSelected());
                         dispose();
                     }
                 });
