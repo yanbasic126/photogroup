@@ -8,14 +8,15 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Base64;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
 
 import com.drew.imaging.ImageProcessingException;
 import com.photogroup.exception.ExceptionHandler;
 import com.photogroup.groupby.metadata.MetadataReader;
-import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
-
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
 
 /**
  * Help http://lbsyun.baidu.com/index.php?title=webapi, https://www.bingmapsportal.com
@@ -52,22 +53,40 @@ public class PostionHelper {
             String str = sb.toString();
             String subStr = str.substring(str.indexOf('(') + 1, str.indexOf("})") + 1);
             // System.out.println(subStr);
-            JSONObject jsonObj = JSONObject.fromObject(subStr);
-            JSONArray poiRegions = (JSONArray) jsonObj.getJSONObject("result").getJSONArray("poiRegions");
+            JSONObject jsonObj = (JSONObject) JSONValue.parse(subStr);
+            JSONObject resultObj = (JSONObject) jsonObj.get("result");
+            JSONArray poiRegions = (JSONArray) resultObj.get("poiRegions");
             if (poiRegions.size() > 0) {
                 JSONObject region = (JSONObject) poiRegions.get(0);
-                address = region.getString("name");
+                address = String.valueOf(region.get("name"));
             }
             if (address == null) {
-                JSONArray positions = (JSONArray) jsonObj.getJSONObject("result").getJSONArray("pois");
+                JSONArray positions = (JSONArray) resultObj.get("pois");
                 if (positions.size() > 0) {
                     JSONObject posi = (JSONObject) positions.get(0);
-                    address = posi.getString("name");
+                    address = String.valueOf(posi.get("name"));
                 }
             }
             if (address == null) {
-                address = (String) jsonObj.getJSONObject("result").get("formatted_address");
+                address = String.valueOf(resultObj.get("formatted_address"));
             }
+
+            // JSONObject jsonObj = JSONObject.fromObject(subStr);
+            // JSONArray poiRegions = (JSONArray) jsonObj.getJSONObject("result").getJSONArray("poiRegions");
+            // if (poiRegions.size() > 0) {
+            // JSONObject region = (JSONObject) poiRegions.get(0);
+            // address = region.getString("name");
+            // }
+            // if (address == null) {
+            // JSONArray positions = (JSONArray) jsonObj.getJSONObject("result").getJSONArray("pois");
+            // if (positions.size() > 0) {
+            // JSONObject posi = (JSONObject) positions.get(0);
+            // address = posi.getString("name");
+            // }
+            // }
+            // if (address == null) {
+            // address = (String) jsonObj.getJSONObject("result").get("formatted_address");
+            // }
         } catch (Exception e) {
             e.printStackTrace();
             ExceptionHandler.logError(e.getMessage());
@@ -114,8 +133,8 @@ public class PostionHelper {
                     String mapY = results[2].split("\\:")[1];
                     mapX = mapX.substring(1, mapX.length() - 1);
                     mapY = mapY.substring(1, mapY.length() - 1);
-                    mapX = new String(Base64.decode(mapX));
-                    mapY = new String(Base64.decode(mapY));
+                    mapX = new String(Base64.getDecoder().decode(mapX));
+                    mapY = new String(Base64.getDecoder().decode(mapY));
                     latlng = new double[] { Double.parseDouble(mapX), Double.parseDouble(mapY) };
                 } else {
                     ExceptionHandler.logError("error != 0, " + url);
@@ -163,7 +182,7 @@ public class PostionHelper {
     }
 
     public static void main(String[] args) throws Exception {
-        File photoFolder = new File("D:\\test\\pic\\2018.7.22春秀路小区,北京海晟世纪酒店(英福瑞国际公寓),东外大街社区-来京人员和出租房屋服务站,西中街小学");
+        File photoFolder = new File("D:\\axing_pic_6743\\2015.4.28贵友大厦,永安里(地铁站)");
         File[] listFiles = photoFolder.listFiles();
         for (final File child : listFiles) {
 

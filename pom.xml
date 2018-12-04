@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.lemonphoto</groupId>
     <artifactId>lemonphoto</artifactId>
-    <version>4.3.2</version>
+    <version>4.4.0</version>
     <name>Lemon Photo</name>
     <description>move photos by taken date
     2018-8-23: add sort photo before add gps address.
@@ -26,8 +26,9 @@
     2018-11-29: show size on download.
     2018-11-30: add a photo viewer.
     2018-12-1: enhance photo viewer, support sub folder setting.
-    2018-12-3: enhance file viewer, orientation
-    2018-12-4: remove joda-time by java8 api, sort result</description>
+    2018-12-3: enhance file viewer, orientation.
+    2018-12-4: remove joda-time by java8 api, sort result.
+    2018-12-4: remove json-lib by json-simple,reduce build size to less than 1MB.</description>
 
     <distributionManagement>
         <repository>
@@ -41,12 +42,17 @@
     </distributionManagement>
 
     <dependencies>
-        <dependency>
+        <!-- dependency>
             <groupId>net.sf.json-lib</groupId>
             <artifactId>json-lib</artifactId>
             <version>2.4</version>
             <classifier>jdk15</classifier>
-        </dependency>
+        </dependency -->
+		<dependency>
+			<groupId>com.googlecode.json-simple</groupId>
+			<artifactId>json-simple</artifactId>
+			<version>1.1</version>
+		</dependency>
         <dependency>
             <groupId>com.drewnoakes</groupId>
             <artifactId>metadata-extractor</artifactId>
@@ -143,9 +149,9 @@
                         <configuration>
                             <tasks>
                                 <copy file="resources/run-linux.sh.tmp"
-                                    tofile="resources/run-linux.sh" />
+                                    tofile="resources/run-linux.sh" overwrite="true" />
                                 <copy file="resources/run-windows.bat.tmp"
-                                    tofile="resources/run-windows.bat" />
+                                    tofile="resources/run-windows.bat" overwrite="true" />
                                 <replace token="@project_version@"
                                     value="${project.version}" dir="resources">
                                     <include name="run-windows.bat" />

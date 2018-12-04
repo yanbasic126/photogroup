@@ -4,10 +4,11 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
 
-import com.photogroup.exception.ExceptionHandler;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
 
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
+import com.photogroup.exception.ExceptionHandler;
 
 public class UpdateManager {
 
@@ -32,10 +33,15 @@ public class UpdateManager {
             in.close();
             String str = sb.toString();
             String subStr = str.substring(str.indexOf('['), str.indexOf("]") + 1);
-            JSONArray jsonArray = JSONArray.fromObject(subStr);
+
+            JSONArray jsonArray = (JSONArray) JSONValue.parse(subStr);
             JSONObject latestObj = (JSONObject) jsonArray.get(jsonArray.size() - 1);
-            latestVersion = latestObj.getString("version");
-            downloadURL = latestObj.getString("download_url");
+            latestVersion = String.valueOf(latestObj.get("version"));
+            downloadURL = String.valueOf(latestObj.get("download_url"));
+            // JSONArray jsonArray = JSONArray.fromObject(subStr);
+            // JSONObject latestObj = (JSONObject) jsonArray.get(jsonArray.size() - 1);
+            // latestVersion = latestObj.getString("version");
+            // downloadURL = latestObj.getString("download_url");
         } catch (Exception e) {
             e.printStackTrace();
             ExceptionHandler.logError(e.getMessage());

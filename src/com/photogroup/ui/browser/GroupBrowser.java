@@ -224,280 +224,67 @@ public class GroupBrowser {
      * Initialize the contents of the frame.
      */
     private void initialize() {
-        frameGroupBrowser = new JFrame();
-        frameGroupBrowser.setBounds(100, 100, (PREVIEW_SIZE + PHOTO_GAP * 2) * 5 + 40, 700);
-        frameGroupBrowser.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frameGroupBrowser.setTitle("Lemon Photo");
-        frameGroupBrowser.setIconImage(lemonIcon.getImage());
-        frameGroupBrowser.setLocationByPlatform(true);
-        JMenuBar menuBar = new JMenuBar();
-        frameGroupBrowser.setJMenuBar(menuBar);
+        createFrame();
+        createMenu();
+        createToolbar();
+        createAddressBar();
+        createBrowserPanel();
+        createDebugPanel();
+    }
 
-        JMenu mnWindowMenu = new JMenu("Window");
-        menuBar.add(mnWindowMenu);
-        // mnWindowMenu.setAccelerator(KeyStroke.getKeyStroke('W', InputEvent.ALT_MASK));
-        JMenuItem mntmCollapseItem = new JMenuItem("Collapse All");
-        mntmCollapseItem.setIcon(upIcon);
-        mnWindowMenu.add(mntmCollapseItem);
-        mntmCollapseItem.addActionListener(new ActionListener() {
+    private void createDebugPanel() {
+        panelDebug = new JPanel();
+        GridBagConstraints gbc_panel_2_1 = new GridBagConstraints();
+        gbc_panel_2_1.anchor = GridBagConstraints.NORTH;
+        gbc_panel_2_1.fill = GridBagConstraints.HORIZONTAL;
+        gbc_panel_2_1.gridx = 0;
+        gbc_panel_2_1.gridy = 4;
+        // panel_2.setVisible(false);
+        frameGroupBrowser.getContentPane().add(panelDebug, gbc_panel_2_1);
+        gbc_panel_2_1 = new GridBagConstraints();
+        gbc_panel_2_1.insets = new Insets(0, 0, 5, 0);
+        gbc_panel_2_1.anchor = GridBagConstraints.NORTHWEST;
+        gbc_panel_2_1.gridx = 1;
+        gbc_panel_2_1.gridy = 0;
+        GridBagLayout gbl_panelDebug = new GridBagLayout();
+        gbl_panelDebug.columnWidths = new int[] { 600, 0 };
+        gbl_panelDebug.rowHeights = new int[] { 0 };
+        gbl_panelDebug.columnWeights = new double[] { 1.0, Double.MIN_VALUE };
+        gbl_panelDebug.rowWeights = new double[] { Double.MIN_VALUE };
+        panelDebug.setLayout(gbl_panelDebug);
 
-            public void actionPerformed(ActionEvent e) {
-                for (JButton btnExpand : btnExpandList) {
-                    btnExpand.setIcon(downIcon);
-                }
-                for (JPanel panelFlow : panelFlowList) {
-                    panelFlow.setVisible(false);
-                }
-            }
-        });
+        panelDebugLog = new JPanel();
+        // panelDebug.add(panel_2, gbc_panel_2_1);
+        GridBagLayout gbl_panelDebugLog = new GridBagLayout();
+        gbl_panelDebugLog.columnWidths = new int[] { 0, 0 };
+        gbl_panelDebugLog.rowHeights = new int[] { 0, 0 };
+        gbl_panelDebugLog.columnWeights = new double[] { 1.0, Double.MIN_VALUE };
+        gbl_panelDebugLog.rowWeights = new double[] { 1.0, Double.MIN_VALUE };
+        panelDebugLog.setLayout(gbl_panelDebugLog);
 
-        JMenuItem mntmExpandItem = new JMenuItem("Expand All");
-        mntmExpandItem.setIcon(downIcon);
-        mnWindowMenu.add(mntmExpandItem);
-        mntmExpandItem.addActionListener(new ActionListener() {
+        scrollPaneDebug = new JScrollPane(panelDebugLog);
+        scrollPaneDebug.setPreferredSize(new Dimension(100, 160));
+        GridBagConstraints gbc_scrollPaneDebug = new GridBagConstraints();
+        gbc_scrollPaneDebug.fill = GridBagConstraints.BOTH;
+        gbc_scrollPaneDebug.gridx = 0;
+        gbc_scrollPaneDebug.gridy = 0;
+        txtDebugLog = new JTextAreaLog();
+        txtDebugLog.setText("");
+        txtDebugLog.setRows(10);
+        DefaultCaret caret = (DefaultCaret) txtDebugLog.getCaret();
+        caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
+        GridBagConstraints gbc_txtDebugLog = new GridBagConstraints();
+        gbc_txtDebugLog.anchor = GridBagConstraints.SOUTH;
+        gbc_txtDebugLog.fill = GridBagConstraints.HORIZONTAL;
+        gbc_txtDebugLog.gridx = 0;
+        gbc_txtDebugLog.gridy = 0;
+        panelDebugLog.add(txtDebugLog, gbc_txtDebugLog);
+        panelDebug.add(scrollPaneDebug, gbc_scrollPaneDebug);
+        scrollPaneDebug.getVerticalScrollBar().setUnitIncrement(16);
+        panelDebug.setVisible(false);
+    }
 
-            public void actionPerformed(ActionEvent e) {
-                for (JButton btnExpand : btnExpandList) {
-                    btnExpand.setIcon(upIcon);
-                }
-                for (JPanel panelFlow : panelFlowList) {
-                    panelFlow.setVisible(true);
-                }
-            }
-        });
-
-        JMenu mnHelpMenu = new JMenu("Help");
-        menuBar.add(mnHelpMenu);
-        // mnHelpMenu.setAccelerator(KeyStroke.getKeyStroke('H', InputEvent.ALT_MASK));
-
-        JMenuItem mntmHelpItem = new JMenuItem("Help");
-        mnHelpMenu.add(mntmHelpItem);
-
-        JMenuItem mntmLogItem = new JMenuItem("Show Logs");
-        // mntmLogItem.setIcon(debugIcon);
-        mnHelpMenu.add(mntmLogItem);
-        mntmLogItem.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                if (panelDebug.isVisible()) {
-                    panelDebug.setVisible(false);
-                    mntmLogItem.setText("Show Logs");
-                } else {
-                    panelDebug.setVisible(true);
-                    mntmLogItem.setText("Hide Logs");
-                }
-            }
-        });
-
-        JMenuItem mntmAboutItem = new JMenuItem("About");
-        // mntmAboutItem.setIcon(lemonSmallIcon);
-        mnHelpMenu.add(mntmAboutItem);
-        mntmAboutItem.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                showAboutDialog();
-            }
-        });
-
-        GridBagLayout gridBagLayout = new GridBagLayout();
-        gridBagLayout.columnWidths = new int[] { 0, 0 };
-        gridBagLayout.rowHeights = new int[] { 0, 0, 1, 0, 0 };
-        gridBagLayout.columnWeights = new double[] { 1.0, Double.MIN_VALUE };
-        gridBagLayout.rowWeights = new double[] { 0.0, 0.0, 1.0, 0.0, 0.0 };
-        frameGroupBrowser.getContentPane().setLayout(gridBagLayout);
-
-        JPanel panelToolbar = new JPanel();
-        GridBagConstraints gbc_panelToolbar = new GridBagConstraints();
-        gbc_panelToolbar.anchor = GridBagConstraints.NORTH;
-        gbc_panelToolbar.insets = new Insets(0, 0, 5, 0);
-        gbc_panelToolbar.fill = GridBagConstraints.HORIZONTAL;
-        gbc_panelToolbar.gridx = 0;
-        gbc_panelToolbar.gridy = 0;
-        frameGroupBrowser.getContentPane().add(panelToolbar, gbc_panelToolbar);
-        GridBagLayout gbl_panelToolbar = new GridBagLayout();
-        gbl_panelToolbar.columnWidths = new int[] { 0, 0, 0 };
-        gbl_panelToolbar.rowHeights = new int[] { 0, 0 };
-        gbl_panelToolbar.columnWeights = new double[] { 0.0, 0.0, Double.MIN_VALUE };
-        gbl_panelToolbar.rowWeights = new double[] { 0.0, Double.MIN_VALUE };
-        panelToolbar.setLayout(gbl_panelToolbar);
-
-        JToolBar toolBarSetting = new JToolBar();
-        toolBarSetting.setFloatable(false);
-        GridBagConstraints gbc_toolBarSetting = new GridBagConstraints();
-        gbc_toolBarSetting.insets = new Insets(0, 0, 0, 5);
-        gbc_toolBarSetting.gridx = 0;
-        gbc_toolBarSetting.gridy = 0;
-        panelToolbar.add(toolBarSetting, gbc_toolBarSetting);
-
-        btnProfile = new JButton("Profile");
-        btnProfile.setIcon(profileIcon);
-
-        btnProfile.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                profile();
-            }
-        });
-
-        JButton btnSetting = new JButton("Setting");
-        btnSetting.setIcon(settingIcon);
-
-        btnSetting.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                SettingDialog dialog = new SettingDialog();
-                dialog.setVisible(true);
-            }
-        });
-
-        btnSave = new JButton("Save");
-        btnSave.setIcon(saveIcon);
-        btnSave.setEnabled(false);
-        btnSave.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                if (photoGroup == null) {
-                    // popup error
-                    JOptionPane.showMessageDialog(frameGroupBrowser, "Error! Nothing to save!", "Save",
-                            JOptionPane.ERROR_MESSAGE);
-                } else {
-                    doSave();
-                }
-            }
-        });
-
-        // JToggleButton btnLogs = new JToggleButton("Log");
-        // btnLogs.addActionListener(new ActionListener() {
-        //
-        // public void actionPerformed(ActionEvent e) {
-        // panelDebug.setVisible(!panelDebug.isVisible());
-        // }
-        // });
-
-        // try {
-        // BufferedImage bufferedImage = ImageIO.read(ClassLoader.getSystemResource("icon/debug_32.png"));
-        // btnLogs.setIcon(new ImageIcon(bufferedImage));
-        // } catch (IOException e) {
-        // e.printStackTrace();
-        // ExceptionHandler.logError(e.getMessage());
-        // }
-
-        JSeparator separator_1 = new JSeparator();
-        separator_1.setOrientation(SwingConstants.VERTICAL);
-        toolBarSetting.add(separator_1);
-
-        toolBarSetting.add(btnProfile);
-        toolBarSetting.add(btnSave);
-
-        JSeparator separator = new JSeparator();
-        separator.setOrientation(SwingConstants.VERTICAL);
-        toolBarSetting.add(separator);
-        toolBarSetting.add(btnSetting);
-        // toolBarSetting.add(btnLogs);
-
-        JPanel panelAddress = new JPanel();
-        GridBagConstraints gbc_panelAddress = new GridBagConstraints();
-        gbc_panelAddress.anchor = GridBagConstraints.NORTH;
-        gbc_panelAddress.insets = new Insets(0, 0, 5, 0);
-        gbc_panelAddress.fill = GridBagConstraints.HORIZONTAL;
-        gbc_panelAddress.gridx = 0;
-        gbc_panelAddress.gridy = 1;
-        frameGroupBrowser.getContentPane().add(panelAddress, gbc_panelAddress);
-        GridBagLayout gbl_panelAddress = new GridBagLayout();
-        gbl_panelAddress.columnWidths = new int[] { 86, 0, 0 };
-        gbl_panelAddress.rowHeights = new int[] { 23, 0 };
-        gbl_panelAddress.columnWeights = new double[] { 1.0, 0.0, Double.MIN_VALUE };
-        gbl_panelAddress.rowWeights = new double[] { 0.0, Double.MIN_VALUE };
-        panelAddress.setLayout(gbl_panelAddress);
-
-        // JLabel lblFolder = new JLabel("Photo folder ");
-        // GridBagConstraints gbc_lblFolder = new GridBagConstraints();
-        // gbc_lblFolder.anchor = GridBagConstraints.WEST;
-        // gbc_lblFolder.insets = new Insets(0, 0, 0, 5);
-        // gbc_lblFolder.gridx = 0;
-        // gbc_lblFolder.gridy = 0;
-        // panelAddress.add(lblFolder, gbc_lblFolder);
-
-        JButton btnFolder = new JButton();
-        btnFolder.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    String checkFolder = checkFolder();
-                    if (checkFolder == null) {
-                        File folder = new File(textFieldFolder.getText());
-                        Desktop.getDesktop().open(folder);
-                    } else {
-                        JOptionPane.showMessageDialog(frameGroupBrowser, checkFolder, "Folder", JOptionPane.ERROR_MESSAGE);
-                    }
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                    ExceptionHandler.logError(ex.getMessage());
-                }
-            }
-
-        });
-        btnFolder.setIcon(folderIcon);
-        GridBagConstraints gbc_btnFolder = new GridBagConstraints();
-        gbc_btnFolder.insets = new Insets(0, 0, 0, 5);
-        gbc_btnFolder.gridx = 1;
-        gbc_btnFolder.gridy = 0;
-
-        int size = (int) btnFolder.getPreferredSize().getHeight();
-        btnFolder.setPreferredSize(new Dimension(size, size));
-        panelAddress.add(btnFolder, gbc_btnFolder);
-
-        JButton btnBrowse = new JButton("Browse...");
-        int width = (int) btnBrowse.getPreferredSize().getWidth();
-        btnBrowse.setPreferredSize(new Dimension(width, size));
-        btnBrowse.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                JFileChooser chooser = new JFileChooser();
-                if (!textFieldFolder.getText().isEmpty()) {
-                    File choicedDir = new File(textFieldFolder.getText());
-                    if (choicedDir.exists()) {
-                        chooser.setCurrentDirectory(choicedDir);
-                    }
-                }
-                chooser.setDialogTitle(Messages.getString("PhotoGroupWindow.6")); //$NON-NLS-1$
-                chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-                chooser.setAcceptAllFileFilterUsed(false);
-                if (chooser.showOpenDialog(frameGroupBrowser) == JFileChooser.APPROVE_OPTION) {
-                    textFieldFolder.setText(chooser.getSelectedFile().getAbsolutePath());
-                }
-            }
-
-        });
-        GridBagConstraints gbc_btnBrowse = new GridBagConstraints();
-        gbc_btnBrowse.anchor = GridBagConstraints.NORTHWEST;
-        gbc_btnBrowse.gridx = 2;
-        gbc_btnBrowse.gridy = 0;
-        panelAddress.add(btnBrowse, gbc_btnBrowse);
-
-        textFieldFolder = new JTextFieldAddress();
-        textFieldFolder.setText("");
-        int twidth = (int) textFieldFolder.getPreferredSize().getWidth();
-        textFieldFolder.setPreferredSize(new Dimension(twidth, size));
-        textFieldFolder.addKeyListener(new KeyAdapter() {
-
-            @Override
-            public void keyPressed(KeyEvent e) {
-                if (10 == e.getKeyCode()) {
-                    profile();
-                }
-            }
-        });
-        GridBagConstraints gbc_textFieldFolder = new GridBagConstraints();
-        gbc_textFieldFolder.fill = GridBagConstraints.HORIZONTAL;
-        gbc_textFieldFolder.insets = new Insets(0, 0, 0, 5);
-        gbc_textFieldFolder.gridx = 0;
-        gbc_textFieldFolder.gridy = 0;
-        panelAddress.add(textFieldFolder, gbc_textFieldFolder);
-        textFieldFolder.setColumns(10);
-
+    private void createBrowserPanel() {
         JPanel panelBrowser = new JPanel();
         GridBagConstraints gbc_panelBrowser = new GridBagConstraints();
         gbc_panelBrowser.insets = new Insets(0, 0, 5, 0);
@@ -559,57 +346,321 @@ public class GroupBrowser {
         gbc_progressBar.gridx = 0;
         gbc_progressBar.gridy = 0;
         panelStatus.add(progressBar, gbc_progressBar);
+    }
 
-        panelDebug = new JPanel();
-        GridBagConstraints gbc_panel_2_1 = new GridBagConstraints();
-        gbc_panel_2_1.anchor = GridBagConstraints.NORTH;
-        gbc_panel_2_1.fill = GridBagConstraints.HORIZONTAL;
-        gbc_panel_2_1.gridx = 0;
-        gbc_panel_2_1.gridy = 4;
-        // panel_2.setVisible(false);
-        frameGroupBrowser.getContentPane().add(panelDebug, gbc_panel_2_1);
-        gbc_panel_2_1 = new GridBagConstraints();
-        gbc_panel_2_1.insets = new Insets(0, 0, 5, 0);
-        gbc_panel_2_1.anchor = GridBagConstraints.NORTHWEST;
-        gbc_panel_2_1.gridx = 1;
-        gbc_panel_2_1.gridy = 0;
-        GridBagLayout gbl_panelDebug = new GridBagLayout();
-        gbl_panelDebug.columnWidths = new int[] { 600, 0 };
-        gbl_panelDebug.rowHeights = new int[] { 0 };
-        gbl_panelDebug.columnWeights = new double[] { 1.0, Double.MIN_VALUE };
-        gbl_panelDebug.rowWeights = new double[] { Double.MIN_VALUE };
-        panelDebug.setLayout(gbl_panelDebug);
+    private void createAddressBar() {
+        JPanel panelAddress = new JPanel();
+        GridBagConstraints gbc_panelAddress = new GridBagConstraints();
+        gbc_panelAddress.anchor = GridBagConstraints.NORTH;
+        gbc_panelAddress.insets = new Insets(0, 0, 5, 0);
+        gbc_panelAddress.fill = GridBagConstraints.HORIZONTAL;
+        gbc_panelAddress.gridx = 0;
+        gbc_panelAddress.gridy = 1;
+        frameGroupBrowser.getContentPane().add(panelAddress, gbc_panelAddress);
+        GridBagLayout gbl_panelAddress = new GridBagLayout();
+        gbl_panelAddress.columnWidths = new int[] { 86, 0, 0 };
+        gbl_panelAddress.rowHeights = new int[] { 23, 0 };
+        gbl_panelAddress.columnWeights = new double[] { 1.0, 0.0, Double.MIN_VALUE };
+        gbl_panelAddress.rowWeights = new double[] { 0.0, Double.MIN_VALUE };
+        panelAddress.setLayout(gbl_panelAddress);
 
-        panelDebugLog = new JPanel();
-        // panelDebug.add(panel_2, gbc_panel_2_1);
-        GridBagLayout gbl_panelDebugLog = new GridBagLayout();
-        gbl_panelDebugLog.columnWidths = new int[] { 0, 0 };
-        gbl_panelDebugLog.rowHeights = new int[] { 0, 0 };
-        gbl_panelDebugLog.columnWeights = new double[] { 1.0, Double.MIN_VALUE };
-        gbl_panelDebugLog.rowWeights = new double[] { 1.0, Double.MIN_VALUE };
-        panelDebugLog.setLayout(gbl_panelDebugLog);
+        // JLabel lblFolder = new JLabel("Photo folder ");
+        // GridBagConstraints gbc_lblFolder = new GridBagConstraints();
+        // gbc_lblFolder.anchor = GridBagConstraints.WEST;
+        // gbc_lblFolder.insets = new Insets(0, 0, 0, 5);
+        // gbc_lblFolder.gridx = 0;
+        // gbc_lblFolder.gridy = 0;
+        // panelAddress.add(lblFolder, gbc_lblFolder);
 
-        scrollPaneDebug = new JScrollPane(panelDebugLog);
-        scrollPaneDebug.setPreferredSize(new Dimension(100, 160));
-        GridBagConstraints gbc_scrollPaneDebug = new GridBagConstraints();
-        gbc_scrollPaneDebug.fill = GridBagConstraints.BOTH;
-        gbc_scrollPaneDebug.gridx = 0;
-        gbc_scrollPaneDebug.gridy = 0;
-        txtDebugLog = new JTextAreaLog();
-        txtDebugLog.setText("");
-        txtDebugLog.setRows(10);
-        DefaultCaret caret = (DefaultCaret) txtDebugLog.getCaret();
-        caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
-        GridBagConstraints gbc_txtDebugLog = new GridBagConstraints();
-        gbc_txtDebugLog.anchor = GridBagConstraints.SOUTH;
-        gbc_txtDebugLog.fill = GridBagConstraints.HORIZONTAL;
-        gbc_txtDebugLog.gridx = 0;
-        gbc_txtDebugLog.gridy = 0;
-        panelDebugLog.add(txtDebugLog, gbc_txtDebugLog);
-        panelDebug.add(scrollPaneDebug, gbc_scrollPaneDebug);
-        scrollPaneDebug.getVerticalScrollBar().setUnitIncrement(16);
-        panelDebug.setVisible(false);
+        JButton btnFolder = new JButton();
+        btnFolder.addActionListener(new ActionListener() {
 
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                openFolder();
+            }
+        });
+        btnFolder.setIcon(folderIcon);
+        GridBagConstraints gbc_btnFolder = new GridBagConstraints();
+        gbc_btnFolder.insets = new Insets(0, 0, 0, 5);
+        gbc_btnFolder.gridx = 1;
+        gbc_btnFolder.gridy = 0;
+
+        int size = (int) btnFolder.getPreferredSize().getHeight();
+        btnFolder.setPreferredSize(new Dimension(size, size));
+        panelAddress.add(btnFolder, gbc_btnFolder);
+
+        JButton btnBrowse = new JButton("Browse...");
+        int width = (int) btnBrowse.getPreferredSize().getWidth();
+        btnBrowse.setPreferredSize(new Dimension(width, size));
+        btnBrowse.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                browseFolder();
+            }
+        });
+        GridBagConstraints gbc_btnBrowse = new GridBagConstraints();
+        gbc_btnBrowse.anchor = GridBagConstraints.NORTHWEST;
+        gbc_btnBrowse.gridx = 2;
+        gbc_btnBrowse.gridy = 0;
+        panelAddress.add(btnBrowse, gbc_btnBrowse);
+
+        textFieldFolder = new JTextFieldAddress();
+        textFieldFolder.setText("");
+        int twidth = (int) textFieldFolder.getPreferredSize().getWidth();
+        textFieldFolder.setPreferredSize(new Dimension(twidth, size));
+        textFieldFolder.addKeyListener(new KeyAdapter() {
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (10 == e.getKeyCode()) {
+                    profile();
+                }
+            }
+        });
+        GridBagConstraints gbc_textFieldFolder = new GridBagConstraints();
+        gbc_textFieldFolder.fill = GridBagConstraints.HORIZONTAL;
+        gbc_textFieldFolder.insets = new Insets(0, 0, 0, 5);
+        gbc_textFieldFolder.gridx = 0;
+        gbc_textFieldFolder.gridy = 0;
+        panelAddress.add(textFieldFolder, gbc_textFieldFolder);
+        textFieldFolder.setColumns(10);
+    }
+
+    private void openFolder() {
+        try {
+            String checkFolder = checkFolder();
+            if (checkFolder == null) {
+                File folder = new File(textFieldFolder.getText());
+                Desktop.getDesktop().open(folder);
+            } else {
+                JOptionPane.showMessageDialog(frameGroupBrowser, checkFolder, "Folder", JOptionPane.ERROR_MESSAGE);
+            }
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            ExceptionHandler.logError(ex.getMessage());
+        }
+    }
+
+    private void browseFolder() {
+        JFileChooser chooser = new JFileChooser();
+        if (!textFieldFolder.getText().isEmpty()) {
+            File choicedDir = new File(textFieldFolder.getText());
+            if (choicedDir.exists()) {
+                chooser.setCurrentDirectory(choicedDir);
+            }
+        }
+        chooser.setDialogTitle(Messages.getString("PhotoGroupWindow.6")); //$NON-NLS-1$
+        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        // chooser.setAccessory(new FileListAccessory(chooser));
+        chooser.setAcceptAllFileFilterUsed(false);
+        if (chooser.showOpenDialog(frameGroupBrowser) == JFileChooser.APPROVE_OPTION) {
+            textFieldFolder.setText(chooser.getSelectedFile().getAbsolutePath());
+        }
+    }
+
+    private void createToolbar() {
+        JPanel panelToolbar = new JPanel();
+        GridBagConstraints gbc_panelToolbar = new GridBagConstraints();
+        gbc_panelToolbar.anchor = GridBagConstraints.NORTH;
+        gbc_panelToolbar.insets = new Insets(0, 0, 5, 0);
+        gbc_panelToolbar.fill = GridBagConstraints.HORIZONTAL;
+        gbc_panelToolbar.gridx = 0;
+        gbc_panelToolbar.gridy = 0;
+        frameGroupBrowser.getContentPane().add(panelToolbar, gbc_panelToolbar);
+        GridBagLayout gbl_panelToolbar = new GridBagLayout();
+        gbl_panelToolbar.columnWidths = new int[] { 0, 0, 0 };
+        gbl_panelToolbar.rowHeights = new int[] { 0, 0 };
+        gbl_panelToolbar.columnWeights = new double[] { 0.0, 0.0, Double.MIN_VALUE };
+        gbl_panelToolbar.rowWeights = new double[] { 0.0, Double.MIN_VALUE };
+        panelToolbar.setLayout(gbl_panelToolbar);
+
+        JToolBar toolBarSetting = new JToolBar();
+        toolBarSetting.setFloatable(false);
+        GridBagConstraints gbc_toolBarSetting = new GridBagConstraints();
+        gbc_toolBarSetting.insets = new Insets(0, 0, 0, 5);
+        gbc_toolBarSetting.gridx = 0;
+        gbc_toolBarSetting.gridy = 0;
+        panelToolbar.add(toolBarSetting, gbc_toolBarSetting);
+
+        btnProfile = new JButton("Profile");
+        btnProfile.setIcon(profileIcon);
+
+        btnProfile.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                profile();
+            }
+        });
+
+        JButton btnSetting = new JButton("Settings");
+        btnSetting.setIcon(settingIcon);
+
+        btnSetting.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                SettingDialog dialog = new SettingDialog();
+                dialog.setVisible(true);
+            }
+        });
+
+        btnSave = new JButton("Save");
+        btnSave.setIcon(saveIcon);
+        btnSave.setEnabled(false);
+        btnSave.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                if (photoGroup == null) {
+                    // popup error
+                    JOptionPane.showMessageDialog(frameGroupBrowser, "Error! Nothing to save!", "Save",
+                            JOptionPane.ERROR_MESSAGE);
+                } else {
+                    doSave();
+                }
+            }
+        });
+
+        // JToggleButton btnLogs = new JToggleButton("Log");
+        // btnLogs.addActionListener(new ActionListener() {
+        //
+        // public void actionPerformed(ActionEvent e) {
+        // panelDebug.setVisible(!panelDebug.isVisible());
+        // }
+        // });
+
+        // try {
+        // BufferedImage bufferedImage = ImageIO.read(ClassLoader.getSystemResource("icon/debug_32.png"));
+        // btnLogs.setIcon(new ImageIcon(bufferedImage));
+        // } catch (IOException e) {
+        // e.printStackTrace();
+        // ExceptionHandler.logError(e.getMessage());
+        // }
+
+        JSeparator separator_1 = new JSeparator();
+        separator_1.setOrientation(SwingConstants.VERTICAL);
+        toolBarSetting.add(separator_1);
+
+        toolBarSetting.add(btnProfile);
+        toolBarSetting.add(btnSave);
+
+        JSeparator separator = new JSeparator();
+        separator.setOrientation(SwingConstants.VERTICAL);
+        toolBarSetting.add(separator);
+        toolBarSetting.add(btnSetting);
+        // toolBarSetting.add(btnLogs);
+    }
+
+    private void createFrame() {
+        frameGroupBrowser = new JFrame();
+        frameGroupBrowser.setBounds(100, 100, (PREVIEW_SIZE + PHOTO_GAP * 2) * 5 + 40, 700);
+        frameGroupBrowser.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frameGroupBrowser.setTitle("Lemon Photo");
+        frameGroupBrowser.setIconImage(lemonIcon.getImage());
+        frameGroupBrowser.setLocationByPlatform(true);
+        GridBagLayout gridBagLayout = new GridBagLayout();
+        gridBagLayout.columnWidths = new int[] { 0, 0 };
+        gridBagLayout.rowHeights = new int[] { 0, 0, 1, 0, 0 };
+        gridBagLayout.columnWeights = new double[] { 1.0, Double.MIN_VALUE };
+        gridBagLayout.rowWeights = new double[] { 0.0, 0.0, 1.0, 0.0, 0.0 };
+        frameGroupBrowser.getContentPane().setLayout(gridBagLayout);
+    }
+
+    private void createMenu() {
+        JMenuBar menuBar = new JMenuBar();
+        frameGroupBrowser.setJMenuBar(menuBar);
+
+        JMenu mnFileMenu = new JMenu("File");
+        menuBar.add(mnFileMenu);
+        mnFileMenu.setMnemonic(KeyEvent.VK_F);
+        JMenuItem mntmOpenItem = new JMenuItem("Open Folder...");
+        JMenuItem mntmExitItem = new JMenuItem("Exit");
+        mnFileMenu.add(mntmOpenItem);
+        mnFileMenu.add(mntmExitItem);
+        mntmExitItem.setMnemonic(KeyEvent.VK_X);
+        mntmOpenItem.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                browseFolder();
+            }
+        });
+        mntmExitItem.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                frameGroupBrowser.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                frameGroupBrowser.dispose();
+            }
+        });
+
+        JMenu mnWindowMenu = new JMenu("Window");
+        menuBar.add(mnWindowMenu);
+        mnWindowMenu.setMnemonic(KeyEvent.VK_W);
+        // mnWindowMenu.setAccelerator(KeyStroke.getKeyStroke('W', InputEvent.ALT_MASK));
+        JMenuItem mntmCollapseItem = new JMenuItem("Collapse All");
+        mntmCollapseItem.setIcon(upIcon);
+        mnWindowMenu.add(mntmCollapseItem);
+        mntmCollapseItem.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                for (JButton btnExpand : btnExpandList) {
+                    btnExpand.setIcon(downIcon);
+                }
+                for (JPanel panelFlow : panelFlowList) {
+                    panelFlow.setVisible(false);
+                }
+            }
+        });
+
+        JMenuItem mntmExpandItem = new JMenuItem("Expand All");
+        mntmExpandItem.setIcon(downIcon);
+        mnWindowMenu.add(mntmExpandItem);
+        mntmExpandItem.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                for (JButton btnExpand : btnExpandList) {
+                    btnExpand.setIcon(upIcon);
+                }
+                for (JPanel panelFlow : panelFlowList) {
+                    panelFlow.setVisible(true);
+                }
+            }
+        });
+
+        JMenu mnHelpMenu = new JMenu("Help");
+        menuBar.add(mnHelpMenu);
+        // mnHelpMenu.setAccelerator(KeyStroke.getKeyStroke('H', InputEvent.ALT_MASK));
+        mnHelpMenu.setMnemonic(KeyEvent.VK_H);
+        JMenuItem mntmHelpItem = new JMenuItem("Help");
+        mnHelpMenu.add(mntmHelpItem);
+
+        mntmHelpItem.setMnemonic(KeyEvent.VK_H);
+
+        JMenuItem mntmLogItem = new JMenuItem("Show Logs");
+        // mntmLogItem.setIcon(debugIcon);
+        mnHelpMenu.add(mntmLogItem);
+        mntmLogItem.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                if (panelDebug.isVisible()) {
+                    panelDebug.setVisible(false);
+                    mntmLogItem.setText("Show Logs");
+                } else {
+                    panelDebug.setVisible(true);
+                    mntmLogItem.setText("Hide Logs");
+                }
+            }
+        });
+
+        JMenuItem mntmAboutItem = new JMenuItem("About");
+        mntmAboutItem.setIcon(lemonSmallIcon);
+        mntmAboutItem.setMnemonic(KeyEvent.VK_A);
+        mnHelpMenu.add(mntmAboutItem);
+        mntmAboutItem.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                showAboutDialog();
+            }
+        });
     }
 
     protected void showAboutDialog() {

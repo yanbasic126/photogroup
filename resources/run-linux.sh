@@ -1,1 +1,1 @@
-javaw -jar photogroup-3.1.0-SNAPSHOT.jar
+javaw -jar photogroup-4.4.0.jar

@@ -24,6 +24,7 @@ public class FileUtil {
         int threshold = SettingStore.getSettingStore().getThreshold();
         Iterator<?> it = group.entrySet().iterator();
         while (it.hasNext()) {
+            @SuppressWarnings("unchecked")
             Map.Entry<String, List<File>> pair = (Entry<String, List<File>>) it.next();
             if (pair.getValue().size() >= threshold) {
                 File dateFolder = new File(photosPath, pair.getKey());
