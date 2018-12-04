@@ -4,12 +4,12 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -19,10 +19,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 
-import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
-
 import com.drew.imaging.ImageProcessingException;
 import com.photogroup.exception.ExceptionHandler;
 import com.photogroup.groupby.metadata.MetadataReader;
@@ -30,6 +26,8 @@ import com.photogroup.groupby.position.PostionHelper;
 import com.photogroup.util.PhotoNameCompareUtil;
 
 public class PhotoGroup implements Runnable {
+
+    private static final String DATE_TIME_PATTERN = "yyyy:MM:dd HH:mm:ss";
 
     public Object processPrecent = 0;
 
@@ -52,6 +50,8 @@ public class PhotoGroup implements Runnable {
     private Map<String, List<File>> photoGroup;
 
     private boolean subfolder;
+
+    private String dataTimepPattern;
 
     public PhotoGroup(Map<String, List<File>> photoGroup, String photosPath, int threshold, int module, String format,
             boolean guess, boolean gps, boolean report, boolean includeSubFolder) {
@@ -80,9 +80,12 @@ public class PhotoGroup implements Runnable {
             return;
         }
 
-        DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy:MM:dd HH:mm:ss");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_TIME_PATTERN);
 
-        Map<String, List<File>> photosDate = new HashMap<String, List<File>>();
+        // TODO remove simple formatter
+        SimpleDateFormat simpleFormatter = new SimpleDateFormat(DATE_TIME_PATTERN);
+
+        Map<LocalDate, List<File>> photosDate = new HashMap<LocalDate, List<File>>();
         Comparator<File> comparator = new Comparator<File>() {
 
             @Override
@@ -149,7 +152,6 @@ public class PhotoGroup implements Runnable {
             }
         }
         File[] files = exifDateTime.keySet().toArray(new File[0]);
-
         progress = 0;
         precent = 0;
         for (final File file : files) { // files
@@ -189,8 +191,7 @@ public class PhotoGroup implements Runnable {
                     String ext = file.getName().substring(i + 1).toUpperCase();
                     for (String supportType : photoTypes) {
                         if (supportType.equals(ext)) {
-                            SimpleDateFormat fileDateFormat = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss");
-                            dateTime = fileDateFormat.format(file.lastModified());
+                            dateTime = simpleFormatter.format(file.lastModified());
                             break;
                         }
                     }
@@ -198,20 +199,16 @@ public class PhotoGroup implements Runnable {
             }
 
             if (dateTime == null && module == 3) {
-                SimpleDateFormat fileDateFormat = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss");
-                dateTime = fileDateFormat.format(file.lastModified());
+                dateTime = simpleFormatter.format(file.lastModified());
             }
             if (dateTime != null) {
-
-                DateTime parseDateTime = formatter.parseDateTime(dateTime.trim());
-                String dateFormat = new SimpleDateFormat("yyyy.MM.dd").format(parseDateTime.toDate());
-
-                if (photosDate.get(dateFormat) == null) {
+                LocalDate localDate = LocalDate.parse(dateTime.trim(), formatter);
+                if (photosDate.get(localDate) == null) {
                     ArrayList<File> photoNameList = new ArrayList<File>();
                     photoNameList.add(file);
-                    photosDate.put(dateFormat, photoNameList);
+                    photosDate.put(localDate, photoNameList);
                 } else {
-                    photosDate.get(dateFormat).add(file);
+                    photosDate.get(localDate).add(file);
                 }
             }
             progress++;
@@ -228,13 +225,12 @@ public class PhotoGroup implements Runnable {
         }
         System.out.println("");
 
+        DateTimeFormatter pattern = DateTimeFormatter.ofPattern(format);
         Iterator<?> it = photosDate.entrySet().iterator();
         while (it.hasNext()) {
-            Map.Entry<String, List<File>> pair = (Entry<String, List<File>>) it.next();
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd");
+            Map.Entry<LocalDate, List<File>> pair = (Entry<LocalDate, List<File>>) it.next();
             try {
-                Date photoDate = dateFormat.parse(pair.getKey());
-                String folderName = new SimpleDateFormat(format).format(photoDate);
+                String folderName = pair.getKey().format(pattern);
                 String addressName = "";
                 Set<String> addressNames = new HashSet<String>();
                 List<File> photos = pair.getValue();
@@ -271,11 +267,10 @@ public class PhotoGroup implements Runnable {
 
                 photoGroup.put(folderName, pair.getValue());
                 System.out.println(folderName + " : " + pair.getValue().size());
-            } catch (ParseException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
                 ExceptionHandler.logError(e.getMessage());
             }
-
         }
     }
 

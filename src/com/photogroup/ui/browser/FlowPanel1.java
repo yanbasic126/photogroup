@@ -2,7 +2,6 @@ package com.photogroup.ui.browser;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.EventQueue;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
@@ -11,6 +10,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
+import java.util.Locale;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -29,10 +33,7 @@ import javax.swing.border.LineBorder;
 import javax.swing.plaf.synth.SynthLookAndFeel;
 
 /**
- * DOC yyan class global comment. Detailled comment <br/>
- *
- * $Id$
- *
+ * FOR TEST USE
  */
 public class FlowPanel1 {
 
@@ -52,24 +53,39 @@ public class FlowPanel1 {
      * Launch the application.
      */
     public static void main(String[] args) {
-        if (null instanceof FlowPanel1) {
-            System.out.println(11);
-        } else {
-            System.out.println(22);
+        SimpleDateFormat fileDateFormat = new SimpleDateFormat("yyyy.M.d", Locale.CHINA);
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.M.d", Locale.getDefault());
+        LocalDate parse;
+        try {
+            Date parse2 = fileDateFormat.parse("2018.8.9");
+            System.out.println(parse2);
+            parse = LocalDate.parse("2018.8.9", formatter);
+
+            System.out.println(parse);
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
         }
-        // UIManager.put("ScrollBar.thumb", Color.black);
-
-        EventQueue.invokeLater(new Runnable() {
-
-            public void run() {
-                try {
-                    FlowPanel1 window = new FlowPanel1();
-                    window.frame.setVisible(true);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
+        //
+        // if (null instanceof FlowPanel1) {
+        // System.out.println(11);
+        // } else {
+        // System.out.println(22);
+        // }
+        // // UIManager.put("ScrollBar.thumb", Color.black);
+        //
+        // EventQueue.invokeLater(new Runnable() {
+        //
+        // public void run() {
+        // try {
+        // FlowPanel1 window = new FlowPanel1();
+        // window.frame.setVisible(true);
+        // } catch (Exception e) {
+        // e.printStackTrace();
+        // }
+        // }
+        // });
     }
 
     /**
@@ -179,10 +195,11 @@ public class FlowPanel1 {
 
         JLabel lblTitle = new JLabel("titletitletitletitletitletitle");
         lblTitle.addMouseListener(new MouseAdapter() {
+
             @Override
             public void mouseClicked(MouseEvent e) {
                 System.out.println(111);
-                lblTitle.setBorder(new LineBorder(new Color(123,123,123)));
+                lblTitle.setBorder(new LineBorder(new Color(123, 123, 123)));
             }
         });
         toolBar.add(lblTitle);

@@ -23,8 +23,12 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -74,6 +78,7 @@ import com.photogroup.ui.widget.JTextFieldAddress;
 import com.photogroup.update.UpdateManager;
 import com.photogroup.util.FileUtil;
 import com.photogroup.util.ImageUtil;
+import com.photogroup.util.PhotoNameCompareUtil;
 
 public class GroupBrowser {
 
@@ -614,7 +619,7 @@ public class GroupBrowser {
         dialog.setVisible(true);
     }
 
-    private void createImageGroup(Entry<String, List<File>> oneGroup) {
+    private void createImageGroup(String title, List<File> files) {
         JPanel panelGroup1 = new JPanel();
         // panelGroup1.setBorder(new LineBorder(new Color(0, 0, 0)));
         GridBagConstraints gbc_panelGroup1 = new GridBagConstraints();
@@ -656,9 +661,9 @@ public class GroupBrowser {
         // JLabel lblTitle = new JLabel(oneGroup.getKey() + " (" + oneGroup.getValue().size() + ")");
         // toolBar.add(lblTitle);
 
-        JTextField textFieldTitle = new JTextField(oneGroup.getKey());
-        textFieldTitle.setToolTipText(oneGroup.getKey());
-        textFieldTitle.setName(oneGroup.getKey());
+        JTextField textFieldTitle = new JTextField(title);
+        textFieldTitle.setToolTipText(title);
+        textFieldTitle.setName(title);
         // textFieldTitle.setEditable(false);
         toolBar.add(textFieldTitle);
         textFieldTitle.setBorder(new EmptyBorder(0, 0, 0, 0));
@@ -731,7 +736,7 @@ public class GroupBrowser {
             }
         });
 
-        for (File photo : oneGroup.getValue()) {
+        for (File photo : files) {
             addImagePanel(panelFlow, photo);
         }
 
@@ -904,10 +909,30 @@ public class GroupBrowser {
                     // });
                 }
                 panelGroupAll.removeAll();
+                final List<String> sortTitles = new ArrayList<String>();
+                final DateFormat settingDateFormat = new SimpleDateFormat(SettingStore.getSettingStore().getFormat());
                 Iterator<?> it = photoGroup.entrySet().iterator();
                 while (it.hasNext()) {
                     Map.Entry<String, List<File>> pair = (Entry<String, List<File>>) it.next();
-                    createImageGroup(pair);
+                    sortTitles.add(pair.getKey());
+                }
+
+                Collections.sort(sortTitles, new Comparator<String>() {
+
+                    @Override
+                    public int compare(String date1, String date2) {
+                        try {
+                            return settingDateFormat.parse(PhotoNameCompareUtil.findDateString(date1))
+                                    .compareTo(settingDateFormat.parse(PhotoNameCompareUtil.findDateString(date2)));
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                        return date1.compareTo(date2);
+                    }
+                });
+
+                for (String title : sortTitles) {
+                    createImageGroup(title, photoGroup.get(title));
                 }
                 double[] rowWeights;
                 if (photoGroup.size() > 1) {

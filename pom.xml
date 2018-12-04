@@ -26,7 +26,8 @@
     2018-11-29: show size on download.
     2018-11-30: add a photo viewer.
     2018-12-1: enhance photo viewer, support sub folder setting.
-    2018-12-3: enhance file viewer, orientation</description>
+    2018-12-3: enhance file viewer, orientation
+    2018-12-4: remove joda-time by java8 api, sort result</description>
 
     <distributionManagement>
         <repository>
@@ -40,11 +41,6 @@
     </distributionManagement>
 
     <dependencies>
-        <dependency>
-            <groupId>joda-time</groupId>
-            <artifactId>joda-time</artifactId>
-            <version>2.10</version>
-        </dependency>
         <dependency>
             <groupId>net.sf.json-lib</groupId>
             <artifactId>json-lib</artifactId>

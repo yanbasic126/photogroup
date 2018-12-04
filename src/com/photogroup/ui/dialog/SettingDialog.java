@@ -141,7 +141,7 @@ public class SettingDialog extends JDialog {
             panel_2.add(lblNewLabel_3, gbc_lblNewLabel_3);
 
             comboBoxFormat = new JComboBox();
-            comboBoxFormat.setModel(new DefaultComboBoxModel(new String[] { "YYYY.M.d", "YYYY.MM.dd", "M.d", "MM.dd" })); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+            comboBoxFormat.setModel(new DefaultComboBoxModel(new String[] { "yyyy.M.d", "yyyy.MM.dd", "M.d", "MM.dd" })); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
             comboBoxFormat.setEditable(true);
             comboBoxFormat.setSelectedItem(SettingStore.getSettingStore().getFormat());
             GridBagConstraints gbc_comboBox = new GridBagConstraints();

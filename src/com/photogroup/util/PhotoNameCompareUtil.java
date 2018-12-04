@@ -9,6 +9,8 @@ public class PhotoNameCompareUtil {
 
     static final Pattern PATTERN_NUMBER = Pattern.compile("\\d+");
 
+    static final Pattern PATTERN_DATE = Pattern.compile("[\\d\\.]+");
+
     static Comparator<File> PHOTO_NAME_COMPARATOR;
 
     /**
@@ -57,6 +59,22 @@ public class PhotoNameCompareUtil {
         }
 
         return false;
+    }
+
+    /**
+     * Input: 2018.8.9中央工艺美术学院, output: 2018.8.9
+     * 
+     * @param str
+     * @return
+     */
+    public static String findDateString(String str) {
+
+        Matcher m1 = PATTERN_DATE.matcher(str);
+        if (m1.find()) {
+
+            return m1.group(0);
+        }
+        return str;
     }
 
 }

@@ -49,13 +49,13 @@ public class SettingStore {
             settingMap = new Properties();
             settingMap.load(new InputStreamReader(inputStream, "utf-8"));
 
-            threshold = Integer.parseInt(settingMap.getProperty("threshold"));
-            module = Integer.parseInt(settingMap.getProperty("module"));
-            format = settingMap.getProperty("format");
-            guess = Boolean.valueOf(settingMap.getProperty("guess"));
-            gps = Boolean.valueOf(settingMap.getProperty("gps"));
-            report = Boolean.valueOf(settingMap.getProperty("report"));
-            includeSubFolder = Boolean.valueOf(settingMap.getProperty("subfolder"));
+            threshold = Integer.parseInt(settingMap.getProperty("cmd.threshold"));
+            module = Integer.parseInt(settingMap.getProperty("cmd.module"));
+            format = settingMap.getProperty("cmd.format");
+            guess = Boolean.valueOf(settingMap.getProperty("cmd.guess"));
+            gps = Boolean.valueOf(settingMap.getProperty("cmd.gps"));
+            report = Boolean.valueOf(settingMap.getProperty("cmd.report"));
+            includeSubFolder = Boolean.valueOf(settingMap.getProperty("cmd.subfolder"));
             uiUseThumbnail = Boolean.valueOf(settingMap.getProperty("ui.use_thumbnail"));
         }
     }
