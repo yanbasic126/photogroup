@@ -73,6 +73,7 @@ import com.photogroup.ui.dialog.AboutAndUpdateDialog;
 import com.photogroup.ui.dialog.SettingDialog;
 import com.photogroup.ui.dialog.ViewerDialog;
 import com.photogroup.ui.layout.WrapLayout;
+import com.photogroup.ui.widget.FileListAccessory;
 import com.photogroup.ui.widget.JTextAreaLog;
 import com.photogroup.ui.widget.JTextFieldAddress;
 import com.photogroup.update.UpdateManager;
@@ -453,7 +454,7 @@ public class GroupBrowser {
         }
         chooser.setDialogTitle(Messages.getString("PhotoGroupWindow.6")); //$NON-NLS-1$
         chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        // chooser.setAccessory(new FileListAccessory(chooser));
+        chooser.setAccessory(new FileListAccessory(chooser));
         chooser.setAcceptAllFileFilterUsed(false);
         if (chooser.showOpenDialog(frameGroupBrowser) == JFileChooser.APPROVE_OPTION) {
             textFieldFolder.setText(chooser.getSelectedFile().getAbsolutePath());
