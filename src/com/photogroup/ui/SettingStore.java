@@ -1,9 +1,15 @@
 package com.photogroup.ui;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.util.Map.Entry;
 import java.util.Properties;
+import java.util.Set;
 
 public class SettingStore {
 
@@ -23,9 +29,17 @@ public class SettingStore {
 
     private boolean uiUseThumbnail;
 
+    private String baiduKey;
+
+    private String bingKey;
+
+    private String googleKey;
+
     private Properties settingMap = null;
 
     private static SettingStore store;
+
+    private File settingFile;
 
     private SettingStore() {
         try {
@@ -43,21 +57,55 @@ public class SettingStore {
     }
 
     private void initMap() throws IOException {
-
-        InputStream inputStream = getClass().getClassLoader().getResourceAsStream("default_settings.txt");
+        InputStream inputStream = null;
+        // install files
+        String userHome = System.getProperty("user.home");
+        File homeDir = new File(userHome + "/.lemonphoto");
+        homeDir.mkdir();
+        settingFile = new File(userHome + "/.lemonphoto/default_settings.txt");
+        if (!settingFile.exists()) {
+            // copy setting file
+            InputStream is = getClass().getClassLoader().getResourceAsStream("default_settings.txt");
+            OutputStream os = new FileOutputStream(settingFile);
+            byte[] buffer = new byte[1024];
+            int length;
+            while ((length = is.read(buffer)) > 0) {
+                os.write(buffer, 0, length);
+            }
+            os.close();
+            is.close();
+        }
+        inputStream = new FileInputStream(settingFile);
         if (inputStream != null) {
             settingMap = new Properties();
             settingMap.load(new InputStreamReader(inputStream, "utf-8"));
-
-            threshold = Integer.parseInt(settingMap.getProperty("cmd.threshold"));
-            module = Integer.parseInt(settingMap.getProperty("cmd.module"));
-            format = settingMap.getProperty("cmd.format");
-            guess = Boolean.valueOf(settingMap.getProperty("cmd.guess"));
-            gps = Boolean.valueOf(settingMap.getProperty("cmd.gps"));
-            report = Boolean.valueOf(settingMap.getProperty("cmd.report"));
-            includeSubFolder = Boolean.valueOf(settingMap.getProperty("cmd.subfolder"));
-            uiUseThumbnail = Boolean.valueOf(settingMap.getProperty("ui.use_thumbnail"));
         }
+        // update settingMap from package
+        InputStream newIs = getClass().getClassLoader().getResourceAsStream("default_settings.txt");
+        Properties newProperties = new Properties();
+        newProperties.load(newIs);
+        Set<Entry<Object, Object>> newset = newProperties.entrySet();
+        for (Entry<Object, Object> e : newset) {
+            String key = (String) e.getKey();
+            String value = (String) e.getValue();
+            if (!settingMap.containsKey(key)) {
+                settingMap.put(key, value);
+            }
+        }
+        newIs.close();
+        // getClass().getClassLoader().getResourceAsStream("default_settings.txt");
+
+        threshold = Integer.parseInt(settingMap.getProperty("cmd.threshold"));
+        module = Integer.parseInt(settingMap.getProperty("cmd.module"));
+        format = settingMap.getProperty("cmd.format");
+        guess = Boolean.valueOf(settingMap.getProperty("cmd.guess"));
+        gps = Boolean.valueOf(settingMap.getProperty("cmd.gps"));
+        report = Boolean.valueOf(settingMap.getProperty("cmd.report"));
+        includeSubFolder = Boolean.valueOf(settingMap.getProperty("cmd.subfolder"));
+        uiUseThumbnail = Boolean.valueOf(settingMap.getProperty("ui.use_thumbnail"));
+        baiduKey = settingMap.getProperty("password.baidu_api_key");
+        bingKey = settingMap.getProperty("password.bing_api_key");
+        googleKey = settingMap.getProperty("password.google_api_key");
     }
 
     public int getThreshold() {
@@ -66,6 +114,7 @@ public class SettingStore {
 
     public void setThreshold(int threshold) {
         this.threshold = threshold;
+        settingMap.setProperty("cmd.threshold", String.valueOf(threshold));
     }
 
     public int getModule() {
@@ -74,6 +123,7 @@ public class SettingStore {
 
     public void setModule(int module) {
         this.module = module;
+        settingMap.setProperty("cmd.module", String.valueOf(module));
     }
 
     public String getFormat() {
@@ -82,6 +132,7 @@ public class SettingStore {
 
     public void setFormat(String format) {
         this.format = format;
+        settingMap.setProperty("cmd.format", String.valueOf(format));
     }
 
     public boolean isGuess() {
@@ -90,6 +141,7 @@ public class SettingStore {
 
     public void setGuess(boolean guess) {
         this.guess = guess;
+        settingMap.setProperty("cmd.guess", String.valueOf(guess));
     }
 
     public boolean isGps() {
@@ -98,6 +150,7 @@ public class SettingStore {
 
     public void setGps(boolean gps) {
         this.gps = gps;
+        settingMap.setProperty("cmd.gps", String.valueOf(gps));
     }
 
     public boolean isReport() {
@@ -106,6 +159,7 @@ public class SettingStore {
 
     public void setReport(boolean report) {
         this.report = report;
+        settingMap.setProperty("cmd.report", String.valueOf(report));
     }
 
     public boolean isIncludeSubFolder() {
@@ -114,6 +168,7 @@ public class SettingStore {
 
     public void setIncludeSubFolder(boolean includeSubFolder) {
         this.includeSubFolder = includeSubFolder;
+        settingMap.setProperty("cmd.subfolder", String.valueOf(includeSubFolder));
     }
 
     public boolean isUseThumbnail() {
@@ -122,6 +177,41 @@ public class SettingStore {
 
     public void setUseThumbnail(boolean uiUseThumbnail) {
         this.uiUseThumbnail = uiUseThumbnail;
+        settingMap.setProperty("ui.use_thumbnail", String.valueOf(uiUseThumbnail));
+    }
+
+    public static void saveSettings() throws Exception {
+        if (store != null) {
+            FileOutputStream os = new FileOutputStream(store.settingFile);
+            store.settingMap.store(os, null);
+        }
+    }
+
+    public String getBaiduKey() {
+        return baiduKey;
+    }
+
+    public void setBaiduKey(String baiduKey) {
+        this.baiduKey = baiduKey;
+        settingMap.setProperty("password.baidu_api_key", String.valueOf(baiduKey));
+    }
+
+    public String getBingKey() {
+        return bingKey;
+    }
+
+    public void setBingKey(String bingKey) {
+        this.bingKey = bingKey;
+        settingMap.setProperty("password.bing_api_key", String.valueOf(bingKey));
+    }
+
+    public String getGoogleKey() {
+        return googleKey;
+    }
+
+    public void setGoogleKey(String googleKey) {
+        this.googleKey = googleKey;
+        settingMap.setProperty("password.google_api_key", String.valueOf(googleKey));
     }
 
 }

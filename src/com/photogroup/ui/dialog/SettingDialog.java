@@ -1,6 +1,7 @@
 package com.photogroup.ui.dialog;
 
 import java.awt.BorderLayout;
+import java.awt.Desktop;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -8,7 +9,10 @@ import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.IOException;
+import java.net.URI;
 import java.util.Enumeration;
 
 import javax.swing.AbstractButton;
@@ -20,13 +24,15 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JSpinner;
+import javax.swing.JTabbedPane;
+import javax.swing.JTextField;
 import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.border.EmptyBorder;
-import javax.swing.border.TitledBorder;
 
 import com.photogroup.ui.Messages;
 import com.photogroup.ui.SettingStore;
@@ -51,6 +57,12 @@ public class SettingDialog extends JDialog {
     private ImageIcon lemonIcon;
 
     private JCheckBox chckbxThumbnail;
+
+    private JTextField textFieldBaidu;
+
+    private JTextField textFieldBing;
+
+    private JTextField textFieldGoogle;
 
     // private JCheckBox chckbxReport;
 
@@ -81,7 +93,7 @@ public class SettingDialog extends JDialog {
         setIconImage(lemonIcon.getImage());
         setModal(true);
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-        setBounds(100, 100, 830, 400);
+        setBounds(100, 100, 900, 400);
         getContentPane().setLayout(new BorderLayout());
         contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
         getContentPane().add(contentPanel, BorderLayout.CENTER);
@@ -92,15 +104,119 @@ public class SettingDialog extends JDialog {
         gbl_contentPanel.rowWeights = new double[] { 1.0, Double.MIN_VALUE };
         contentPanel.setLayout(gbl_contentPanel);
         {
-            JPanel panel = new JPanel();
+
+            JTabbedPane tabUIPane = new JTabbedPane();
+            tabUIPane.setTabPlacement(JTabbedPane.LEFT);
+
+            JPanel groupingPanel = new JPanel();
             GridBagConstraints gbc_panel = new GridBagConstraints();
             gbc_panel.fill = GridBagConstraints.BOTH;
             gbc_panel.gridx = 0;
             gbc_panel.gridy = 0;
-            contentPanel.add(panel, gbc_panel);
+
+            tabUIPane.add("Grouping", groupingPanel);
+            GridBagConstraints gbc_tabUIPane = new GridBagConstraints();
+            gbc_tabUIPane.anchor = GridBagConstraints.NORTHWEST;
+            contentPanel.add(tabUIPane, gbc_tabUIPane);
+
+            JPanel keysPanel = new JPanel();
+            tabUIPane.add("Map API Keys", keysPanel);
+            GridBagLayout gbl_keysPanel = new GridBagLayout();
+            gbl_keysPanel.columnWidths = new int[] { 0, 526, 0, 0 };
+            gbl_keysPanel.rowHeights = new int[] { 0, 0, 0, 0, 0 };
+            gbl_keysPanel.columnWeights = new double[] { 0.0, 0.0, 1.0, Double.MIN_VALUE };
+            gbl_keysPanel.rowWeights = new double[] { 0.0, 0.0, 0.0, 1.0, Double.MIN_VALUE };
+            keysPanel.setLayout(gbl_keysPanel);
+
+            JLabel lblBaidu = new JLabel(Messages.getString("SettingDialog.lblBaidu.text_1")); //$NON-NLS-1$
+            GridBagConstraints gbc_lblBaidu = new GridBagConstraints();
+            gbc_lblBaidu.insets = new Insets(0, 0, 5, 5);
+            gbc_lblBaidu.gridx = 0;
+            gbc_lblBaidu.gridy = 0;
+            keysPanel.add(lblBaidu, gbc_lblBaidu);
+
+            textFieldBaidu = new JTextField();
+            textFieldBaidu.setText(SettingStore.getSettingStore().getBaiduKey());
+            GridBagConstraints gbc_textFieldBaidu = new GridBagConstraints();
+            gbc_textFieldBaidu.fill = GridBagConstraints.HORIZONTAL;
+            gbc_textFieldBaidu.insets = new Insets(0, 0, 5, 5);
+            gbc_textFieldBaidu.gridx = 1;
+            gbc_textFieldBaidu.gridy = 0;
+            keysPanel.add(textFieldBaidu, gbc_textFieldBaidu);
+            textFieldBaidu.setColumns(10);
+
+            JLabel lblForBaiduAdress = new JLabel(Messages.getString("SettingDialog.lblForChineseAdress.text")); //$NON-NLS-1$
+            GridBagConstraints gbc_lblForChineseAdress = new GridBagConstraints();
+            gbc_lblForChineseAdress.anchor = GridBagConstraints.WEST;
+            gbc_lblForChineseAdress.insets = new Insets(0, 0, 5, 0);
+            gbc_lblForChineseAdress.gridx = 2;
+            gbc_lblForChineseAdress.gridy = 0;
+            keysPanel.add(lblForBaiduAdress, gbc_lblForChineseAdress);
+            lblForBaiduAdress.addMouseListener(new MouseAdapter() {
+
+                public void mouseClicked(MouseEvent e) {
+                    openBrowser("https://jingyan.baidu.com/article/e73e26c0b5b75124adb6a786.html");
+                }
+            });
+
+            JLabel lblBing = new JLabel(Messages.getString("SettingDialog.lblBing.text")); //$NON-NLS-1$
+            GridBagConstraints gbc_lblBing = new GridBagConstraints();
+            gbc_lblBing.insets = new Insets(0, 0, 5, 5);
+            gbc_lblBing.gridx = 0;
+            gbc_lblBing.gridy = 1;
+            keysPanel.add(lblBing, gbc_lblBing);
+
+            textFieldBing = new JTextField();
+            textFieldBing.setText(SettingStore.getSettingStore().getBingKey());
+            GridBagConstraints gbc_textFieldBing = new GridBagConstraints();
+            gbc_textFieldBing.fill = GridBagConstraints.HORIZONTAL;
+            gbc_textFieldBing.insets = new Insets(0, 0, 5, 5);
+            gbc_textFieldBing.gridx = 1;
+            gbc_textFieldBing.gridy = 1;
+            keysPanel.add(textFieldBing, gbc_textFieldBing);
+            textFieldBing.setColumns(10);
+
+            JLabel lblBingAddress = new JLabel(Messages.getString("SettingDialog.lblEnglishAddress.text")); //$NON-NLS-1$
+            GridBagConstraints gbc_lblEnglishAddress = new GridBagConstraints();
+            gbc_lblEnglishAddress.anchor = GridBagConstraints.WEST;
+            gbc_lblEnglishAddress.insets = new Insets(0, 0, 5, 0);
+            gbc_lblEnglishAddress.gridx = 2;
+            gbc_lblEnglishAddress.gridy = 1;
+            keysPanel.add(lblBingAddress, gbc_lblEnglishAddress);
+            lblBingAddress.addMouseListener(new MouseAdapter() {
+
+                public void mouseClicked(MouseEvent e) {
+                    openBrowser("https://msdn.microsoft.com/en-us/library/ff428642.aspx");
+                }
+            });
+
+            JLabel lblGoogle = new JLabel(Messages.getString("SettingDialog.lblGoogle.text")); //$NON-NLS-1$
+            GridBagConstraints gbc_lblGoogle = new GridBagConstraints();
+            gbc_lblGoogle.insets = new Insets(0, 0, 5, 5);
+            gbc_lblGoogle.gridx = 0;
+            gbc_lblGoogle.gridy = 2;
+            keysPanel.add(lblGoogle, gbc_lblGoogle);
+
+            textFieldGoogle = new JTextField();
+            textFieldGoogle.setText(SettingStore.getSettingStore().getGoogleKey());
+            GridBagConstraints gbc_textFieldGoogle = new GridBagConstraints();
+            gbc_textFieldGoogle.fill = GridBagConstraints.HORIZONTAL;
+            gbc_textFieldGoogle.insets = new Insets(0, 0, 5, 5);
+            gbc_textFieldGoogle.gridx = 1;
+            gbc_textFieldGoogle.gridy = 2;
+            keysPanel.add(textFieldGoogle, gbc_textFieldGoogle);
+            textFieldGoogle.setColumns(10);
+
+            JLabel lblNewLabel = new JLabel(Messages.getString("SettingDialog.lblNewLabel.text")); //$NON-NLS-1$
+            GridBagConstraints gbc_lblNewLabel = new GridBagConstraints();
+            gbc_lblNewLabel.anchor = GridBagConstraints.WEST;
+            gbc_lblNewLabel.insets = new Insets(0, 0, 5, 0);
+            gbc_lblNewLabel.gridx = 2;
+            gbc_lblNewLabel.gridy = 2;
+            keysPanel.add(lblNewLabel, gbc_lblNewLabel);
 
             JPanel panel_2 = new JPanel();
-            panel_2.setBorder(new TitledBorder(Messages.getString("PhotoGroupWindow.7"))); //$NON-NLS-1$
+            // panel_2.setBorder(new TitledBorder(Messages.getString("PhotoGroupWindow.7"))); //$NON-NLS-1$
             GridBagLayout gbl_panel_2 = new GridBagLayout();
             gbl_panel_2.columnWidths = new int[] { 0, 0, 0, 5 };
             gbl_panel_2.rowHeights = new int[] { 30, 30, 30, 30, 30, 30, 30, 30, 30 };
@@ -291,15 +407,15 @@ public class SettingDialog extends JDialog {
             gbc_panel_2.insets = new Insets(0, 0, 5, 0);
             gbc_panel_2.gridx = 0;
             gbc_panel_2.gridy = 2;
-            panel.add(panel_2, gbc_panel_2);
+            groupingPanel.add(panel_2, gbc_panel_2);
 
             JLabel lblIsSubLabel = new JLabel(Messages.getString("SettingDialog.lblIsSubLabel.text")); //$NON-NLS-1$
-            GridBagConstraints gbc_lblNewLabel = new GridBagConstraints();
-            gbc_lblNewLabel.anchor = GridBagConstraints.SOUTH;
-            gbc_lblNewLabel.insets = new Insets(0, 0, 5, 5);
-            gbc_lblNewLabel.gridx = 0;
-            gbc_lblNewLabel.gridy = 6;
-            panel_2.add(lblIsSubLabel, gbc_lblNewLabel);
+            GridBagConstraints gbc_lblGoo = new GridBagConstraints();
+            gbc_lblGoo.anchor = GridBagConstraints.SOUTH;
+            gbc_lblGoo.insets = new Insets(0, 0, 5, 5);
+            gbc_lblGoo.gridx = 0;
+            gbc_lblGoo.gridy = 6;
+            panel_2.add(lblIsSubLabel, gbc_lblGoo);
 
             chckbxSubfolder = new JCheckBox(""); //$NON-NLS-1$
             chckbxSubfolder.setSelected(SettingStore.getSettingStore().isIncludeSubFolder());
@@ -370,6 +486,14 @@ public class SettingDialog extends JDialog {
                         // SettingStore.getSettingStore().setReport(chckbxReport.isSelected());
                         SettingStore.getSettingStore().setIncludeSubFolder(chckbxSubfolder.isSelected());
                         SettingStore.getSettingStore().setUseThumbnail(chckbxThumbnail.isSelected());
+                        SettingStore.getSettingStore().setBaiduKey(textFieldBaidu.getText());
+                        SettingStore.getSettingStore().setBingKey(textFieldBing.getText());
+                        SettingStore.getSettingStore().setGoogleKey(textFieldGoogle.getText());
+                        try {
+                            SettingStore.saveSettings();
+                        } catch (Exception e1) {
+                            e1.printStackTrace();
+                        }
                         dispose();
                     }
                 });
@@ -388,6 +512,18 @@ public class SettingDialog extends JDialog {
                 cancelButton.setActionCommand("Cancel");
                 buttonPane.add(cancelButton);
             }
+        }
+    }
+
+    private void openBrowser(String url) {
+        try {
+            int dialog = JOptionPane.showConfirmDialog(contentPanel, "Do you want to open web page " + url, "Warning",
+                    JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+            if (dialog == 0) {
+                Desktop.getDesktop().browse(new URI(url));
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
     }
 

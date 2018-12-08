@@ -6,5 +6,6 @@ cmd.gps:true
 cmd.report:false
 cmd.subfolder:false
 ui.use_thumbnail:true
-password.baidu_api_key:1607e140964c4974ddfd87286ae9d6b7
-password.bing_api_key:As7u1lYGlv0-xxLPr2ZrAFlBPwCinH7O3F2EsebbIv6wRwD0ru8K7zvu3vg4kKwP
+password.baidu_api_key:
+password.bing_api_key:
+password.google_api_key:

@@ -17,13 +17,14 @@ import org.json.simple.JSONValue;
 import com.drew.imaging.ImageProcessingException;
 import com.photogroup.exception.ExceptionHandler;
 import com.photogroup.groupby.metadata.MetadataReader;
+import com.photogroup.ui.SettingStore;
 
 /**
  * Help http://lbsyun.baidu.com/index.php?title=webapi, https://www.bingmapsportal.com
  */
 public class PostionHelper {
 
-    private static final String BAIDU_API_KEY = "1607e140964c4974ddfd87286ae9d6b7";
+    private static String BAIDU_API_KEY = "";
 
     private static final String BAIDU_ADDRESS_URL = "http://api.map.baidu.com/geocoder/v2/?callback=renderReverse&location=";
 
@@ -31,16 +32,20 @@ public class PostionHelper {
 
     private static final String BAIDU_COORD_URL = "http://api.map.baidu.com/ag/coord/convert?from=0&to=4&x=";
 
-    private static final String BING_API_KEY = "As7u1lYGlv0-xxLPr2ZrAFlBPwCinH7O3F2EsebbIv6wRwD0ru8K7zvu3vg4kKwP";
+    private static String BING_API_KEY = "";
 
     private static final String BING_ADDRESS_URL = "http://dev.virtualearth.net/REST/v1/Locations/";
 
     private static final String BING_ADDRESS_PARAM = "?o=json&key=";
 
+    private static String GOOGLE_API_KEY = "";
+
     private static String getBaiduAddress(double lat, double lon) {
         String res;
         String address = null;
         String location = lat + "," + lon;
+        BAIDU_API_KEY = SettingStore.getSettingStore().getBaiduKey();
+
         try {
             URL resjson = new URL(BAIDU_ADDRESS_URL + location + BAIDU_ADDRESS_PARAM + BAIDU_API_KEY);
 
@@ -95,7 +100,12 @@ public class PostionHelper {
     }
 
     private static String getBingAddress(double lat, double lon) {
+        BING_API_KEY = SettingStore.getSettingStore().getBingKey();
+        return null;
+    }
 
+    private static String getGoogleAddress(double lat, double lon) {
+        GOOGLE_API_KEY = SettingStore.getSettingStore().getGoogleKey();
         return null;
     }
 
@@ -163,6 +173,7 @@ public class PostionHelper {
     }
 
     public static String queryPostion(File photo) throws ImageProcessingException, IOException {
+
         Double[] gps = MetadataReader.gps(photo);
         if (gps != null && gps.length == 2) {
 
