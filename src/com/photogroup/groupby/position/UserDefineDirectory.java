@@ -1,13 +1,18 @@
 package com.photogroup.groupby.position;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Properties;
 
+import com.photogroup.util.FileUtil;
+
 enum UserDefineDirectory {
 
                           INSTANCE;
+
+    private static final String CUSTOM_NAME_MAPPING = "custom_name_mapping.ini";
 
     private Properties directoryMap = null;
 
@@ -20,9 +25,9 @@ enum UserDefineDirectory {
     }
 
     private void initMap() throws IOException {
-
-        // File directory = new File("custom_name_mapping.txt");
-        InputStream inputStream = getClass().getClassLoader().getResourceAsStream("custom_name_mapping.txt");
+        InputStream inputStream = new FileInputStream(FileUtil.createSettingFileIfNotExist(CUSTOM_NAME_MAPPING));
+        // File directory = new File("custom_name_mapping.ini");
+        // InputStream inputStream = getClass().getClassLoader().getResourceAsStream(CUSTOM_NAME_MAPPING);
         if (inputStream != null) {
             // if (directory.exists() && directory.canRead()) {
             directoryMap = new Properties();

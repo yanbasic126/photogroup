@@ -45,56 +45,58 @@ public class PostionHelper {
         String address = null;
         String location = lat + "," + lon;
         BAIDU_API_KEY = SettingStore.getSettingStore().getBaiduKey();
+        if (!BAIDU_API_KEY.isEmpty()) {
 
-        try {
-            URL resjson = new URL(BAIDU_ADDRESS_URL + location + BAIDU_ADDRESS_PARAM + BAIDU_API_KEY);
+            try {
+                URL resjson = new URL(BAIDU_ADDRESS_URL + location + BAIDU_ADDRESS_PARAM + BAIDU_API_KEY);
 
-            BufferedReader in = new BufferedReader(new InputStreamReader(resjson.openStream(), "utf-8"));
-            StringBuilder sb = new StringBuilder("");
-            while ((res = in.readLine()) != null) {
-                sb.append(res.trim());
-            }
-            in.close();
-            String str = sb.toString();
-            String subStr = str.substring(str.indexOf('(') + 1, str.indexOf("})") + 1);
-            // System.out.println(subStr);
-            JSONObject jsonObj = (JSONObject) JSONValue.parse(subStr);
-            JSONObject resultObj = (JSONObject) jsonObj.get("result");
-            JSONArray poiRegions = (JSONArray) resultObj.get("poiRegions");
-            if (poiRegions.size() > 0) {
-                JSONObject region = (JSONObject) poiRegions.get(0);
-                address = String.valueOf(region.get("name"));
-            }
-            if (address == null) {
-                JSONArray positions = (JSONArray) resultObj.get("pois");
-                if (positions.size() > 0) {
-                    JSONObject posi = (JSONObject) positions.get(0);
-                    address = String.valueOf(posi.get("name"));
+                BufferedReader in = new BufferedReader(new InputStreamReader(resjson.openStream(), "utf-8"));
+                StringBuilder sb = new StringBuilder("");
+                while ((res = in.readLine()) != null) {
+                    sb.append(res.trim());
                 }
-            }
-            if (address == null) {
-                address = String.valueOf(resultObj.get("formatted_address"));
-            }
+                in.close();
+                String str = sb.toString();
+                String subStr = str.substring(str.indexOf('(') + 1, str.indexOf("})") + 1);
+                // System.out.println(subStr);
+                JSONObject jsonObj = (JSONObject) JSONValue.parse(subStr);
+                JSONObject resultObj = (JSONObject) jsonObj.get("result");
+                JSONArray poiRegions = (JSONArray) resultObj.get("poiRegions");
+                if (poiRegions.size() > 0) {
+                    JSONObject region = (JSONObject) poiRegions.get(0);
+                    address = String.valueOf(region.get("name"));
+                }
+                if (address == null) {
+                    JSONArray positions = (JSONArray) resultObj.get("pois");
+                    if (positions.size() > 0) {
+                        JSONObject posi = (JSONObject) positions.get(0);
+                        address = String.valueOf(posi.get("name"));
+                    }
+                }
+                if (address == null) {
+                    address = String.valueOf(resultObj.get("formatted_address"));
+                }
 
-            // JSONObject jsonObj = JSONObject.fromObject(subStr);
-            // JSONArray poiRegions = (JSONArray) jsonObj.getJSONObject("result").getJSONArray("poiRegions");
-            // if (poiRegions.size() > 0) {
-            // JSONObject region = (JSONObject) poiRegions.get(0);
-            // address = region.getString("name");
-            // }
-            // if (address == null) {
-            // JSONArray positions = (JSONArray) jsonObj.getJSONObject("result").getJSONArray("pois");
-            // if (positions.size() > 0) {
-            // JSONObject posi = (JSONObject) positions.get(0);
-            // address = posi.getString("name");
-            // }
-            // }
-            // if (address == null) {
-            // address = (String) jsonObj.getJSONObject("result").get("formatted_address");
-            // }
-        } catch (Exception e) {
-            e.printStackTrace();
-            ExceptionHandler.logError(e.getMessage());
+                // JSONObject jsonObj = JSONObject.fromObject(subStr);
+                // JSONArray poiRegions = (JSONArray) jsonObj.getJSONObject("result").getJSONArray("poiRegions");
+                // if (poiRegions.size() > 0) {
+                // JSONObject region = (JSONObject) poiRegions.get(0);
+                // address = region.getString("name");
+                // }
+                // if (address == null) {
+                // JSONArray positions = (JSONArray) jsonObj.getJSONObject("result").getJSONArray("pois");
+                // if (positions.size() > 0) {
+                // JSONObject posi = (JSONObject) positions.get(0);
+                // address = posi.getString("name");
+                // }
+                // }
+                // if (address == null) {
+                // address = (String) jsonObj.getJSONObject("result").get("formatted_address");
+                // }
+            } catch (Exception e) {
+                e.printStackTrace();
+                ExceptionHandler.logError(e.getMessage());
+            }
         }
         return address;
     }

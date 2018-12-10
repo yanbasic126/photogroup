@@ -128,7 +128,10 @@ public class PhotoGroup implements Runnable {
                 try {
                     exifDateTime.put(child, MetadataReader.dateTaken(child));
                     if (gps) {
-                        exifAddress.put(child, PostionHelper.queryPostion(child));
+                        String postion = PostionHelper.queryPostion(child);
+                        if (postion != null) {
+                            exifAddress.put(child, PostionHelper.queryPostion(child));
+                        }
                     }
                 } catch (ImageProcessingException | IOException e) {
                     exifDateTime.put(child, null);

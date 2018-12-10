@@ -24,6 +24,11 @@ import com.photogroup.util.FileUtil;
 
 public class AboutAndUpdateDialog extends JDialog {
 
+    /**
+     * 
+     */
+    private static final Color LEMON_COLOR = new Color(243, 205, 63);
+
     private final JPanel contentPanel = new JPanel();
 
     private UpdateManager updateManager;
@@ -141,7 +146,7 @@ public class AboutAndUpdateDialog extends JDialog {
                 panelInfo.setLayout(gbl_panelInfo);
                 {
                     JLabel lblLemonPhoto = new JLabel("Lemon Photo");
-                    lblLemonPhoto.setForeground(new Color(243, 205, 63));
+                    lblLemonPhoto.setForeground(LEMON_COLOR);
                     lblLemonPhoto.setFont(new Font("Tahoma", Font.BOLD, 32));
                     GridBagConstraints gbc_lblLemonPhoto = new GridBagConstraints();
                     gbc_lblLemonPhoto.insets = new Insets(0, 0, 5, 0);
@@ -158,10 +163,10 @@ public class AboutAndUpdateDialog extends JDialog {
                     gbc_panelDownload.gridy = 2;
                     panelInfo.add(panelDownload, gbc_panelDownload);
                     GridBagLayout gbl_panelDownload = new GridBagLayout();
-                    gbl_panelDownload.columnWidths = new int[]{79, 127, 12, 0};
-                    gbl_panelDownload.rowHeights = new int[]{25, 0};
-                    gbl_panelDownload.columnWeights = new double[]{0.0, 0.0, 1.0, Double.MIN_VALUE};
-                    gbl_panelDownload.rowWeights = new double[]{0.0, Double.MIN_VALUE};
+                    gbl_panelDownload.columnWidths = new int[] { 79, 127, 12, 0 };
+                    gbl_panelDownload.rowHeights = new int[] { 25, 0 };
+                    gbl_panelDownload.columnWeights = new double[] { 0.0, 0.0, 1.0, Double.MIN_VALUE };
+                    gbl_panelDownload.rowWeights = new double[] { 0.0, Double.MIN_VALUE };
                     panelDownload.setLayout(gbl_panelDownload);
                     {
                         {
@@ -186,8 +191,8 @@ public class AboutAndUpdateDialog extends JDialog {
                             public void actionPerformed(ActionEvent e) {
                                 JFileChooser chooser = new JFileChooser();
                                 // chooser.setCurrentDirectory(new File(System.getProperty("user.dir")));
-                                chooser.setSelectedFile(new File(
-                                        System.getProperty("user.dir") + "/lemonphoto-" + updateManager.getLatestVersion() + ".jar"));
+                                chooser.setSelectedFile(new File(System.getProperty("user.dir") + "/lemonphoto-"
+                                        + updateManager.getLatestVersion() + ".jar"));
                                 chooser.setDialogTitle("Download"); //$NON-NLS-1$
                                 chooser.setDialogType(JFileChooser.SAVE_DIALOG);
                                 chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);

@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.nio.channels.Channels;
@@ -19,6 +20,8 @@ import com.photogroup.exception.ExceptionHandler;
 import com.photogroup.ui.SettingStore;
 
 public class FileUtil {
+
+    public static final String LEMONPHOTO_PATH = "/.lemonphoto";
 
     public static void movePhotos(String photosPath, Map<String, List<File>> group) {
         int threshold = SettingStore.getSettingStore().getThreshold();
@@ -80,5 +83,25 @@ public class FileUtil {
             value = new BigDecimal(value / 1024).setScale(2, BigDecimal.ROUND_DOWN).doubleValue();
             return String.valueOf(value) + "GB";
         }
+    }
+
+    public static File createSettingFileIfNotExist(String fileName) throws IOException {
+        String userHome = System.getProperty("user.home");
+        File homeDir = new File(userHome + LEMONPHOTO_PATH);
+        homeDir.mkdir();
+        File settingFile = new File(userHome + LEMONPHOTO_PATH + "/" + fileName);
+        if (!settingFile.exists()) {
+            // copy setting file
+            InputStream is = FileUtil.class.getClassLoader().getResourceAsStream(fileName);
+            OutputStream os = new FileOutputStream(settingFile);
+            byte[] buffer = new byte[1024];
+            int length;
+            while ((length = is.read(buffer)) > 0) {
+                os.write(buffer, 0, length);
+            }
+            os.close();
+            is.close();
+        }
+        return settingFile;
     }
 }

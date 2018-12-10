@@ -6,12 +6,17 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
 
+import com.photogroup.util.FileUtil;
+
 public class SettingStore {
+
+    private static final String LEMONPHOTO_PATH = "/.lemonphoto";
+
+    private static final String DEFAULT_SETTINGS_FILE = "default_settings.ini";
 
     private int threshold;
 
@@ -57,31 +62,14 @@ public class SettingStore {
     }
 
     private void initMap() throws IOException {
-        InputStream inputStream = null;
-        // install files
-        String userHome = System.getProperty("user.home");
-        File homeDir = new File(userHome + "/.lemonphoto");
-        homeDir.mkdir();
-        settingFile = new File(userHome + "/.lemonphoto/default_settings.txt");
-        if (!settingFile.exists()) {
-            // copy setting file
-            InputStream is = getClass().getClassLoader().getResourceAsStream("default_settings.txt");
-            OutputStream os = new FileOutputStream(settingFile);
-            byte[] buffer = new byte[1024];
-            int length;
-            while ((length = is.read(buffer)) > 0) {
-                os.write(buffer, 0, length);
-            }
-            os.close();
-            is.close();
-        }
-        inputStream = new FileInputStream(settingFile);
+        settingFile = FileUtil.createSettingFileIfNotExist(DEFAULT_SETTINGS_FILE);
+        InputStream inputStream = new FileInputStream(settingFile);
         if (inputStream != null) {
             settingMap = new Properties();
             settingMap.load(new InputStreamReader(inputStream, "utf-8"));
         }
         // update settingMap from package
-        InputStream newIs = getClass().getClassLoader().getResourceAsStream("default_settings.txt");
+        InputStream newIs = getClass().getClassLoader().getResourceAsStream(DEFAULT_SETTINGS_FILE);
         Properties newProperties = new Properties();
         newProperties.load(newIs);
         Set<Entry<Object, Object>> newset = newProperties.entrySet();
@@ -93,7 +81,7 @@ public class SettingStore {
             }
         }
         newIs.close();
-        // getClass().getClassLoader().getResourceAsStream("default_settings.txt");
+        // getClass().getClassLoader().getResourceAsStream("default_settings.ini");
 
         threshold = Integer.parseInt(settingMap.getProperty("cmd.threshold"));
         module = Integer.parseInt(settingMap.getProperty("cmd.module"));

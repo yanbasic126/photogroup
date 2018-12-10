@@ -86,7 +86,7 @@ public class SettingDialog extends JDialog {
 
         setTitle(Messages.getString("SettingDialog.this.title")); //$NON-NLS-1$
         try {
-            lemonIcon = ImageUtil.getImageFromSystemResource("icon/lemon_32.png");
+            lemonIcon = ImageUtil.getImageFromSystemResource(Messages.getString("SettingDialog.0")); //$NON-NLS-1$
         } catch (IOException e1) {
             e1.printStackTrace();
         }
@@ -114,13 +114,13 @@ public class SettingDialog extends JDialog {
             gbc_panel.gridx = 0;
             gbc_panel.gridy = 0;
 
-            tabUIPane.add("Grouping", groupingPanel);
+            tabUIPane.add(Messages.getString("SettingDialog.group_tab"), groupingPanel); //$NON-NLS-1$
             GridBagConstraints gbc_tabUIPane = new GridBagConstraints();
             gbc_tabUIPane.anchor = GridBagConstraints.NORTHWEST;
             contentPanel.add(tabUIPane, gbc_tabUIPane);
 
             JPanel keysPanel = new JPanel();
-            tabUIPane.add("Map API Keys", keysPanel);
+            tabUIPane.add(Messages.getString("SettingDialog.key_tab"), keysPanel); //$NON-NLS-1$
             GridBagLayout gbl_keysPanel = new GridBagLayout();
             gbl_keysPanel.columnWidths = new int[] { 0, 526, 0, 0 };
             gbl_keysPanel.rowHeights = new int[] { 0, 0, 0, 0, 0 };
@@ -155,7 +155,7 @@ public class SettingDialog extends JDialog {
             lblForBaiduAdress.addMouseListener(new MouseAdapter() {
 
                 public void mouseClicked(MouseEvent e) {
-                    openBrowser("https://jingyan.baidu.com/article/e73e26c0b5b75124adb6a786.html");
+                    openBrowser("https://jingyan.baidu.com/article/e73e26c0b5b75124adb6a786.html"); //$NON-NLS-1$
                 }
             });
 
@@ -186,7 +186,7 @@ public class SettingDialog extends JDialog {
             lblBingAddress.addMouseListener(new MouseAdapter() {
 
                 public void mouseClicked(MouseEvent e) {
-                    openBrowser("https://msdn.microsoft.com/en-us/library/ff428642.aspx");
+                    openBrowser("https://msdn.microsoft.com/en-us/library/ff428642.aspx"); //$NON-NLS-1$
                 }
             });
 
@@ -465,7 +465,7 @@ public class SettingDialog extends JDialog {
             buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
             getContentPane().add(buttonPane, BorderLayout.SOUTH);
             {
-                JButton okButton = new JButton("OK");
+                JButton okButton = new JButton(Messages.getString("SettingDialog.btn_ok")); //$NON-NLS-1$
                 okButton.addActionListener(new ActionListener() {
 
                     public void actionPerformed(ActionEvent e) {
@@ -497,19 +497,19 @@ public class SettingDialog extends JDialog {
                         dispose();
                     }
                 });
-                okButton.setActionCommand("OK");
+                okButton.setActionCommand(Messages.getString("SettingDialog.btn_ok")); //$NON-NLS-1$
                 buttonPane.add(okButton);
                 getRootPane().setDefaultButton(okButton);
             }
             {
-                JButton cancelButton = new JButton("Cancel");
+                JButton cancelButton = new JButton(Messages.getString("SettingDialog.btn_cancel")); //$NON-NLS-1$
                 cancelButton.addActionListener(new ActionListener() {
 
                     public void actionPerformed(ActionEvent e) {
                         dispose();
                     }
                 });
-                cancelButton.setActionCommand("Cancel");
+                cancelButton.setActionCommand(Messages.getString("SettingDialog.btn_cancel")); //$NON-NLS-1$
                 buttonPane.add(cancelButton);
             }
         }
@@ -517,7 +517,7 @@ public class SettingDialog extends JDialog {
 
     private void openBrowser(String url) {
         try {
-            int dialog = JOptionPane.showConfirmDialog(contentPanel, "Do you want to open web page " + url, "Warning",
+            int dialog = JOptionPane.showConfirmDialog(contentPanel, Messages.getString("SettingDialog.dlg_open_web") + url, Messages.getString("SettingDialog.dlg_warn"), //$NON-NLS-1$ //$NON-NLS-2$
                     JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
             if (dialog == 0) {
                 Desktop.getDesktop().browse(new URI(url));

@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.lemonphoto</groupId>
     <artifactId>lemonphoto</artifactId>
-    <version>4.6.0</version>
+    <version>4.7.0</version>
     <name>Lemon Photo</name>
     <description>move photos by taken date
     2018-8-23: add sort photo before add gps address.
@@ -30,7 +30,8 @@
     2018-12-4: remove joda-time by java8 api, sort result.
     2018-12-4: remove json-lib by json-simple,reduce build size to less than 1MB.
     2018-12-6: add FileListAccessory.
-    2018-12-9: remove api key.</description>
+    2018-12-9: remove api key.
+    2018-12-10: implement rename on saving.</description>
 
     <distributionManagement>
         <repository>
@@ -74,8 +75,8 @@
                 <directory>src</directory>
                 <includes>
                     <include>**/*.properties</include>
-                    <include>custom_name_mapping.txt</include>
-                    <include>default_settings.txt</include>
+                    <include>custom_name_mapping.ini</include>
+                    <include>default_settings.ini</include>
                     <include>dark_synth_theme.xml</include>
                     <include>version.txt</include>
                     <include>icon/**</include>
