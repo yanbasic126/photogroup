@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
@@ -66,7 +67,7 @@ public class SettingStore {
         InputStream inputStream = new FileInputStream(settingFile);
         if (inputStream != null) {
             settingMap = new Properties();
-            settingMap.load(new InputStreamReader(inputStream, "utf-8"));
+            settingMap.load(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
         }
         // update settingMap from package
         InputStream newIs = getClass().getClassLoader().getResourceAsStream(DEFAULT_SETTINGS_FILE);

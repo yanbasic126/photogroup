@@ -4,6 +4,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 
 import com.photogroup.util.FileUtil;
@@ -33,7 +34,7 @@ enum UserDefineDirectory {
             directoryMap = new Properties();
             // FileInputStream is = new FileInputStream(directory);
             // BufferedInputStream in = new BufferedInputStream(is);
-            directoryMap.load(new InputStreamReader(inputStream, "utf-8"));
+            directoryMap.load(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
             // }
         }
     }

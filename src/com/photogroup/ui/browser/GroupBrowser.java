@@ -68,6 +68,7 @@ import com.drew.imaging.ImageProcessingException;
 import com.photogroup.exception.ExceptionHandler;
 import com.photogroup.groupby.PhotoGroup;
 import com.photogroup.groupby.metadata.MetadataReader;
+import com.photogroup.setting.HistoryDirectory;
 import com.photogroup.ui.Messages;
 import com.photogroup.ui.SettingStore;
 import com.photogroup.ui.dialog.AboutAndUpdateDialog;
@@ -83,6 +84,8 @@ import com.photogroup.util.ImageUtil;
 import com.photogroup.util.PhotoNameCompareUtil;
 
 public class GroupBrowser {
+
+    private static final int MENU_DIR_LEN = 30;
 
     private static final int PHOTO_GAP = 1;
 
@@ -154,6 +157,8 @@ public class GroupBrowser {
     private List<JButton> btnExpandList = new ArrayList<JButton>();
 
     private Map<JTextField, String> textFieldTitleMap = new HashMap<JTextField, String>();
+
+    private JMenuBar menuBar;
 
     /**
      * Launch the application.
@@ -449,6 +454,7 @@ public class GroupBrowser {
     }
 
     private void browseFolder() {
+        UIManager.put("FileChooser.readOnly", Boolean.TRUE);
         JFileChooser chooser = new JFileChooser();
         if (!textFieldFolder.getText().isEmpty()) {
             File choicedDir = new File(textFieldFolder.getText());
@@ -559,7 +565,7 @@ public class GroupBrowser {
 
     private void createFrame() {
         frameGroupBrowser = new JFrame();
-        frameGroupBrowser.setBounds(100, 100, (PREVIEW_SIZE + PHOTO_GAP * 2) * 5 + 40, 700);
+        frameGroupBrowser.setBounds(100, 100, (PREVIEW_SIZE + PHOTO_GAP * 2) * 5 + 50, 700);
         frameGroupBrowser.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frameGroupBrowser.setTitle(Messages.getString("GroupBrowser.title")); //$NON-NLS-1$
         frameGroupBrowser.setIconImage(lemonIcon.getImage());
@@ -573,30 +579,10 @@ public class GroupBrowser {
     }
 
     private void createMenu() {
-        JMenuBar menuBar = new JMenuBar();
+        menuBar = new JMenuBar();
         frameGroupBrowser.setJMenuBar(menuBar);
 
-        JMenu mnFileMenu = new JMenu(Messages.getString("GroupBrowser.fie")); //$NON-NLS-1$
-        menuBar.add(mnFileMenu);
-        mnFileMenu.setMnemonic(KeyEvent.VK_F);
-        JMenuItem mntmOpenItem = new JMenuItem(Messages.getString("GroupBrowser.open_folder")); //$NON-NLS-1$
-        JMenuItem mntmExitItem = new JMenuItem(Messages.getString("GroupBrowser.exit")); //$NON-NLS-1$
-        mnFileMenu.add(mntmOpenItem);
-        mnFileMenu.add(mntmExitItem);
-        mntmExitItem.setMnemonic(KeyEvent.VK_X);
-        mntmOpenItem.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                browseFolder();
-            }
-        });
-        mntmExitItem.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                frameGroupBrowser.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-                frameGroupBrowser.dispose();
-            }
-        });
+        createMenuFile();
 
         JMenu mnWindowMenu = new JMenu(Messages.getString("GroupBrowser.menu_window")); //$NON-NLS-1$
         menuBar.add(mnWindowMenu);
@@ -665,6 +651,63 @@ public class GroupBrowser {
 
             public void actionPerformed(ActionEvent e) {
                 showAboutDialog();
+            }
+        });
+    }
+
+    private void createMenuFile() {
+        JMenu mnFileMenu = new JMenu(Messages.getString("GroupBrowser.fie")); //$NON-NLS-1$
+        menuBar.add(mnFileMenu, 0);
+        mnFileMenu.setMnemonic(KeyEvent.VK_F);
+        JMenuItem mntmOpenItem = new JMenuItem(Messages.getString("GroupBrowser.open_folder")); //$NON-NLS-1$
+        mnFileMenu.add(mntmOpenItem);
+
+        mntmOpenItem.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                browseFolder();
+            }
+        });
+
+        Set<String> directories = HistoryDirectory.INSTANCE.listDirectory();
+        if (directories.size() > 0) {
+            mnFileMenu.addSeparator();
+        }
+        for (String dir : directories) {
+            String shortDir = dir.length() < MENU_DIR_LEN ? dir
+                    : dir.substring(0, MENU_DIR_LEN / 2) + "..." + dir.substring(dir.length() - MENU_DIR_LEN / 2, dir.length());
+            JMenuItem mntmDirItem = new JMenuItem(shortDir);
+            mntmDirItem.setToolTipText(dir);
+            mnFileMenu.add(mntmDirItem);
+            mntmDirItem.addActionListener(new ActionListener() {
+
+                public void actionPerformed(ActionEvent e) {
+                    textFieldFolder.setText(dir);
+                }
+            });
+        }
+        if (directories.size() > 0) {
+            mnFileMenu.addSeparator();
+            JMenuItem mntmClearHistoryItem = new JMenuItem("Clear History");
+            mnFileMenu.add(mntmClearHistoryItem);
+            mntmClearHistoryItem.addActionListener(new ActionListener() {
+
+                public void actionPerformed(ActionEvent e) {
+                    HistoryDirectory.INSTANCE.clearHistory();
+                    refreshMenuFile();
+                }
+            });
+            mnFileMenu.addSeparator();
+        }
+
+        JMenuItem mntmExitItem = new JMenuItem(Messages.getString("GroupBrowser.exit")); //$NON-NLS-1$
+        mnFileMenu.add(mntmExitItem);
+        mntmExitItem.setMnemonic(KeyEvent.VK_X);
+        mntmExitItem.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                frameGroupBrowser.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                frameGroupBrowser.dispose();
             }
         });
     }
@@ -939,11 +982,18 @@ public class GroupBrowser {
         String errMsg = validateBeforeRun();
         if (errMsg == null) {
             doProfile();
+            HistoryDirectory.INSTANCE.addDirectory(textFieldFolder.getText());
+            refreshMenuFile();
         } else {
             // popup error
             JOptionPane.showMessageDialog(frameGroupBrowser, errMsg, Messages.getString("GroupBrowser.profile"), //$NON-NLS-1$
                     JOptionPane.ERROR_MESSAGE);
         }
+    }
+
+    private void refreshMenuFile() {
+        menuBar.remove(0);
+        createMenuFile();
     }
 
     private void doProfile() {

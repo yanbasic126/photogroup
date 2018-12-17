@@ -1,7 +1,6 @@
 package com.photogroup.ui.dialog;
 
 import java.awt.BorderLayout;
-import java.awt.Desktop;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -9,10 +8,7 @@ import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.io.IOException;
-import java.net.URI;
 import java.util.Enumeration;
 
 import javax.swing.AbstractButton;
@@ -24,7 +20,6 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JSpinner;
@@ -36,6 +31,7 @@ import javax.swing.border.EmptyBorder;
 
 import com.photogroup.ui.Messages;
 import com.photogroup.ui.SettingStore;
+import com.photogroup.ui.util.UIUilt;
 import com.photogroup.util.ImageUtil;
 
 public class SettingDialog extends JDialog {
@@ -145,19 +141,14 @@ public class SettingDialog extends JDialog {
             keysPanel.add(textFieldBaidu, gbc_textFieldBaidu);
             textFieldBaidu.setColumns(10);
 
-            JLabel lblForBaiduAdress = new JLabel(Messages.getString("SettingDialog.lblForChineseAdress.text")); //$NON-NLS-1$
+            JLabel lblForBaiduAdress = UIUilt.createSimpleLinkLabel(Messages.getString("SettingDialog.lblForChineseAdress.text"), //$NON-NLS-1$
+                    Messages.getString("SettingDialog.lblBaidu.url")); //$NON-NLS-1$
             GridBagConstraints gbc_lblForChineseAdress = new GridBagConstraints();
             gbc_lblForChineseAdress.anchor = GridBagConstraints.WEST;
             gbc_lblForChineseAdress.insets = new Insets(0, 0, 5, 0);
             gbc_lblForChineseAdress.gridx = 2;
             gbc_lblForChineseAdress.gridy = 0;
             keysPanel.add(lblForBaiduAdress, gbc_lblForChineseAdress);
-            lblForBaiduAdress.addMouseListener(new MouseAdapter() {
-
-                public void mouseClicked(MouseEvent e) {
-                    openBrowser("https://jingyan.baidu.com/article/e73e26c0b5b75124adb6a786.html"); //$NON-NLS-1$
-                }
-            });
 
             JLabel lblBing = new JLabel(Messages.getString("SettingDialog.lblBing.text")); //$NON-NLS-1$
             GridBagConstraints gbc_lblBing = new GridBagConstraints();
@@ -176,19 +167,14 @@ public class SettingDialog extends JDialog {
             keysPanel.add(textFieldBing, gbc_textFieldBing);
             textFieldBing.setColumns(10);
 
-            JLabel lblBingAddress = new JLabel(Messages.getString("SettingDialog.lblEnglishAddress.text")); //$NON-NLS-1$
+            JLabel lblBingAddress = UIUilt.createSimpleLinkLabel(Messages.getString("SettingDialog.lblEnglishAddress.text"), //$NON-NLS-1$
+                    Messages.getString("SettingDialog.lblBing.url")); //$NON-NLS-1$
             GridBagConstraints gbc_lblEnglishAddress = new GridBagConstraints();
             gbc_lblEnglishAddress.anchor = GridBagConstraints.WEST;
             gbc_lblEnglishAddress.insets = new Insets(0, 0, 5, 0);
             gbc_lblEnglishAddress.gridx = 2;
             gbc_lblEnglishAddress.gridy = 1;
             keysPanel.add(lblBingAddress, gbc_lblEnglishAddress);
-            lblBingAddress.addMouseListener(new MouseAdapter() {
-
-                public void mouseClicked(MouseEvent e) {
-                    openBrowser("https://msdn.microsoft.com/en-us/library/ff428642.aspx"); //$NON-NLS-1$
-                }
-            });
 
             JLabel lblGoogle = new JLabel(Messages.getString("SettingDialog.lblGoogle.text")); //$NON-NLS-1$
             GridBagConstraints gbc_lblGoogle = new GridBagConstraints();
@@ -512,18 +498,6 @@ public class SettingDialog extends JDialog {
                 cancelButton.setActionCommand(Messages.getString("SettingDialog.btn_cancel")); //$NON-NLS-1$
                 buttonPane.add(cancelButton);
             }
-        }
-    }
-
-    private void openBrowser(String url) {
-        try {
-            int dialog = JOptionPane.showConfirmDialog(contentPanel, Messages.getString("SettingDialog.dlg_open_web") + url, Messages.getString("SettingDialog.dlg_warn"), //$NON-NLS-1$ //$NON-NLS-2$
-                    JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
-            if (dialog == 0) {
-                Desktop.getDesktop().browse(new URI(url));
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
         }
     }
 

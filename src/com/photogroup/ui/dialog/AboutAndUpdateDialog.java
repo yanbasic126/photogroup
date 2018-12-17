@@ -19,14 +19,15 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import com.photogroup.ui.Messages;
+import com.photogroup.ui.util.UIUilt;
 import com.photogroup.update.UpdateManager;
 import com.photogroup.util.FileUtil;
 
 public class AboutAndUpdateDialog extends JDialog {
 
-    /**
-     * 
-     */
+    private static final String GIT_REPO = "https://github.com/yanbasic126/photogroup";
+
     private static final Color LEMON_COLOR = new Color(243, 205, 63);
 
     private final JPanel contentPanel = new JPanel();
@@ -38,24 +39,11 @@ public class AboutAndUpdateDialog extends JDialog {
     private JLabel labelSize;
 
     /**
-     * Launch the application.
-     */
-    public static void main(String[] args) {
-        try {
-            AboutAndUpdateDialog dialog = new AboutAndUpdateDialog();
-            dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-            dialog.setVisible(true);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
      * Create the dialog.
      */
     public AboutAndUpdateDialog() {
         setResizable(false);
-        setTitle("About Lemon Photo");
+        setTitle("About " + Messages.getString("GroupBrowser.title"));
         setIconImage(Toolkit.getDefaultToolkit().getImage(AboutAndUpdateDialog.class.getResource("/icon/lemon_16.png")));
         setModal(true);
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
@@ -145,7 +133,7 @@ public class AboutAndUpdateDialog extends JDialog {
                 gbl_panelInfo.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE };
                 panelInfo.setLayout(gbl_panelInfo);
                 {
-                    JLabel lblLemonPhoto = new JLabel("Lemon Photo");
+                    JLabel lblLemonPhoto = new JLabel(Messages.getString("GroupBrowser.title"));
                     lblLemonPhoto.setForeground(LEMON_COLOR);
                     lblLemonPhoto.setFont(new Font("Tahoma", Font.BOLD, 32));
                     GridBagConstraints gbc_lblLemonPhoto = new GridBagConstraints();
@@ -221,7 +209,7 @@ public class AboutAndUpdateDialog extends JDialog {
                     panelInfo.add(lblInformation, gbc_lblInformation);
                 }
                 {
-                    JLabel lblUrl = new JLabel("https://github.com/yanbasic126/photogroup");
+                    JLabel lblUrl = UIUilt.createSimpleLinkLabel(GIT_REPO, GIT_REPO);
                     GridBagConstraints gbc_lblUrl = new GridBagConstraints();
                     gbc_lblUrl.insets = new Insets(0, 0, 5, 0);
                     gbc_lblUrl.gridx = 0;

@@ -8,6 +8,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
 import org.json.simple.JSONArray;
@@ -50,7 +51,7 @@ public class PostionHelper {
             try {
                 URL resjson = new URL(BAIDU_ADDRESS_URL + location + BAIDU_ADDRESS_PARAM + BAIDU_API_KEY);
 
-                BufferedReader in = new BufferedReader(new InputStreamReader(resjson.openStream(), "utf-8"));
+                BufferedReader in = new BufferedReader(new InputStreamReader(resjson.openStream(), StandardCharsets.UTF_8));
                 StringBuilder sb = new StringBuilder("");
                 while ((res = in.readLine()) != null) {
                     sb.append(res.trim());
@@ -122,7 +123,7 @@ public class PostionHelper {
             connection.setConnectTimeout(1000);
             connection.setReadTimeout(1000);
             connection.setDoOutput(true);
-            OutputStreamWriter out = new OutputStreamWriter(connection.getOutputStream(), "utf-8");
+            OutputStreamWriter out = new OutputStreamWriter(connection.getOutputStream(), StandardCharsets.UTF_8);
             out.flush();
             out.close();
 

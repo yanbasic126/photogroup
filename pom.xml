@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.lemonphoto</groupId>
     <artifactId>lemonphoto</artifactId>
-    <version>4.7.0</version>
+    <version>4.8.0</version>
     <name>Lemon Photo</name>
     <description>move photos by taken date
     2018-8-23: add sort photo before add gps address.
@@ -31,7 +31,8 @@
     2018-12-4: remove json-lib by json-simple,reduce build size to less than 1MB.
     2018-12-6: add FileListAccessory.
     2018-12-9: remove api key.
-    2018-12-10: implement rename on saving.</description>
+    2018-12-10: implement rename on saving.
+    2018-12-17: directory history.</description>
 
     <distributionManagement>
         <repository>
@@ -86,8 +87,8 @@
             <resource>
                 <directory>resources</directory>
                 <includes>
-                    <include>run-linux.sh</include>
-                    <include>run-windows.bat</include>
+                    <include>LemonPhoto.sh</include>
+                    <include>LemonPhoto.bat</include>
                 </includes>
             </resource>
             <resource>
@@ -151,17 +152,17 @@
                         <phase>prepare-package</phase>
                         <configuration>
                             <tasks>
-                                <copy file="resources/run-linux.sh.tmp"
-                                    tofile="resources/run-linux.sh" overwrite="true" />
-                                <copy file="resources/run-windows.bat.tmp"
-                                    tofile="resources/run-windows.bat" overwrite="true" />
+                                <copy file="resources/LemonPhoto.sh.tmp"
+                                    tofile="resources/LemonPhoto.sh" overwrite="true" />
+                                <copy file="resources/LemonPhoto.bat.tmp"
+                                    tofile="resources/LemonPhoto.bat" overwrite="true" />
                                 <replace token="@project_version@"
                                     value="${project.version}" dir="resources">
-                                    <include name="run-windows.bat" />
+                                    <include name="LemonPhoto.bat" />
                                 </replace>
                                 <replace token="@project_version@"
                                     value="${project.version}" dir="resources">
-                                    <include name="run-linux.sh" />
+                                    <include name="LemonPhoto.sh" />
                                 </replace>
                                 <echo file="src/version.txt"><![CDATA[${project.version}]]></echo>
                             </tasks>
