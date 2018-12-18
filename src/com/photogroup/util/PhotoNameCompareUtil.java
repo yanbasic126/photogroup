@@ -7,11 +7,11 @@ import java.util.regex.Pattern;
 
 public class PhotoNameCompareUtil {
 
-    static final Pattern PATTERN_NUMBER = Pattern.compile("\\d+");
+    private static final Pattern PATTERN_NUMBER = Pattern.compile("\\d+");
 
-    static final Pattern PATTERN_DATE = Pattern.compile("[\\d\\.]+");
+    private static final Pattern PATTERN_DATE = Pattern.compile("[\\d\\.]+");
 
-    static Comparator<File> PHOTO_NAME_COMPARATOR;
+    private static Comparator<File> PHOTO_NAME_COMPARATOR;
 
     /**
      * @param s1

@@ -51,8 +51,6 @@ public class PhotoGroup implements Runnable {
 
     private boolean subfolder;
 
-    private String dataTimepPattern;
-
     public PhotoGroup(Map<String, List<File>> photoGroup, String photosPath, int threshold, int module, String format,
             boolean guess, boolean gps, boolean report, boolean includeSubFolder) {
         this.photoGroup = photoGroup;

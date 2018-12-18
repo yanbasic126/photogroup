@@ -78,7 +78,7 @@ public class MetadataReader {
         String seconds = split2[2].trim().substring(0, split2[2].trim().length() - 1);
 
         double decimal = ((Double.valueOf(minutes) * 60) + Double.valueOf(seconds)) / (60 * 60);
-        if (stringRef.equals("N") || stringRef.equals("E")) {
+        if ("N".equals(stringRef) || "E".equals(stringRef)) {
             result = Double.valueOf(degrees) + decimal;
         } else {
             result = 0 - (Double.valueOf(degrees) + decimal);

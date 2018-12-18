@@ -75,11 +75,11 @@ public class CommandLine {
                 break;
             case "--help":
                 printHelp();
-                System.exit(0);
+                Runtime.getRuntime().exit(0);
                 break;
             case "-h":
                 printHelp();
-                System.exit(0);
+                Runtime.getRuntime().exit(0);
                 break;
             default:
                 System.out.println("Error! Unsupport parameter: " + args[i]);
@@ -88,7 +88,8 @@ public class CommandLine {
         }
         HashMap<String, List<File>> photoGroup = new HashMap<String, List<File>>();
         try {
-            Thread thread = new Thread(new PhotoGroup(photoGroup, photosPath, threshold, module, format, guess, gps, report, subfolder));
+            Thread thread = new Thread(
+                    new PhotoGroup(photoGroup, photosPath, threshold, module, format, guess, gps, report, subfolder));
             thread.start();
             thread.join();
         } catch (InterruptedException e) {
@@ -110,8 +111,7 @@ public class CommandLine {
                 "--guess (-g), If the photo EXIF data does not exist and it betweens the same taken date pohots which contains EXIF data, will use this date as taken date. Default is true");
         System.out.println(
                 "--gps (-gps), Add address in folder name by GPS data. Require internet access to baidu map API. Default is true");
-        System.out.println(
-                "--subfolder (-subfolder), Include sub folder, read files recursively.");
+        System.out.println("--subfolder (-subfolder), Include sub folder, read files recursively.");
         // System.out.println("--report (-r), Generate photo process report after running, in the photo directory.
         // Default is true");
     }

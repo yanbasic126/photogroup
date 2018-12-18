@@ -162,9 +162,10 @@ public class FileListAccessory extends JPanel implements PropertyChangeListener 
                 if (thumbnailData != null) {
                     InputStream thumbByteStream = new ByteArrayInputStream(thumbnailData);
                     bufferedImage = ImageIO.read(thumbByteStream);
-                } else {
-                    // bufferedImage = ImageIO.read(photo);
                 }
+                // else {
+                // bufferedImage = ImageIO.read(photo);
+                // }
             } catch (IOException e) {
                 e.printStackTrace();
             }

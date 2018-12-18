@@ -7,7 +7,7 @@
 [![Build Status](https://travis-ci.org/yanbasic126/photogroup.svg?branch=master)](https://travis-ci.org/yanbasic126/photogroup)
 
 ## Download
-https://packagecloud.io/yanbasic/photogroup/packages/java/com.lemonphoto/lemonphoto-4.6.0.jar/artifacts/lemonphoto-4.6.0.jar/download
+<https://packagecloud.io/yanbasic/photogroup/packages/java/com.lemonphoto/lemonphoto-4.6.0.jar/artifacts/lemonphoto-4.6.0.jar/download>
 
 ## How to Run
 Option 1: Use 'java -jar lemonphoto-(version).jar'

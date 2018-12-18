@@ -78,7 +78,6 @@ import com.photogroup.ui.layout.WrapLayout;
 import com.photogroup.ui.widget.FileListAccessory;
 import com.photogroup.ui.widget.JTextAreaLog;
 import com.photogroup.ui.widget.JTextFieldAddress;
-import com.photogroup.update.UpdateManager;
 import com.photogroup.util.FileUtil;
 import com.photogroup.util.ImageUtil;
 import com.photogroup.util.PhotoNameCompareUtil;
@@ -101,10 +100,6 @@ public class GroupBrowser {
     private static boolean systemLogThreadStart = false;
 
     private HashMap<String, List<File>> photoGroup;
-
-    private PrintStream systemOutRedirect;
-
-    private UpdateManager updateManager;
 
     private JFrame frameGroupBrowser;
 
@@ -196,7 +191,7 @@ public class GroupBrowser {
      * Create the application.
      */
     public GroupBrowser() {
-        systemOutRedirect = new PrintStream(new ByteArrayOutputStream() {
+        PrintStream systemOutRedirect = new PrintStream(new ByteArrayOutputStream() {
 
             @Override
             public synchronized void write(byte[] b, int off, int len) {
@@ -892,16 +887,14 @@ public class GroupBrowser {
 
             @Override
             public void mouseClicked(MouseEvent e) {
-                if (e.getButton() == 1) {
-                    if (e.getClickCount() == 1) {
-                        if (panelSelectedImage != null) {
-                            panelSelectedImage.setBorder(IMAGE_PANEL_BORDER);
-                        }
-                        panel.setBorder(IMAGE_PANEL_SELECTED_BORDER);
-                        panelSelectedImage = panel;
-                    } else if (e.getClickCount() == 2) {
-                        openToPreview(photo, isImage);
+                if (e.getButton() == 1 && e.getClickCount() == 1) {
+                    if (panelSelectedImage != null) {
+                        panelSelectedImage.setBorder(IMAGE_PANEL_BORDER);
                     }
+                    panel.setBorder(IMAGE_PANEL_SELECTED_BORDER);
+                    panelSelectedImage = panel;
+                } else if (e.getButton() == 1 && e.getClickCount() == 2) {
+                    openToPreview(photo, isImage);
                 } else if (e.getButton() == 2) {
                     if (e.getClickCount() == 1) {
                         openToPreview(photo, isImage);
@@ -918,7 +911,7 @@ public class GroupBrowser {
         JLabel labelName = new JLabel(photo.getName());
         // labelName.setBorder(new EmptyBorder(0, 0, 0, 0));
         labelName.setToolTipText(photo.getName());
-        int height = labelName.getHeight();
+        // int height = labelName.getHeight();
         labelName.setPreferredSize(new Dimension(PREVIEW_SIZE, 20));
         GridBagConstraints gbc_labelName = new GridBagConstraints();
         gbc_labelName.anchor = GridBagConstraints.NORTHWEST;
@@ -928,20 +921,20 @@ public class GroupBrowser {
 
     }
 
-    private BufferedImage resizeImageToPreview(BufferedImage originalImage) {
-        int type = originalImage.getType() == 0 ? BufferedImage.TYPE_INT_ARGB : originalImage.getType();
-
-        int width = originalImage.getWidth();
-        int height = originalImage.getHeight();
-        int x = (width > height) ? PREVIEW_SIZE : width / height * PREVIEW_SIZE;
-        int y = (width > height) ? height / width * PREVIEW_SIZE : PREVIEW_SIZE;
-
-        BufferedImage resizedImage = new BufferedImage(x, y, type);
-        Graphics2D g = resizedImage.createGraphics();
-        g.drawImage(originalImage, 0, 0, x, y, null);
-        g.dispose();
-        return resizedImage;
-    }
+    // private BufferedImage resizeImageToPreview(BufferedImage originalImage) {
+    // int type = originalImage.getType() == 0 ? BufferedImage.TYPE_INT_ARGB : originalImage.getType();
+    //
+    // int width = originalImage.getWidth();
+    // int height = originalImage.getHeight();
+    // int x = (width > height) ? PREVIEW_SIZE : width / height * PREVIEW_SIZE;
+    // int y = (width > height) ? height / width * PREVIEW_SIZE : PREVIEW_SIZE;
+    //
+    // BufferedImage resizedImage = new BufferedImage(x, y, type);
+    // Graphics2D g = resizedImage.createGraphics();
+    // g.drawImage(originalImage, 0, 0, x, y, null);
+    // g.dispose();
+    // return resizedImage;
+    // }
 
     private BufferedImage resizeImageToPreviewIPhone(BufferedImage originalImage) {
         int type = originalImage.getType() == 0 ? BufferedImage.TYPE_INT_ARGB : originalImage.getType();

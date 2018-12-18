@@ -133,7 +133,7 @@ public class PostionHelper {
             l_urlStream = connection.getInputStream();
             BufferedReader l_reader = new BufferedReader(new InputStreamReader(l_urlStream));
             while ((sCurrentLine = l_reader.readLine()) != null) {
-                if (!sCurrentLine.equals(""))
+                if (!"".equals(sCurrentLine))
                     sTotalString += sCurrentLine;
             }
             // System.out.println(sTotalString);

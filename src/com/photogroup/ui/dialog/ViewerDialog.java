@@ -32,7 +32,7 @@ public class ViewerDialog extends JFrame {
 
     private boolean componentResizing = false;
 
-    ImageIcon photoImage;
+    private ImageIcon photoImage;
 
     public ViewerDialog(File photo) {
         getContentPane().setBackground(Color.BLACK);
@@ -129,6 +129,8 @@ public class ViewerDialog extends JFrame {
                 case 8: // PI / 2
                     t.translate(0, sw);
                     t.rotate(3 * Math.PI / 2);
+                    break;
+                default:
                     break;
                 }
                 BufferedImage bscaleImage = new BufferedImage(sw, sh, Image.SCALE_FAST);
