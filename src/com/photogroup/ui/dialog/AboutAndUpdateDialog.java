@@ -8,6 +8,8 @@ import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
 
@@ -38,9 +40,6 @@ public class AboutAndUpdateDialog extends JDialog {
 
     private JLabel labelSize;
 
-    /**
-     * Create the dialog.
-     */
     public AboutAndUpdateDialog() {
         setResizable(false);
         setTitle("About " + Messages.getString("GroupBrowser.title"));
@@ -110,13 +109,35 @@ public class AboutAndUpdateDialog extends JDialog {
                 gbl_panelImage.rowWeights = new double[] { 1.0, Double.MIN_VALUE };
                 panelImage.setLayout(gbl_panelImage);
                 {
-                    JLabel lblNewLabel = new JLabel("");
+                    JLabel lblNewLabel = new JLabel();
                     lblNewLabel.setIcon(new ImageIcon(AboutAndUpdateDialog.class.getResource("/icon/lemon_32.png")));
                     GridBagConstraints gbc_lblNewLabel = new GridBagConstraints();
                     gbc_lblNewLabel.anchor = GridBagConstraints.NORTHWEST;
                     gbc_lblNewLabel.gridx = 0;
                     gbc_lblNewLabel.gridy = 0;
                     panelImage.add(lblNewLabel, gbc_lblNewLabel);
+                    lblNewLabel.addMouseListener(new MouseAdapter() {
+
+                        public void mouseClicked(MouseEvent e) {
+                            if (lblNewLabel.getLocation().y == 0) {
+                                new Thread(new Runnable() {
+
+                                    @Override
+                                    public void run() {
+                                        double height = lblNewLabel.getParent().getHeight() - 72;
+                                        for (double h = 1; h < height; h++) {
+                                            lblNewLabel.setLocation(0, (int) h);
+                                            int sleep = (int) ((height - h) / 2);
+                                            try {
+                                                Thread.sleep(sleep);
+                                            } catch (InterruptedException e) {
+                                            }
+                                        }
+                                    }
+                                }).start();
+                            }
+                        }
+                    });
                 }
             }
             {
@@ -179,8 +200,8 @@ public class AboutAndUpdateDialog extends JDialog {
                             public void actionPerformed(ActionEvent e) {
                                 JFileChooser chooser = new JFileChooser();
                                 // chooser.setCurrentDirectory(new File(System.getProperty("user.dir")));
-                                chooser.setSelectedFile(new File(System.getProperty("user.dir") + "/lemonphoto-"
-                                        + updateManager.getLatestVersion() + ".jar"));
+                                chooser.setSelectedFile(
+                                        new File(System.getProperty("user.dir") + "/" + updateManager.getFilename()));
                                 chooser.setDialogTitle("Download"); //$NON-NLS-1$
                                 chooser.setDialogType(JFileChooser.SAVE_DIALOG);
                                 chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
@@ -287,7 +308,7 @@ public class AboutAndUpdateDialog extends JDialog {
             File target = new File(targetPath);
             while (btnUpdateAndDownload.getText().equals("Downloading...")) {
                 try {
-                    Thread.sleep(200);
+                    Thread.sleep(100);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

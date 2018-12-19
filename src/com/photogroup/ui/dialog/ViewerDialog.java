@@ -37,7 +37,7 @@ public class ViewerDialog extends JFrame {
     public ViewerDialog(File photo) {
         getContentPane().setBackground(Color.BLACK);
         setTitle(photo.getAbsolutePath());
-        setIconImage(Toolkit.getDefaultToolkit().getImage(AboutAndUpdateDialog.class.getResource("/icon/lemon_16.png")));
+        setIconImage(Toolkit.getDefaultToolkit().getImage(ViewerDialog.class.getResource("/icon/lemon_16.png")));
         setSize(100, 0);
 
         this.addComponentListener(new ComponentAdapter() {

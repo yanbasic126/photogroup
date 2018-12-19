@@ -8,6 +8,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -27,7 +28,17 @@ import com.photogroup.util.PhotoNameCompareUtil;
 
 public class PhotoGroup implements Runnable {
 
+    /**
+     * 
+     */
+    private static final int FILENAME_LEN = 128;
+
     private static final String DATE_TIME_PATTERN = "yyyy:MM:dd HH:mm:ss";
+
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_TIME_PATTERN);
+
+    // TODO remove simple formatter
+    private static final SimpleDateFormat simpleFormatter = new SimpleDateFormat(DATE_TIME_PATTERN);
 
     public Object processPrecent = 0;
 
@@ -45,7 +56,7 @@ public class PhotoGroup implements Runnable {
 
     private boolean report;
 
-    private String[] photoTypes;
+    private Set<String> photoTypes;
 
     private Map<String, List<File>> photoGroup;
 
@@ -63,7 +74,15 @@ public class PhotoGroup implements Runnable {
         this.report = report;
         this.subfolder = includeSubFolder;
 
-        photoTypes = new String[] { "PNG", "JPG", "JPEG", "GIF" };
+        photoTypes = new HashSet<String>() {
+
+            {
+                add("PNG");
+                add("JPG");
+                add("JPEG");
+                add("GIF");
+            }
+        };
     }
 
     @Override
@@ -78,11 +97,6 @@ public class PhotoGroup implements Runnable {
             return;
         }
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_TIME_PATTERN);
-
-        // TODO remove simple formatter
-        SimpleDateFormat simpleFormatter = new SimpleDateFormat(DATE_TIME_PATTERN);
-
         Map<LocalDate, List<File>> photosDate = new HashMap<LocalDate, List<File>>();
         Comparator<File> comparator = new Comparator<File>() {
 
@@ -94,67 +108,33 @@ public class PhotoGroup implements Runnable {
         Map<File, String> exifDateTime = new TreeMap<File, String>(comparator);
         Map<File, String> exifAddress = new TreeMap<File, String>(comparator);
 
-        final File photoFolder = new File(photosPath);
-
         float progress = 0;
-
-        File[] listFiles;
-
-        if (subfolder) {
-            List<File> recursiveFiles = new ArrayList<File>();
-            try {
-                Files.find(Paths.get(photosPath), Integer.MAX_VALUE, (filePath, fileAttr) -> fileAttr.isRegularFile())
-                        .forEach(filePath -> {
-                            recursiveFiles.add(new File(filePath.toUri()));
-                        });
-            } catch (IOException e) {
-                e.printStackTrace();
-                ExceptionHandler.logError(e.getMessage());
-            }
-
-            listFiles = recursiveFiles.toArray(new File[] {});
-        } else {
-            listFiles = photoFolder.listFiles();
-        }
-
-        float fileCount = listFiles.length;
         int precent = 0;
 
+        File[] listFiles = listFiles();
+        float fileCount = listFiles.length;
+
         for (final File child : listFiles) {
-            if (child.isFile() && !child.isHidden()) {
-
-                try {
-                    exifDateTime.put(child, MetadataReader.dateTaken(child));
-                    if (gps) {
-                        String postion = PostionHelper.queryPostion(child);
-                        if (postion != null) {
-                            exifAddress.put(child, PostionHelper.queryPostion(child));
-                        }
-                    }
-                } catch (ImageProcessingException | IOException e) {
-                    exifDateTime.put(child, null);
-                    e.printStackTrace();
-                    ExceptionHandler.logError(child.getName() + "|" + e.getMessage());
-                }
-                progress++;
-
-                int newPrecent = (int) (progress / fileCount * 100);
-                if (newPrecent != precent) {
-                    // update console
-                    precent = newPrecent;
-                    System.out.print(precent + "%");
-                    for (int i = 0; i <= String.valueOf(precent).length(); i++) {
-                        System.out.print("\b");
-                    }
-                    synchronized (processPrecent) {
-                        processPrecent = newPrecent;
-                    }
+            try {
+                fillMetadataMap(child, exifDateTime, exifAddress);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            progress++;
+            int newPrecent = (int) (progress / fileCount * 100);
+            if (newPrecent != precent) {
+                precent = newPrecent;
+                printPrecent(newPrecent);
+                synchronized (processPrecent) {
+                    processPrecent = newPrecent;
                 }
             }
         }
+
+        // this files list is sorted
         File[] files = exifDateTime.keySet().toArray(new File[0]);
         progress = 0;
-        precent = 0;
+        // precent = 0;
         for (final File file : files) { // files
             String dateTime = exifDateTime.get(file);
 
@@ -187,42 +167,25 @@ public class PhotoGroup implements Runnable {
             }
 
             if (dateTime == null && module == 2) {
-                int i = file.getName().lastIndexOf('.');
-                if (i > 0) {
-                    String ext = file.getName().substring(i + 1).toUpperCase();
-                    for (String supportType : photoTypes) {
-                        if (supportType.equals(ext)) {
-                            dateTime = simpleFormatter.format(file.lastModified());
-                            break;
-                        }
-                    }
+                String ext = getExtension(file);
+                if (photoTypes.contains(ext)) {
+                    dateTime = simpleFormatter.format(file.lastModified());
+                    break;
                 }
             }
 
             if (dateTime == null && module == 3) {
                 dateTime = simpleFormatter.format(file.lastModified());
             }
-            if (dateTime != null) {
-                LocalDate localDate = LocalDate.parse(dateTime.trim(), formatter);
-                if (photosDate.get(localDate) == null) {
-                    ArrayList<File> photoNameList = new ArrayList<File>();
-                    photoNameList.add(file);
-                    photosDate.put(localDate, photoNameList);
-                } else {
-                    photosDate.get(localDate).add(file);
-                }
-            }
+            addFileDate(file, dateTime, photosDate);
             progress++;
-
-            int newPrecent = (int) (progress / fileCount * 100);
-            if (newPrecent != precent) {
-                // update console
-                precent = newPrecent;
-                System.out.print(precent + "%");
-                for (int i = 0; i <= String.valueOf(precent).length(); i++) {
-                    System.out.print("\b");
-                }
-            }
+            //
+            // int newPrecent = (int) (progress / fileCount * 100);
+            // if (newPrecent != precent) {
+            // // update console
+            // precent = newPrecent;
+            // printPrecent(precent);
+            // }
         }
         System.out.println("");
 
@@ -230,49 +193,135 @@ public class PhotoGroup implements Runnable {
         Iterator<?> it = photosDate.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry<LocalDate, List<File>> pair = (Entry<LocalDate, List<File>>) it.next();
+            Set<String> addressNames = new HashSet<String>();
+            List<File> photos = pair.getValue();
+            Collections.sort(photos, comparator);
+            for (File photo : photos) {
+                if (exifAddress.get(photo) != null) {
+                    addressNames.add(exifAddress.get(photo));
+                }
+            }
+
+            String folderName = pair.getKey().format(pattern) + contactAddress(addressNames);
+            // if (pair.getValue().size() >= threshold) {
+            // File dateFolder = new File(photoFolder, folderName);
+            // if (!dateFolder.exists()) {
+            // dateFolder.mkdir();
+            // }
+            // for (File photo : pair.getValue()) {
+            // if (photo.exists()) {
+            // File targetPhoto = new File(dateFolder, photo.getName());
+            // photo.renameTo(targetPhoto);
+            // }
+            // }
+            // }
+
+            photoGroup.put(folderName, pair.getValue());
+            System.out.println(folderName + " : " + pair.getValue().size());
+        }
+    }
+
+    private String contactAddress(Set<String> addressNames) {
+        String addressName = "";
+        for (String add : addressNames) {
+            if (addressName.length() + add.length() > FILENAME_LEN) { // 255
+                break;
+            } else {
+                addressName += add + ",";
+            }
+        }
+        if (addressName.endsWith(",")) {
+            addressName = addressName.substring(0, addressName.length() - 1);
+        }
+        return addressName;
+    }
+
+    private void addFileDate(final File file, String dateTime, Map<LocalDate, List<File>> photosDate) {
+        if (dateTime != null) {
+            LocalDate localDate = LocalDate.parse(dateTime.trim(), formatter);
+            if (photosDate.get(localDate) == null) {
+                ArrayList<File> photoNameList = new ArrayList<File>();
+                photoNameList.add(file);
+                photosDate.put(localDate, photoNameList);
+            } else {
+                photosDate.get(localDate).add(file);
+            }
+        }
+    }
+
+    // update console
+    private void printPrecent(int precent) {
+        System.out.print(precent + "%");
+        for (int i = 0; i <= String.valueOf(precent).length(); i++) {
+            System.out.print("\b");
+        }
+    }
+
+    /**
+     * Read file metadata and store into datatime map and address map
+     * 
+     * @param child
+     * @param exifDateTime
+     * @param exifAddress
+     * @throws IOException
+     */
+    private void fillMetadataMap(final File child, Map<File, String> exifDateTime, Map<File, String> exifAddress)
+            throws IOException {
+        try {
+            exifDateTime.put(child, MetadataReader.dateTaken(child));
+            if (gps) {
+                String postion = PostionHelper.queryPostion(child);
+                if (postion != null) {
+                    exifAddress.put(child, PostionHelper.queryPostion(child));
+                }
+            }
+        } catch (ImageProcessingException e) {
+            exifDateTime.put(child, null);
+            e.printStackTrace();
+            ExceptionHandler.logError(child.getName() + "|" + e.getMessage());
+        }
+    }
+
+    /**
+     * get files list in folder
+     * 
+     * @return files
+     */
+    private File[] listFiles() {
+        // File[] listFiles;
+        final File photoFolder = new File(photosPath);
+
+        final List<File> recursiveFiles = new ArrayList<File>();
+        if (subfolder) {
             try {
-                String folderName = pair.getKey().format(pattern);
-                String addressName = "";
-                Set<String> addressNames = new HashSet<String>();
-                List<File> photos = pair.getValue();
-                Collections.sort(photos, comparator);
-                for (File photo : photos) {
-                    if (exifAddress.get(photo) != null) {
-                        addressNames.add(exifAddress.get(photo));
-                    }
-                }
-                for (String add : addressNames) {
-                    if (addressName.length() + add.length() > 128) { // 255
-                        break;
-                    } else {
-                        addressName += add + ",";
-                    }
-                }
-                if (addressName.endsWith(",")) {
-                    addressName = addressName.substring(0, addressName.length() - 1);
-                }
-                folderName += addressName;
-
-                // if (pair.getValue().size() >= threshold) {
-                // File dateFolder = new File(photoFolder, folderName);
-                // if (!dateFolder.exists()) {
-                // dateFolder.mkdir();
-                // }
-                // for (File photo : pair.getValue()) {
-                // if (photo.exists()) {
-                // File targetPhoto = new File(dateFolder, photo.getName());
-                // photo.renameTo(targetPhoto);
-                // }
-                // }
-                // }
-
-                photoGroup.put(folderName, pair.getValue());
-                System.out.println(folderName + " : " + pair.getValue().size());
-            } catch (Exception e) {
+                Files.find(Paths.get(photosPath), Integer.MAX_VALUE, (filePath, fileAttr) -> fileAttr.isRegularFile())
+                        .forEach(filePath -> {
+                            recursiveFiles.add(new File(filePath.toUri()));
+                        });
+            } catch (IOException e) {
                 e.printStackTrace();
                 ExceptionHandler.logError(e.getMessage());
             }
+        } else {
+            recursiveFiles.addAll(Arrays.asList(photoFolder.listFiles()));
         }
+
+        List<File> listFiles = new ArrayList<File>();
+        for (File child : recursiveFiles) {
+            if (child.isFile() && !child.isHidden()) {
+                listFiles.add(child);
+            }
+        }
+        return listFiles.toArray(new File[] {});
+    }
+
+    private String getExtension(File file) {
+        String ext = "";
+        int i = file.getName().lastIndexOf('.');
+        if (i > 0) {
+            ext = file.getName().substring(i + 1).toUpperCase();
+        }
+        return ext;
     }
 
 }
