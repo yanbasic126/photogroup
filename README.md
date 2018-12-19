@@ -4,6 +4,7 @@
 ![](https://raw.githubusercontent.com/yanbasic126/photogroup/master/resources/app1.png)
 ![](https://raw.githubusercontent.com/yanbasic126/photogroup/master/resources/app2.png)
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/1cbfcb65ffc24df9a77ee2ed6b1f6045)](https://app.codacy.com/app/yanbasic/photogroup?utm_source=github.com&utm_medium=referral&utm_content=yanbasic126/photogroup&utm_campaign=Badge_Grade_Settings)
 [![Build Status](https://travis-ci.org/yanbasic126/photogroup.svg?branch=master)](https://travis-ci.org/yanbasic126/photogroup)
 
 ## Download
