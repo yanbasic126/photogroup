@@ -1,7 +1,5 @@
 package com.photogroup.util;
 
-import java.io.File;
-import java.util.Comparator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -11,7 +9,7 @@ public class PhotoNameCompareUtil {
 
     private static final Pattern PATTERN_DATE = Pattern.compile("[\\d\\.]+");
 
-    private static Comparator<File> PHOTO_NAME_COMPARATOR;
+    // private static Comparator<File> PHOTO_NAME_COMPARATOR;
 
     /**
      * @param s1

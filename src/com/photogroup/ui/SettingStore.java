@@ -15,7 +15,7 @@ import com.photogroup.util.FileUtil;
 
 public class SettingStore {
 
-    private static final String LEMONPHOTO_PATH = "/.lemonphoto";
+    // private static final String LEMONPHOTO_PATH = "/.lemonphoto";
 
     private static final String DEFAULT_SETTINGS_FILE = "default_settings.ini";
 

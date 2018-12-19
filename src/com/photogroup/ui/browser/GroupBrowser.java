@@ -115,13 +115,13 @@ public class GroupBrowser {
 
     private ImageIcon upIcon;
 
-    private ImageIcon renameIcon;
+    // private ImageIcon renameIcon;
 
     private ImageIcon lemonIcon;
 
     private ImageIcon lemonSmallIcon;
 
-    private ImageIcon debugIcon;
+    // private ImageIcon debugIcon;
 
     private ImageIcon profileIcon;
 
@@ -207,7 +207,7 @@ public class GroupBrowser {
             // renameIcon = ImageUtil.getImageIconFromSystemResource("icon/Blue_tag.png");
             lemonIcon = ImageUtil.getImageFromSystemResource("icon/lemon_32.png"); //$NON-NLS-1$
             lemonSmallIcon = ImageUtil.getImageFromSystemResource("icon/lemon_16.png"); //$NON-NLS-1$
-            debugIcon = ImageUtil.getImageFromSystemResource("icon/debug_16.png"); //$NON-NLS-1$
+            // debugIcon = ImageUtil.getImageFromSystemResource("icon/debug_16.png"); //$NON-NLS-1$
             profileIcon = ImageUtil.getImageFromSystemResource("icon/profile_32.png"); //$NON-NLS-1$
             settingIcon = ImageUtil.getImageFromSystemResource("icon/settings_32.png"); //$NON-NLS-1$
             saveIcon = ImageUtil.getImageFromSystemResource("icon/save_32.png"); //$NON-NLS-1$

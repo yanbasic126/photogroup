@@ -24,6 +24,7 @@ import com.drew.imaging.ImageProcessingException;
 import com.photogroup.exception.ExceptionHandler;
 import com.photogroup.groupby.metadata.MetadataReader;
 import com.photogroup.groupby.position.PostionHelper;
+import com.photogroup.util.FileUtil;
 import com.photogroup.util.PhotoNameCompareUtil;
 
 public class PhotoGroup implements Runnable {
@@ -44,7 +45,7 @@ public class PhotoGroup implements Runnable {
 
     private String photosPath;
 
-    private int threshold;
+    // private int threshold;
 
     private int module;
 
@@ -54,7 +55,7 @@ public class PhotoGroup implements Runnable {
 
     private boolean gps;
 
-    private boolean report;
+    // private boolean report;
 
     private Set<String> photoTypes;
 
@@ -66,12 +67,12 @@ public class PhotoGroup implements Runnable {
             boolean guess, boolean gps, boolean report, boolean includeSubFolder) {
         this.photoGroup = photoGroup;
         this.photosPath = photosPath;
-        this.threshold = threshold;
+        // this.threshold = threshold;
         this.module = module;
         this.format = format;
         this.guess = guess;
         this.gps = gps;
-        this.report = report;
+        // this.report = report;
         this.subfolder = includeSubFolder;
 
         photoTypes = new HashSet<String>() {
@@ -167,7 +168,7 @@ public class PhotoGroup implements Runnable {
             }
 
             if (dateTime == null && module == 2) {
-                String ext = getExtension(file);
+                String ext = FileUtil.getExtension(file);
                 if (photoTypes.contains(ext)) {
                     dateTime = simpleFormatter.format(file.lastModified());
                     break;
@@ -313,15 +314,6 @@ public class PhotoGroup implements Runnable {
             }
         }
         return listFiles.toArray(new File[] {});
-    }
-
-    private String getExtension(File file) {
-        String ext = "";
-        int i = file.getName().lastIndexOf('.');
-        if (i > 0) {
-            ext = file.getName().substring(i + 1).toUpperCase();
-        }
-        return ext;
     }
 
 }

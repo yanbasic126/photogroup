@@ -33,13 +33,13 @@ public class PostionHelper {
 
     private static final String BAIDU_COORD_URL = "http://api.map.baidu.com/ag/coord/convert?from=0&to=4&x=";
 
-    private static String BING_API_KEY = "";
+    // private static String BING_API_KEY = "";
 
-    private static final String BING_ADDRESS_URL = "http://dev.virtualearth.net/REST/v1/Locations/";
+    // private static final String BING_ADDRESS_URL = "http://dev.virtualearth.net/REST/v1/Locations/";
 
-    private static final String BING_ADDRESS_PARAM = "?o=json&key=";
+    // private static final String BING_ADDRESS_PARAM = "?o=json&key=";
 
-    private static String GOOGLE_API_KEY = "";
+    // private static String GOOGLE_API_KEY = "";
 
     private static String getBaiduAddress(double lat, double lon) {
         String res;
@@ -103,12 +103,12 @@ public class PostionHelper {
     }
 
     private static String getBingAddress(double lat, double lon) {
-        BING_API_KEY = SettingStore.getSettingStore().getBingKey();
+        // BING_API_KEY = SettingStore.getSettingStore().getBingKey();
         return null;
     }
 
     private static String getGoogleAddress(double lat, double lon) {
-        GOOGLE_API_KEY = SettingStore.getSettingStore().getGoogleKey();
+        // GOOGLE_API_KEY = SettingStore.getSettingStore().getGoogleKey();
         return null;
     }
 

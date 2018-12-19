@@ -104,4 +104,13 @@ public class FileUtil {
         }
         return settingFile;
     }
+
+    public static String getExtension(File file) {
+        String ext = "";
+        int i = file.getName().lastIndexOf('.');
+        if (i > 0) {
+            ext = file.getName().substring(i + 1).toUpperCase();
+        }
+        return ext;
+    }
 }

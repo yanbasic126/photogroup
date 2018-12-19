@@ -110,4 +110,11 @@ public class FlowPanel1 extends JPanel {
 
     }
 
+    public static void main(String[] args) {
+        for (int i = 1; i < 100; i++) {
+            // System.out.println(Math.PI / i * 100);
+            System.out.println(Math.sin(Math.PI / i) * 100);
+        }
+    }
+
 }
