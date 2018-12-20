@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.lemonphoto</groupId>
     <artifactId>lemonphoto</artifactId>
-    <version>4.8.1</version>
+    <version>4.8.2</version>
     <name>Lemon Photo</name>
     <description>move photos by taken date
     2018-8-23: add sort photo before add gps address.
@@ -33,7 +33,8 @@
     2018-12-9: remove api key.
     2018-12-10: implement rename on saving.
     2018-12-17: directory history.
-    2018-12-18: codacy review.</description>
+    2018-12-18: codacy review.
+    2018-12-20: codacy review.</description>
 
     <distributionManagement>
         <repository>
@@ -96,6 +97,7 @@
                 <directory>${basedir}</directory>
                 <includes>
                     <include>README.md</include>
+                    <include>LICENSE</include>
                 </includes>
             </resource>
         </resources>
@@ -153,9 +155,9 @@
                         <phase>prepare-package</phase>
                         <configuration>
                             <tasks>
-                                <copy file="resources/LemonPhoto.sh.tmp"
+                                <copy file="resources/LemonPhoto.sh.template"
                                     tofile="resources/LemonPhoto.sh" overwrite="true" />
-                                <copy file="resources/LemonPhoto.bat.tmp"
+                                <copy file="resources/LemonPhoto.bat.template"
                                     tofile="resources/LemonPhoto.bat" overwrite="true" />
                                 <replace token="@project_version@"
                                     value="${project.version}" dir="resources">
@@ -172,6 +174,19 @@
                             <goal>run</goal>
                         </goals>
                     </execution>
+					<execution>
+						<id>clean</id>
+						<configuration>
+							<tasks>
+								<delete file="resources/LemonPhoto.sh" />
+								<delete file="resources/LemonPhoto.bat" />
+							</tasks>
+						</configuration>
+						<phase>clean</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
                 </executions>
             </plugin>
         </plugins>

@@ -1,13 +1,34 @@
 package com.photogroup.util;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Comparator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class PhotoNameCompareUtil {
+import com.photogroup.ui.SettingStore;
+
+public class ComparatorUtil {
 
     private static final Pattern PATTERN_NUMBER = Pattern.compile("\\d+");
 
     private static final Pattern PATTERN_DATE = Pattern.compile("[\\d\\.]+");
+
+    private static final DateFormat settingDateFormat = new SimpleDateFormat(SettingStore.getSettingStore().getFormat());
+
+    public static final Comparator<String> DATE_TITLE_COMPARATOR = new Comparator<String>() {
+
+        @Override
+        public int compare(String date1, String date2) {
+            try {
+                return settingDateFormat.parse(findDateString(date1)).compareTo(settingDateFormat.parse(findDateString(date2)));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            return date1.compareTo(date2);
+        }
+    };
 
     // private static Comparator<File> PHOTO_NAME_COMPARATOR;
 

@@ -131,6 +131,7 @@ public class AboutAndUpdateDialog extends JDialog {
                                             try {
                                                 Thread.sleep(sleep);
                                             } catch (InterruptedException e) {
+                                                e.printStackTrace();
                                             }
                                         }
                                     }

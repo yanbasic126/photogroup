@@ -129,6 +129,7 @@ public class JTextAreaLog extends JTextArea implements MouseListener {
                 b = true;
             }
         } catch (Exception e) {
+            e.printStackTrace();
         }
         return b;
     }
@@ -142,15 +143,6 @@ public class JTextAreaLog extends JTextArea implements MouseListener {
         return b;
     }
 
-    public void mouseClicked(MouseEvent e) {
-    }
-
-    public void mouseEntered(MouseEvent e) {
-    }
-
-    public void mouseExited(MouseEvent e) {
-    }
-
     public void mousePressed(MouseEvent e) {
         if (e.getButton() == MouseEvent.BUTTON3) {
             copy.setEnabled(isCanCopy());
@@ -160,7 +152,20 @@ public class JTextAreaLog extends JTextArea implements MouseListener {
         }
     }
 
+    public void mouseClicked(MouseEvent e) {
+        // do nothing
+    }
+
+    public void mouseEntered(MouseEvent e) {
+        // do nothing
+    }
+
+    public void mouseExited(MouseEvent e) {
+        // do nothing
+    }
+
     public void mouseReleased(MouseEvent e) {
+        // do nothing
     }
 
 }

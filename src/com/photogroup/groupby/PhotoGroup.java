@@ -24,8 +24,8 @@ import com.drew.imaging.ImageProcessingException;
 import com.photogroup.exception.ExceptionHandler;
 import com.photogroup.groupby.metadata.MetadataReader;
 import com.photogroup.groupby.position.PostionHelper;
+import com.photogroup.util.ComparatorUtil;
 import com.photogroup.util.FileUtil;
-import com.photogroup.util.PhotoNameCompareUtil;
 
 public class PhotoGroup implements Runnable {
 
@@ -57,14 +57,22 @@ public class PhotoGroup implements Runnable {
 
     // private boolean report;
 
-    private Set<String> photoTypes;
+    private static final Set<String> photoTypes = new HashSet<String>() {
+
+        {
+            add("PNG");
+            add("JPG");
+            add("JPEG");
+            add("GIF");
+        }
+    };;
 
     private Map<String, List<File>> photoGroup;
 
     private boolean subfolder;
 
-    public PhotoGroup(Map<String, List<File>> photoGroup, String photosPath, int threshold, int module, String format,
-            boolean guess, boolean gps, boolean report, boolean includeSubFolder) {
+    public PhotoGroup(Map<String, List<File>> photoGroup, String photosPath, /* int threshold, */ int module, String format,
+            boolean guess, boolean gps, /* boolean report, */ boolean includeSubFolder) {
         this.photoGroup = photoGroup;
         this.photosPath = photosPath;
         // this.threshold = threshold;
@@ -74,16 +82,6 @@ public class PhotoGroup implements Runnable {
         this.gps = gps;
         // this.report = report;
         this.subfolder = includeSubFolder;
-
-        photoTypes = new HashSet<String>() {
-
-            {
-                add("PNG");
-                add("JPG");
-                add("JPEG");
-                add("GIF");
-            }
-        };
     }
 
     @Override
@@ -103,7 +101,7 @@ public class PhotoGroup implements Runnable {
 
             @Override
             public int compare(File o1, File o2) {
-                return PhotoNameCompareUtil.compareByName(o1.getName(), o2.getName());
+                return ComparatorUtil.compareByName(o1.getName(), o2.getName());
             }
         };
         Map<File, String> exifDateTime = new TreeMap<File, String>(comparator);
@@ -143,7 +141,7 @@ public class PhotoGroup implements Runnable {
                 String upDate = null;
                 String downDate = null;
                 for (int up = (int) progress - 1; up >= 0; up--) {
-                    if (!PhotoNameCompareUtil.isSameNamingType(files[up].getName(), file.getName())) {
+                    if (!ComparatorUtil.isSameNamingType(files[up].getName(), file.getName())) {
                         break;
                     }
                     String exif = exifDateTime.get(files[up]);
@@ -153,7 +151,7 @@ public class PhotoGroup implements Runnable {
                     }
                 }
                 for (int down = (int) progress + 1; down < files.length; down++) {
-                    if (!PhotoNameCompareUtil.isSameNamingType(files[down].getName(), file.getName())) {
+                    if (!ComparatorUtil.isSameNamingType(files[down].getName(), file.getName())) {
                         break;
                     }
                     String exif = exifDateTime.get(files[down]);

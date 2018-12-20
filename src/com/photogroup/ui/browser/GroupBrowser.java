@@ -23,12 +23,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -60,8 +56,6 @@ import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import javax.swing.text.DefaultCaret;
 
 import com.drew.imaging.ImageProcessingException;
@@ -78,9 +72,9 @@ import com.photogroup.ui.layout.WrapLayout;
 import com.photogroup.ui.widget.FileListAccessory;
 import com.photogroup.ui.widget.JTextAreaLog;
 import com.photogroup.ui.widget.JTextFieldAddress;
+import com.photogroup.util.ComparatorUtil;
 import com.photogroup.util.FileUtil;
 import com.photogroup.util.ImageUtil;
-import com.photogroup.util.PhotoNameCompareUtil;
 
 public class GroupBrowser {
 
@@ -814,24 +808,24 @@ public class GroupBrowser {
         panelFlowList.add(panelFlow);
         btnExpandList.add(btnExpand);
 
-        textFieldTitle.getDocument().addDocumentListener(new DocumentListener() {
-
-            public void changedUpdate(DocumentEvent e) {
-                // whatever you want
-            }
-
-            public void removeUpdate(DocumentEvent e) {
-                // whatever you want
-            }
-
-            public void insertUpdate(DocumentEvent e) {
-                // whatever you want
-                // String originName = textFieldTitle.getToolTipText();
-                // photoGroup.put(textFieldTitle.getText(), photoGroup.get(originName));
-                // photoGroup.remove(originName);
-                // textFieldTitle.setToolTipText(textFieldTitle.getText());
-            }
-        });
+        // textFieldTitle.getDocument().addDocumentListener(new DocumentListener() {
+        //
+        // public void changedUpdate(DocumentEvent e) {
+        // // whatever you want
+        // }
+        //
+        // public void removeUpdate(DocumentEvent e) {
+        // // whatever you want
+        // }
+        //
+        // public void insertUpdate(DocumentEvent e) {
+        // // whatever you want
+        // // String originName = textFieldTitle.getToolTipText();
+        // // photoGroup.put(textFieldTitle.getText(), photoGroup.get(originName));
+        // // photoGroup.remove(originName);
+        // // textFieldTitle.setToolTipText(textFieldTitle.getText());
+        // }
+        // });
 
         for (File photo : files) {
             addImagePanel(panelFlow, photo);
@@ -994,9 +988,9 @@ public class GroupBrowser {
         photoGroup = new HashMap<String, List<File>>();
 
         PhotoGroup groupThread = new PhotoGroup(photoGroup, textFieldFolder.getText(),
-                SettingStore.getSettingStore().getThreshold(), SettingStore.getSettingStore().getModule(),
+                /* SettingStore.getSettingStore().getThreshold(), */ SettingStore.getSettingStore().getModule(),
                 SettingStore.getSettingStore().getFormat(), SettingStore.getSettingStore().isGuess(),
-                SettingStore.getSettingStore().isGps(), SettingStore.getSettingStore().isReport(),
+                SettingStore.getSettingStore().isGps(), /* SettingStore.getSettingStore().isReport(), */
                 SettingStore.getSettingStore().isIncludeSubFolder());
         ExecutorService exe = Executors.newFixedThreadPool(1);
         new Thread(new Runnable() {
@@ -1013,49 +1007,12 @@ public class GroupBrowser {
                     // });
                 }
                 panelGroupAll.removeAll();
-                final List<String> sortTitles = new ArrayList<String>();
-                final DateFormat settingDateFormat = new SimpleDateFormat(SettingStore.getSettingStore().getFormat());
-                Iterator<?> it = photoGroup.entrySet().iterator();
-                while (it.hasNext()) {
-                    Map.Entry<String, List<File>> pair = (Entry<String, List<File>>) it.next();
-                    sortTitles.add(pair.getKey());
-                }
-
-                Collections.sort(sortTitles, new Comparator<String>() {
-
-                    @Override
-                    public int compare(String date1, String date2) {
-                        try {
-                            return settingDateFormat.parse(PhotoNameCompareUtil.findDateString(date1))
-                                    .compareTo(settingDateFormat.parse(PhotoNameCompareUtil.findDateString(date2)));
-                        } catch (ParseException e) {
-                            e.printStackTrace();
-                        }
-                        return date1.compareTo(date2);
-                    }
-                });
+                final List<String> sortTitles = getGroupTitlesByDate();
 
                 for (String title : sortTitles) {
                     createImageGroup(title, photoGroup.get(title));
                 }
-                double[] rowWeights;
-                if (photoGroup.size() > 1) {
-                    rowWeights = new double[photoGroup.size()];
-                    for (int i = 0; i < rowWeights.length - 1; i++) {
-                        rowWeights[i] = 0.0;
-                    }
-                    rowWeights[rowWeights.length - 1] = 1.0;
-                } else {
-                    rowWeights = new double[] { 1.0 };
-                }
-                GridBagLayout panelGroupAllGridBagLayout = (GridBagLayout) panelGroupAll.getLayout();
-                panelGroupAllGridBagLayout.rowWeights = rowWeights;
-                panelGroupAll.setVisible(false);
-                panelGroupAll.setVisible(true);
-                btnProfile.setEnabled(true);
-                if (photoGroup.size() > 0) {
-                    btnSave.setEnabled(true);
-                }
+                layoutGroupPanel();
                 progressBar.setValue(100);
                 // EventQueue.invokeLater(new Runnable() {
                 //
@@ -1068,6 +1025,32 @@ public class GroupBrowser {
             }
         }).start();
 
+        startLogMonitor();
+
+        exe.execute(groupThread);
+        exe.shutdown();
+        // new Thread(new Runnable() {
+        //
+        // @Override
+        // public void run() {
+        // btnRun.setText("Running");
+        // btnRun.setEnabled(false);
+        // Map<String, List<File>> groups = group.getPhotoGroup();
+        // try {
+        // GroupResultDialog dialog = new GroupResultDialog(groups);
+        // dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        // dialog.setVisible(true);
+        // } catch (Exception e) {
+        // e.printStackTrace();
+        // }
+        // FileUtil.movePhotos(threshold, textField.getText(), groups);
+        // btnRun.setEnabled(true);
+        // btnRun.setText("Run");
+        // }
+        // }).start();
+    }
+
+    private void startLogMonitor() {
         if (!systemLogThreadStart) {
             systemLogThreadStart = true;
             new Thread(new Runnable() {
@@ -1092,28 +1075,6 @@ public class GroupBrowser {
                 }
             }).start();
         }
-
-        exe.execute(groupThread);
-        exe.shutdown();
-        // new Thread(new Runnable() {
-        //
-        // @Override
-        // public void run() {
-        // btnRun.setText("Running");
-        // btnRun.setEnabled(false);
-        // Map<String, List<File>> groups = group.getPhotoGroup();
-        // try {
-        // GroupResultDialog dialog = new GroupResultDialog(groups);
-        // dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-        // dialog.setVisible(true);
-        // } catch (Exception e) {
-        // e.printStackTrace();
-        // }
-        // FileUtil.movePhotos(threshold, textField.getText(), groups);
-        // btnRun.setEnabled(true);
-        // btnRun.setText("Run");
-        // }
-        // }).start();
     }
 
     private void doSave() {
@@ -1145,5 +1106,39 @@ public class GroupBrowser {
                 e.printStackTrace();
             }
         }
+    }
+
+    private void layoutGroupPanel() {
+        double[] rowWeights;
+        if (photoGroup.size() > 1) {
+            rowWeights = new double[photoGroup.size()];
+            for (int i = 0; i < rowWeights.length - 1; i++) {
+                rowWeights[i] = 0.0;
+            }
+            rowWeights[rowWeights.length - 1] = 1.0;
+        } else {
+            rowWeights = new double[] { 1.0 };
+        }
+        GridBagLayout panelGroupAllGridBagLayout = (GridBagLayout) panelGroupAll.getLayout();
+        panelGroupAllGridBagLayout.rowWeights = rowWeights;
+        panelGroupAll.setVisible(false);
+        panelGroupAll.setVisible(true);
+        btnProfile.setEnabled(true);
+        if (photoGroup.size() > 0) {
+            btnSave.setEnabled(true);
+        }
+    }
+
+    private List<String> getGroupTitlesByDate() {
+        final List<String> sortTitles = new ArrayList<String>();
+
+        Iterator<?> it = photoGroup.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry<String, List<File>> pair = (Entry<String, List<File>>) it.next();
+            sortTitles.add(pair.getKey());
+        }
+
+        Collections.sort(sortTitles, ComparatorUtil.DATE_TITLE_COMPARATOR);
+        return sortTitles;
     }
 }

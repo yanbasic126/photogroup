@@ -88,8 +88,7 @@ public class CommandLine {
         }
         HashMap<String, List<File>> photoGroup = new HashMap<String, List<File>>();
         try {
-            Thread thread = new Thread(
-                    new PhotoGroup(photoGroup, photosPath, threshold, module, format, guess, gps, report, subfolder));
+            Thread thread = new Thread(new PhotoGroup(photoGroup, photosPath, module, format, guess, gps, subfolder));
             thread.start();
             thread.join();
         } catch (InterruptedException e) {

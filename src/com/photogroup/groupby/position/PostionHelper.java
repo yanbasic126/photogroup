@@ -102,15 +102,15 @@ public class PostionHelper {
         return address;
     }
 
-    private static String getBingAddress(double lat, double lon) {
-        // BING_API_KEY = SettingStore.getSettingStore().getBingKey();
-        return null;
-    }
-
-    private static String getGoogleAddress(double lat, double lon) {
-        // GOOGLE_API_KEY = SettingStore.getSettingStore().getGoogleKey();
-        return null;
-    }
+    // private static String getBingAddress(double lat, double lon) {
+    // BING_API_KEY = SettingStore.getSettingStore().getBingKey();
+    // return null;
+    // }
+    //
+    // private static String getGoogleAddress(double lat, double lon) {
+    // GOOGLE_API_KEY = SettingStore.getSettingStore().getGoogleKey();
+    // return null;
+    // }
 
     private static double[] convertBaiduCoordinate(double lat, double lng) {
         double[] latlng = null;
