@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.lemonphoto</groupId>
     <artifactId>lemonphoto</artifactId>
-    <version>4.8.2</version>
+    <version>4.8.3</version>
     <name>Lemon Photo</name>
     <description>move photos by taken date
     2018-8-23: add sort photo before add gps address.
@@ -34,7 +34,8 @@
     2018-12-10: implement rename on saving.
     2018-12-17: directory history.
     2018-12-18: codacy review.
-    2018-12-20: codacy review.</description>
+    2018-12-20: codacy review.
+    2018-12-20: add test.</description>
 
     <distributionManagement>
         <repository>
@@ -70,12 +71,18 @@
             <artifactId>radiance-substance</artifactId>
             <version>1.0.2</version>
         </dependency -->
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-engine</artifactId>
+			<version>5.3.1</version>
+			<scope>test</scope>
+		</dependency>
     </dependencies>
     <build>
-        <sourceDirectory>src</sourceDirectory>
+        <sourceDirectory>src/main/java</sourceDirectory>
         <resources>
             <resource>
-                <directory>src</directory>
+                <directory>src/main/java</directory>
                 <includes>
                     <include>**/*.properties</include>
                     <include>custom_name_mapping.ini</include>
@@ -141,7 +148,7 @@
                         </goals>
                         <configuration>
                             <descriptors>
-                                <descriptor>src/assemblies/assembly.xml</descriptor>
+                                <descriptor>src/main/java/assemblies/assembly.xml</descriptor>
                             </descriptors>
                             <appendAssemblyId>false</appendAssemblyId>
                         </configuration>
@@ -167,7 +174,7 @@
                                     value="${project.version}" dir="resources">
                                     <include name="LemonPhoto.sh" />
                                 </replace>
-                                <echo file="src/version.txt"><![CDATA[${project.version}]]></echo>
+                                <echo file="src/main/java/version.txt"><![CDATA[${project.version}]]></echo>
                             </tasks>
                         </configuration>
                         <goals>
@@ -188,6 +195,11 @@
 						</goals>
 					</execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.22.0</version>
             </plugin>
         </plugins>
         <extensions>

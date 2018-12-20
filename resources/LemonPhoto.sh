@@ -1,0 +1,1 @@
+#!/bin/bashjavaw -jar lemonphoto-4.8.2.jar
