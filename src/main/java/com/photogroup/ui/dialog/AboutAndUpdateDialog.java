@@ -28,6 +28,10 @@ import com.photogroup.util.FileUtil;
 
 public class AboutAndUpdateDialog extends JDialog {
 
+    private static final String LICENSE_URL = "https://raw.githubusercontent.com/yanbasic126/photogroup/master/LICENSE";
+
+    private static final String LICENST_TYPE = "License";
+
     private static final String GIT_REPO = "https://github.com/yanbasic126/photogroup";
 
     private static final Color LEMON_COLOR = new Color(243, 205, 63);
@@ -239,7 +243,7 @@ public class AboutAndUpdateDialog extends JDialog {
                     panelInfo.add(lblUrl, gbc_lblUrl);
                 }
                 {
-                    JLabel lblLicense = new JLabel("License: LGPL");
+                    JLabel lblLicense = UIUilt.createSimpleLinkLabel(LICENST_TYPE, LICENSE_URL);
                     GridBagConstraints gbc_lblLicense = new GridBagConstraints();
                     gbc_lblLicense.gridx = 0;
                     gbc_lblLicense.gridy = 5;
