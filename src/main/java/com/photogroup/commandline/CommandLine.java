@@ -75,12 +75,10 @@ public class CommandLine {
                 break;
             case "--help":
                 printHelp();
-                Runtime.getRuntime().exit(0);
-                break;
+                return;
             case "-h":
                 printHelp();
-                Runtime.getRuntime().exit(0);
-                break;
+                return;
             default:
                 System.out.println("Error! Unsupport parameter: " + args[i]);
                 break;
