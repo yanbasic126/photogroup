@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.lemonphoto</groupId>
     <artifactId>lemonphoto</artifactId>
-    <version>4.8.3</version>
+    <version>4.8.4</version>
     <name>Lemon Photo</name>
     <description>move photos by taken date
     2018-8-23: add sort photo before add gps address.
@@ -35,8 +35,11 @@
     2018-12-17: directory history.
     2018-12-18: codacy review.
     2018-12-20: codacy review.
-    2018-12-20: add test.</description>
-
+    2018-12-20: add test.
+    2018-12-21: add test cases.</description>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
     <distributionManagement>
         <repository>
             <id>packagecloud-yanbasic</id>
@@ -49,12 +52,6 @@
     </distributionManagement>
 
     <dependencies>
-        <!-- dependency>
-            <groupId>net.sf.json-lib</groupId>
-            <artifactId>json-lib</artifactId>
-            <version>2.4</version>
-            <classifier>jdk15</classifier>
-        </dependency -->
 		<dependency>
 			<groupId>com.googlecode.json-simple</groupId>
 			<artifactId>json-simple</artifactId>
@@ -64,17 +61,23 @@
             <groupId>com.drewnoakes</groupId>
             <artifactId>metadata-extractor</artifactId>
             <version>2.9.0</version>
-            <!-- version>2.11.0</version -->
         </dependency>
-        <!-- dependency>
-            <groupId>org.pushing-pixels</groupId>
-            <artifactId>radiance-substance</artifactId>
-            <version>1.0.2</version>
-        </dependency -->
 		<dependency>
-			<groupId>org.junit.jupiter</groupId>
-			<artifactId>junit-jupiter-engine</artifactId>
-			<version>5.3.1</version>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.12</version>
+			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>org.hamcrest</groupId>
+					<artifactId>hamcrest-core</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.hamcrest</groupId>
+			<artifactId>hamcrest-library</artifactId>
+			<version>1.3</version>
 			<scope>test</scope>
 		</dependency>
     </dependencies>
@@ -115,6 +118,7 @@
                 <configuration>
                     <source>1.8</source>
                     <target>1.8</target>
+                    <encoding>utf-8</encoding>
                 </configuration>
             </plugin>
             <plugin>
