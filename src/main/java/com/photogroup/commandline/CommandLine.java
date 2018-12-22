@@ -12,13 +12,14 @@ import com.photogroup.util.FileUtil;
 public class CommandLine {
 
     private static void process(String[] args) {
+        @SuppressWarnings("unused")
         int threshold = 1;
         String photosPath = "";
         int module = 3;
         String format = "YYYY.M.d";
         boolean guess = true;
         boolean gps = true;
-        boolean report = true;
+        // boolean report = true;
         boolean subfolder = false;
         // MM.dd, YYYY.MM.dd, M.d
         for (int i = 0; i < args.length; i++) {

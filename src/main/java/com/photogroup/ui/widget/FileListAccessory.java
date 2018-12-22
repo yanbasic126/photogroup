@@ -199,7 +199,7 @@ public class FileListAccessory extends JPanel implements PropertyChangeListener 
         JLabel labelName = new JLabel(file.getName());
         // labelName.setBorder(new EmptyBorder(0, 0, 0, 0));
         labelName.setToolTipText(file.getName());
-        int height = labelName.getHeight();
+        // int height = labelName.getHeight();
         labelName.setPreferredSize(new Dimension(PREVIEW_SIZE, 20));
         GridBagConstraints gbc_labelName = new GridBagConstraints();
         gbc_labelName.anchor = GridBagConstraints.NORTHWEST;

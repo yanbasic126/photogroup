@@ -50,8 +50,6 @@ public class SettingDialog extends JDialog {
 
     private JCheckBox chckbxSubfolder;
 
-    private ImageIcon lemonIcon;
-
     private JCheckBox chckbxThumbnail;
 
     private JTextField textFieldBaidu;
@@ -82,11 +80,11 @@ public class SettingDialog extends JDialog {
 
         setTitle(Messages.getString("SettingDialog.this.title")); //$NON-NLS-1$
         try {
-            lemonIcon = ImageUtil.getImageFromSystemResource(Messages.getString("SettingDialog.0")); //$NON-NLS-1$
+            ImageIcon lemonIcon = ImageUtil.getImageFromSystemResource(Messages.getString("SettingDialog.0")); //$NON-NLS-1$
+            setIconImage(lemonIcon.getImage());
         } catch (IOException e1) {
             e1.printStackTrace();
         }
-        setIconImage(lemonIcon.getImage());
         setModal(true);
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         setBounds(100, 100, 900, 400);

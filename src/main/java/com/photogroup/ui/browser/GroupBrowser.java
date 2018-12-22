@@ -1,11 +1,9 @@
 package com.photogroup.ui.browser;
 
 import java.awt.Color;
-import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
-import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
@@ -26,7 +24,6 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -67,12 +64,10 @@ import com.photogroup.ui.Messages;
 import com.photogroup.ui.SettingStore;
 import com.photogroup.ui.dialog.AboutAndUpdateDialog;
 import com.photogroup.ui.dialog.SettingDialog;
-import com.photogroup.ui.dialog.ViewerDialog;
 import com.photogroup.ui.layout.WrapLayout;
 import com.photogroup.ui.widget.FileListAccessory;
 import com.photogroup.ui.widget.JTextAreaLog;
 import com.photogroup.ui.widget.JTextFieldAddress;
-import com.photogroup.util.ComparatorUtil;
 import com.photogroup.util.FileUtil;
 import com.photogroup.util.ImageUtil;
 
@@ -131,13 +126,7 @@ public class GroupBrowser {
 
     private JTextAreaLog txtDebugLog;
 
-    private JPanel panelDebugLog;
-
-    private JScrollPane scrollPaneDebug;
-
     private JPanel panelDebug;
-
-    private JPanel panelStatus;
 
     private JPanel panelSelectedImage;
 
@@ -251,7 +240,7 @@ public class GroupBrowser {
         gbl_panelDebug.rowWeights = new double[] { Double.MIN_VALUE };
         panelDebug.setLayout(gbl_panelDebug);
 
-        panelDebugLog = new JPanel();
+        JPanel panelDebugLog = new JPanel();
         // panelDebug.add(panel_2, gbc_panel_2_1);
         GridBagLayout gbl_panelDebugLog = new GridBagLayout();
         gbl_panelDebugLog.columnWidths = new int[] { 0, 0 };
@@ -260,7 +249,7 @@ public class GroupBrowser {
         gbl_panelDebugLog.rowWeights = new double[] { 1.0, Double.MIN_VALUE };
         panelDebugLog.setLayout(gbl_panelDebugLog);
 
-        scrollPaneDebug = new JScrollPane(panelDebugLog);
+        JScrollPane scrollPaneDebug = new JScrollPane(panelDebugLog);
         scrollPaneDebug.setPreferredSize(new Dimension(100, 160));
         GridBagConstraints gbc_scrollPaneDebug = new GridBagConstraints();
         gbc_scrollPaneDebug.fill = GridBagConstraints.BOTH;
@@ -322,7 +311,7 @@ public class GroupBrowser {
         panelBrowser.add(scrollPane, gbc_scrollPane);
         scrollPane.getVerticalScrollBar().setUnitIncrement(16);
 
-        panelStatus = new JPanel();
+        JPanel panelStatus = new JPanel();
         GridBagConstraints gbc_panelStatus = new GridBagConstraints();
         gbc_panelStatus.insets = new Insets(0, 0, 5, 0);
         gbc_panelStatus.anchor = GridBagConstraints.NORTH;
@@ -375,7 +364,7 @@ public class GroupBrowser {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                openFolder();
+                GroupBrowserHelper.openFolder(textFieldFolder.getText());
             }
         });
         btnFolder.setIcon(folderIcon);
@@ -424,22 +413,6 @@ public class GroupBrowser {
         gbc_textFieldFolder.gridy = 0;
         panelAddress.add(textFieldFolder, gbc_textFieldFolder);
         textFieldFolder.setColumns(10);
-    }
-
-    private void openFolder() {
-        try {
-            String checkFolder = checkFolder();
-            if (checkFolder == null) {
-                File folder = new File(textFieldFolder.getText());
-                Desktop.getDesktop().open(folder);
-            } else {
-                JOptionPane.showMessageDialog(frameGroupBrowser, checkFolder, Messages.getString("GroupBrowser.folder"), //$NON-NLS-1$
-                        JOptionPane.ERROR_MESSAGE);
-            }
-        } catch (IOException ex) {
-            ex.printStackTrace();
-            ExceptionHandler.logError(ex.getMessage());
-        }
     }
 
     private void browseFolder() {
@@ -870,7 +843,7 @@ public class GroupBrowser {
         }
         boolean buffered = true;
         if (bufferedImage != null) {
-            ImageIcon icon = new ImageIcon(resizeImageToPreviewIPhone(bufferedImage));
+            ImageIcon icon = new ImageIcon(GroupBrowserHelper.resizeImageToPreviewIPhone(bufferedImage, PREVIEW_SIZE));
             labelImg.setIcon(icon);
         } else {
             buffered = false;
@@ -888,11 +861,9 @@ public class GroupBrowser {
                     panel.setBorder(IMAGE_PANEL_SELECTED_BORDER);
                     panelSelectedImage = panel;
                 } else if (e.getButton() == 1 && e.getClickCount() == 2) {
-                    openToPreview(photo, isImage);
-                } else if (e.getButton() == 2) {
-                    if (e.getClickCount() == 1) {
-                        openToPreview(photo, isImage);
-                    }
+                    GroupBrowserHelper.openToPreview(photo, isImage);
+                } else if (e.getButton() == 2 && e.getClickCount() == 1) {
+                    GroupBrowserHelper.openToPreview(photo, isImage);
                 }
             }
         });
@@ -930,43 +901,8 @@ public class GroupBrowser {
     // return resizedImage;
     // }
 
-    private BufferedImage resizeImageToPreviewIPhone(BufferedImage originalImage) {
-        int type = originalImage.getType() == 0 ? BufferedImage.TYPE_INT_ARGB : originalImage.getType();
-
-        int width = originalImage.getWidth();
-        int height = originalImage.getHeight();
-        int size = (width <= height) ? width : height;
-        int x = (width > height) ? (width - height) / 2 : 0;
-        int y = (height > width) ? (height - width) / 2 : 0;
-
-        BufferedImage resizedImage = new BufferedImage(PREVIEW_SIZE, PREVIEW_SIZE, type);
-        Graphics2D g = resizedImage.createGraphics();
-        // g.drawImage(originalImage, x, y, size, size, null);
-        g.drawImage(originalImage, 0, 0, PREVIEW_SIZE, PREVIEW_SIZE, x, y, size, size, null);
-        g.dispose();
-        return resizedImage;
-    }
-
-    protected String validateBeforeRun() {
-        String errorMsg = checkFolder();
-        return errorMsg;
-    }
-
-    private String checkFolder() {
-        String errorMsg = null;
-        if (textFieldFolder.getText().isEmpty()) {
-            errorMsg = Messages.getString("GroupBrowser.check_folder_err"); //$NON-NLS-1$
-        } else {
-            if (!new File(textFieldFolder.getText()).exists()) {
-                errorMsg = Messages.getString("GroupBrowser.err_folder_1") + textFieldFolder.getText() //$NON-NLS-1$
-                        + Messages.getString("GroupBrowser.err_folder_2"); //$NON-NLS-1$
-            }
-        }
-        return errorMsg;
-    }
-
     private void profile() {
-        String errMsg = validateBeforeRun();
+        String errMsg = GroupBrowserHelper.checkFolder(textFieldFolder.getText());
         if (errMsg == null) {
             doProfile();
             HistoryDirectory.INSTANCE.addDirectory(textFieldFolder.getText());
@@ -1007,7 +943,7 @@ public class GroupBrowser {
                     // });
                 }
                 panelGroupAll.removeAll();
-                final List<String> sortTitles = getGroupTitlesByDate();
+                final List<String> sortTitles = GroupBrowserHelper.getGroupTitlesByDate(photoGroup);
 
                 for (String title : sortTitles) {
                     createImageGroup(title, photoGroup.get(title));
@@ -1094,20 +1030,6 @@ public class GroupBrowser {
         btnSave.setEnabled(false);
     }
 
-    private void openToPreview(File file, boolean isImage) {
-        if (isImage) {
-            ViewerDialog dialog = new ViewerDialog(file);
-            dialog.setLocationByPlatform(true);
-            dialog.setVisible(true);
-        } else {
-            try {
-                Desktop.getDesktop().open(file);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
     private void layoutGroupPanel() {
         double[] rowWeights;
         if (photoGroup.size() > 1) {
@@ -1129,16 +1051,4 @@ public class GroupBrowser {
         }
     }
 
-    private List<String> getGroupTitlesByDate() {
-        final List<String> sortTitles = new ArrayList<String>();
-
-        Iterator<?> it = photoGroup.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry<String, List<File>> pair = (Entry<String, List<File>>) it.next();
-            sortTitles.add(pair.getKey());
-        }
-
-        Collections.sort(sortTitles, ComparatorUtil.DATE_TITLE_COMPARATOR);
-        return sortTitles;
-    }
 }
