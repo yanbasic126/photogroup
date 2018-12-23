@@ -74,6 +74,8 @@ import com.photogroup.util.ImageUtil;
 
 public class GroupBrowser {
 
+    private static final EmptyBorder EMPTY_BORDER = new EmptyBorder(0, 0, 0, 0);
+
     private static final int MENU_DIR_LEN = 30;
 
     private static final int PHOTO_GAP = 1;
@@ -606,14 +608,6 @@ public class GroupBrowser {
         panelGroup1.setLayout(UIUilt.createGridBagLayout(new int[] { 0, 0 }, new int[] { 0, 0 },
                 new double[] { 1.0, Double.MIN_VALUE }, new double[] { 0.0, 0.0 }));
 
-        // JButton btnDate_1 = new JButton(oneGroup.getKey() + " (" + oneGroup.getValue().size() + ")");
-        // btnDate_1.setHorizontalAlignment(AbstractButton.LEFT);
-        // GridBagConstraints gbc_btnDate_1 = new GridBagConstraints();
-        // gbc_btnDate_1.fill = GridBagConstraints.HORIZONTAL;
-        // gbc_btnDate_1.gridx = 0;
-        // gbc_btnDate_1.gridy = 0;
-        // panelGroup1.add(btnDate_1, gbc_btnDate_1);
-
         JToolBar toolBar = new JToolBar();
         toolBar.setFloatable(false);
 
@@ -623,36 +617,14 @@ public class GroupBrowser {
         btnExpand.setIcon(upIcon);
         toolBar.add(btnExpand);
 
-        // JLabel lblTitle = new JLabel(oneGroup.getKey() + " (" + oneGroup.getValue().size() + ")");
-        // toolBar.add(lblTitle);
-
         JTextField textFieldTitle = new JTextField(title);
-        // textFieldTitle.setToolTipText(title);
-        // textFieldTitle.setName(title);
-        // textFieldTitle.setEditable(false);
         toolBar.add(textFieldTitle);
-        textFieldTitle.setBorder(new EmptyBorder(0, 0, 0, 0));
+        textFieldTitle.setBorder(EMPTY_BORDER);
 
         textFieldTitleMap.put(textFieldTitle, title);
 
-        // JButton btnRename = new JButton(Messages.getString("GroupBrowser.btn_rename")); //$NON-NLS-1$
-        // // btnRename.setIcon(renameIcon);
-        // btnRename.addActionListener(new ActionListener() {
-        //
-        // public void actionPerformed(ActionEvent e) {
-        // if (!textFieldTitle.getToolTipText().equals(textFieldTitle.getText())) {
-        // String originName = textFieldTitle.getToolTipText();
-        // photoGroup.put(textFieldTitle.getText(), photoGroup.get(originName));
-        // photoGroup.remove(originName);
-        // textFieldTitle.setToolTipText(textFieldTitle.getText());
-        // }
-        // }
-        // });
-        //
-        // toolBar.add(btnRename);
-
         JPanel panelFlow = new JPanel();
-        panelFlow.setBorder(new EmptyBorder(0, 0, 0, 0));
+        panelFlow.setBorder(EMPTY_BORDER);
         panelFlow.setLayout(WRAP_LAYOUT_FLOW);
         // panelFlow.setBorder(new LineBorder(new Color(0, 0, 0)));
         panelFlow.setBackground(Color.WHITE);
@@ -677,31 +649,9 @@ public class GroupBrowser {
         panelFlowList.add(panelFlow);
         btnExpandList.add(btnExpand);
 
-        // textFieldTitle.getDocument().addDocumentListener(new DocumentListener() {
-        //
-        // public void changedUpdate(DocumentEvent e) {
-        // // whatever you want
-        // }
-        //
-        // public void removeUpdate(DocumentEvent e) {
-        // // whatever you want
-        // }
-        //
-        // public void insertUpdate(DocumentEvent e) {
-        // // whatever you want
-        // // String originName = textFieldTitle.getToolTipText();
-        // // photoGroup.put(textFieldTitle.getText(), photoGroup.get(originName));
-        // // photoGroup.remove(originName);
-        // // textFieldTitle.setToolTipText(textFieldTitle.getText());
-        // }
-        // });
-
         for (File photo : files) {
             addImagePanel(panelFlow, photo);
         }
-
-        // panelFlow.doLayout();
-        // return panelFlow;
     }
 
     private void addImagePanel(JPanel panelFlow, File photo) {

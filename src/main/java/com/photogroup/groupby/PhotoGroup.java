@@ -4,15 +4,11 @@ import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.TreeMap;
 
 import com.photogroup.util.ComparatorUtil;
@@ -36,21 +32,9 @@ public class PhotoGroup implements Runnable {
 
     // private boolean report;
 
-    private static final Set<String> PHOTO_TYPES;
-
     private Map<String, List<File>> photoGroup;
 
     private boolean subfolder;
-
-    static {
-        final Set<String> photoTypes = new HashSet<String>();
-
-        photoTypes.add("PNG");
-        photoTypes.add("JPG");
-        photoTypes.add("JPEG");
-        photoTypes.add("GIF");
-        PHOTO_TYPES = Collections.unmodifiableSet(photoTypes);
-    }
 
     public PhotoGroup(Map<String, List<File>> photoGroup, String photosPath, /* int threshold, */ int module, String format,
             boolean guess, boolean gps, /* boolean report, */ boolean includeSubFolder) {
@@ -78,15 +62,8 @@ public class PhotoGroup implements Runnable {
         }
 
         Map<LocalDate, List<File>> photosDate = new HashMap<LocalDate, List<File>>();
-        Comparator<File> comparator = new Comparator<File>() {
-
-            @Override
-            public int compare(File o1, File o2) {
-                return ComparatorUtil.compareByName(o1.getName(), o2.getName());
-            }
-        };
-        Map<File, String> exifDateTime = new TreeMap<File, String>(comparator);
-        Map<File, String> exifAddress = new TreeMap<File, String>(comparator);
+        Map<File, String> exifDateTime = new TreeMap<File, String>(PhotoGroupHelper.DATENAME_COMPARATOR);
+        Map<File, String> exifAddress = new TreeMap<File, String>(PhotoGroupHelper.DATENAME_COMPARATOR);
 
         float progress = 0;
         int precent = 0;
@@ -148,7 +125,7 @@ public class PhotoGroup implements Runnable {
 
             if (dateTime == null && module == 2) {
                 String ext = FileUtil.getExtension(file);
-                if (PHOTO_TYPES.contains(ext)) {
+                if (PhotoGroupHelper.PHOTO_TYPES.contains(ext)) {
                     dateTime = PhotoGroupHelper.simpleDateFormat(file.lastModified());
                     break;
                 }
@@ -173,16 +150,9 @@ public class PhotoGroup implements Runnable {
         Iterator<?> it = photosDate.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry<LocalDate, List<File>> pair = (Entry<LocalDate, List<File>>) it.next();
-            Set<String> addressNames = new HashSet<String>();
             List<File> photos = pair.getValue();
-            Collections.sort(photos, comparator);
-            for (File photo : photos) {
-                if (exifAddress.get(photo) != null) {
-                    addressNames.add(exifAddress.get(photo));
-                }
-            }
 
-            String folderName = pair.getKey().format(pattern) + PhotoGroupHelper.contactAddress(addressNames);
+            String folderName = pair.getKey().format(pattern) + PhotoGroupHelper.findAddressName(photos, exifAddress);
             // if (pair.getValue().size() >= threshold) {
             // File dateFolder = new File(photoFolder, folderName);
             // if (!dateFolder.exists()) {

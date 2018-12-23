@@ -54,36 +54,16 @@ public class MetadataReader {
         Metadata metadata = readMetadataWithCache(file);
         GpsDirectory directory = metadata.getFirstDirectoryOfType(GpsDirectory.class);
         if (directory != null) {
-            final String empty = "";
-            String lon = directory.getDescription(GpsDirectory.TAG_LONGITUDE) == null ? empty
-                    : directory.getDescription(GpsDirectory.TAG_LONGITUDE).trim();
-            String lonRef = directory.getDescription(GpsDirectory.TAG_LONGITUDE_REF) == null ? empty
-                    : directory.getDescription(GpsDirectory.TAG_LONGITUDE_REF).trim();
-            String lat = directory.getDescription(GpsDirectory.TAG_LATITUDE) == null ? empty
-                    : directory.getDescription(GpsDirectory.TAG_LATITUDE).trim();
-            String latRef = directory.getDescription(GpsDirectory.TAG_LATITUDE_REF) == null ? empty
-                    : directory.getDescription(GpsDirectory.TAG_LATITUDE_REF).trim();
+            String lon = MetadataReaderHelper.getDescription(directory, GpsDirectory.TAG_LONGITUDE);
+            String lonRef = MetadataReaderHelper.getDescription(directory, GpsDirectory.TAG_LONGITUDE_REF);
+            String lat = MetadataReaderHelper.getDescription(directory, GpsDirectory.TAG_LATITUDE);
+            String latRef = MetadataReaderHelper.getDescription(directory, GpsDirectory.TAG_LATITUDE_REF);
             if (!lon.isEmpty() && !lat.isEmpty() && !lonRef.isEmpty() && !latRef.isEmpty()) {
-                return new Double[] { convertGpsToDegree(lat, latRef), convertGpsToDegree(lon, lonRef) };
+                return new Double[] { MetadataReaderHelper.convertGpsToDegree(lat, latRef),
+                        MetadataReaderHelper.convertGpsToDegree(lon, lonRef) };
             }
         }
         return null;
-    }
-
-    private static Double convertGpsToDegree(String stringDMS, String stringRef) {
-        double result;
-        String[] split2 = stringDMS.split(" ");
-        String degrees = split2[0].trim().substring(0, split2[0].trim().length() - 1);
-        String minutes = split2[1].trim().substring(0, split2[1].trim().length() - 1);
-        String seconds = split2[2].trim().substring(0, split2[2].trim().length() - 1);
-
-        double decimal = ((Double.valueOf(minutes) * 60) + Double.valueOf(seconds)) / (60 * 60);
-        if ("N".equals(stringRef) || "E".equals(stringRef)) {
-            result = Double.valueOf(degrees) + decimal;
-        } else {
-            result = 0 - (Double.valueOf(degrees) + decimal);
-        }
-        return result;
     }
 
     /**

@@ -9,6 +9,9 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -17,8 +20,13 @@ import com.drew.imaging.ImageProcessingException;
 import com.photogroup.exception.ExceptionHandler;
 import com.photogroup.groupby.metadata.MetadataReader;
 import com.photogroup.groupby.position.PostionHelper;
+import com.photogroup.util.ComparatorUtil;
 
 public class PhotoGroupHelper {
+
+    public static final Comparator<File> DATENAME_COMPARATOR;
+
+    public static final Set<String> PHOTO_TYPES;
 
     private static final int FILENAME_LEN = 128;
 
@@ -28,6 +36,24 @@ public class PhotoGroupHelper {
 
     // TODO remove simple formatter
     private static final SimpleDateFormat simpleFormatter = new SimpleDateFormat(DATE_TIME_PATTERN);
+
+    static {
+        final Set<String> photoTypes = new HashSet<String>();
+
+        photoTypes.add("PNG");
+        photoTypes.add("JPG");
+        photoTypes.add("JPEG");
+        photoTypes.add("GIF");
+        PHOTO_TYPES = Collections.unmodifiableSet(photoTypes);
+
+        DATENAME_COMPARATOR = new Comparator<File>() {
+
+            @Override
+            public int compare(File o1, File o2) {
+                return ComparatorUtil.compareByName(o1.getName(), o2.getName());
+            }
+        };
+    }
 
     public static void addFileDate(final File file, String dateTime, Map<LocalDate, List<File>> photosDate) {
         if (dateTime != null) {
@@ -46,7 +72,7 @@ public class PhotoGroupHelper {
         return simpleFormatter.format(lastModified);
     }
 
-    public static String contactAddress(Set<String> addressNames) {
+    private static String contactAddress(Set<String> addressNames) {
         String addressName = "";
         for (String add : addressNames) {
             if (addressName.length() + add.length() > FILENAME_LEN) { // 255
@@ -59,6 +85,17 @@ public class PhotoGroupHelper {
             addressName = addressName.substring(0, addressName.length() - 1);
         }
         return addressName;
+    }
+
+    public static String findAddressName(List<File> photos, Map<File, String> exifAddressMap) {
+        Set<String> addressNames = new HashSet<String>();
+        Collections.sort(photos, DATENAME_COMPARATOR);
+        for (File photo : photos) {
+            if (exifAddressMap.get(photo) != null) {
+                addressNames.add(exifAddressMap.get(photo));
+            }
+        }
+        return contactAddress(addressNames);
     }
 
     // update console
