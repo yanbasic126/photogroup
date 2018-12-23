@@ -1,8 +1,6 @@
 package com.photogroup.ui.dialog;
 
 import java.awt.Color;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -25,6 +23,7 @@ import javax.swing.JLabel;
 import javax.swing.KeyStroke;
 
 import com.photogroup.groupby.metadata.MetadataReader;
+import com.photogroup.ui.util.UIUilt;
 
 public class ViewerDialog extends JFrame {
 
@@ -53,17 +52,10 @@ public class ViewerDialog extends JFrame {
                 }
             }
         });
-        GridBagLayout gridBagLayout = new GridBagLayout();
-        gridBagLayout.columnWidths = new int[] { 148, 0 };
-        gridBagLayout.rowHeights = new int[] { 1, 0 };
-        gridBagLayout.columnWeights = new double[] { 1.0, Double.MIN_VALUE };
-        gridBagLayout.rowWeights = new double[] { 1.0, Double.MIN_VALUE };
-        getContentPane().setLayout(gridBagLayout);
+        getContentPane().setLayout(UIUilt.createGridBagLayout(new int[] { 148, 0 }, new int[] { 1, 0 },
+                new double[] { 1.0, Double.MIN_VALUE }, new double[] { 1.0, Double.MIN_VALUE }));
         labelImage = new JLabel();
-        GridBagConstraints gbc_labelImage = new GridBagConstraints();
-        gbc_labelImage.gridx = 0;
-        gbc_labelImage.gridy = 0;
-        getContentPane().add(labelImage, gbc_labelImage);
+        getContentPane().add(labelImage, UIUilt.createGridBagConstraints(-1, -1, null, 0, 0));
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "Cancel"); //$NON-NLS-1$
         getRootPane().getActionMap().put("Cancel", new AbstractAction() { //$NON-NLS-1$

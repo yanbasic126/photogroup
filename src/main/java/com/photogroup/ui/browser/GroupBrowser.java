@@ -65,6 +65,7 @@ import com.photogroup.ui.SettingStore;
 import com.photogroup.ui.dialog.AboutAndUpdateDialog;
 import com.photogroup.ui.dialog.SettingDialog;
 import com.photogroup.ui.layout.WrapLayout;
+import com.photogroup.ui.util.UIUilt;
 import com.photogroup.ui.widget.FileListAccessory;
 import com.photogroup.ui.widget.JTextAreaLog;
 import com.photogroup.ui.widget.JTextFieldAddress;
@@ -85,6 +86,8 @@ public class GroupBrowser {
 
     private static final LineBorder IMAGE_PANEL_SELECTED_BORDER = new LineBorder(UIManager.getColor("Table.selectionBackground"), //$NON-NLS-1$
             2);
+
+    private static final WrapLayout WRAP_LAYOUT_FLOW = new WrapLayout();
 
     private static boolean systemLogThreadStart = false;
 
@@ -204,7 +207,14 @@ public class GroupBrowser {
             e.printStackTrace();
             ExceptionHandler.logError(e.getMessage());
         }
+        createWrapLayout();
         initialize();
+    }
+
+    private void createWrapLayout() {
+        WRAP_LAYOUT_FLOW.setAlignment(FlowLayout.LEFT);
+        WRAP_LAYOUT_FLOW.setHgap(PHOTO_GAP);
+        WRAP_LAYOUT_FLOW.setVgap(PHOTO_GAP);
     }
 
     /**
@@ -221,135 +231,70 @@ public class GroupBrowser {
 
     private void createDebugPanel() {
         panelDebug = new JPanel();
-        GridBagConstraints gbc_panel_2_1 = new GridBagConstraints();
-        gbc_panel_2_1.anchor = GridBagConstraints.NORTH;
-        gbc_panel_2_1.fill = GridBagConstraints.HORIZONTAL;
-        gbc_panel_2_1.gridx = 0;
-        gbc_panel_2_1.gridy = 4;
+
         // panel_2.setVisible(false);
-        frameGroupBrowser.getContentPane().add(panelDebug, gbc_panel_2_1);
-        gbc_panel_2_1 = new GridBagConstraints();
-        gbc_panel_2_1.insets = new Insets(0, 0, 5, 0);
-        gbc_panel_2_1.anchor = GridBagConstraints.NORTHWEST;
-        gbc_panel_2_1.gridx = 1;
-        gbc_panel_2_1.gridy = 0;
-        GridBagLayout gbl_panelDebug = new GridBagLayout();
-        gbl_panelDebug.columnWidths = new int[] { 600, 0 };
-        gbl_panelDebug.rowHeights = new int[] { 0 };
-        gbl_panelDebug.columnWeights = new double[] { 1.0, Double.MIN_VALUE };
-        gbl_panelDebug.rowWeights = new double[] { Double.MIN_VALUE };
-        panelDebug.setLayout(gbl_panelDebug);
+        frameGroupBrowser.getContentPane().add(panelDebug,
+                UIUilt.createGridBagConstraints(GridBagConstraints.HORIZONTAL, GridBagConstraints.NORTH, null, 0, 4));
+
+        panelDebug.setLayout(UIUilt.createGridBagLayout(new int[] { 600, 0 }, new int[] { 0 },
+                new double[] { 1.0, Double.MIN_VALUE }, new double[] { Double.MIN_VALUE }));
 
         JPanel panelDebugLog = new JPanel();
         // panelDebug.add(panel_2, gbc_panel_2_1);
-        GridBagLayout gbl_panelDebugLog = new GridBagLayout();
-        gbl_panelDebugLog.columnWidths = new int[] { 0, 0 };
-        gbl_panelDebugLog.rowHeights = new int[] { 0, 0 };
-        gbl_panelDebugLog.columnWeights = new double[] { 1.0, Double.MIN_VALUE };
-        gbl_panelDebugLog.rowWeights = new double[] { 1.0, Double.MIN_VALUE };
-        panelDebugLog.setLayout(gbl_panelDebugLog);
+        panelDebugLog.setLayout(UIUilt.createGridBagLayout(new int[] { 0, 0 }, new int[] { 0, 0 },
+                new double[] { 1.0, Double.MIN_VALUE }, new double[] { 1.0, Double.MIN_VALUE }));
 
         JScrollPane scrollPaneDebug = new JScrollPane(panelDebugLog);
         scrollPaneDebug.setPreferredSize(new Dimension(100, 160));
-        GridBagConstraints gbc_scrollPaneDebug = new GridBagConstraints();
-        gbc_scrollPaneDebug.fill = GridBagConstraints.BOTH;
-        gbc_scrollPaneDebug.gridx = 0;
-        gbc_scrollPaneDebug.gridy = 0;
         txtDebugLog = new JTextAreaLog();
         txtDebugLog.setText(""); //$NON-NLS-1$
         txtDebugLog.setRows(10);
         DefaultCaret caret = (DefaultCaret) txtDebugLog.getCaret();
         caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
-        GridBagConstraints gbc_txtDebugLog = new GridBagConstraints();
-        gbc_txtDebugLog.anchor = GridBagConstraints.SOUTH;
-        gbc_txtDebugLog.fill = GridBagConstraints.HORIZONTAL;
-        gbc_txtDebugLog.gridx = 0;
-        gbc_txtDebugLog.gridy = 0;
-        panelDebugLog.add(txtDebugLog, gbc_txtDebugLog);
-        panelDebug.add(scrollPaneDebug, gbc_scrollPaneDebug);
+        panelDebugLog.add(txtDebugLog,
+                UIUilt.createGridBagConstraints(GridBagConstraints.HORIZONTAL, GridBagConstraints.SOUTH, null, 0, 0));
+
+        panelDebug.add(scrollPaneDebug, UIUilt.createGridBagConstraints(GridBagConstraints.BOTH, -1, null, 0, 0));
         scrollPaneDebug.getVerticalScrollBar().setUnitIncrement(16);
         panelDebug.setVisible(false);
     }
 
     private void createBrowserPanel() {
         JPanel panelBrowser = new JPanel();
-        GridBagConstraints gbc_panelBrowser = new GridBagConstraints();
-        gbc_panelBrowser.insets = new Insets(0, 0, 5, 0);
-        gbc_panelBrowser.fill = GridBagConstraints.BOTH;
-        gbc_panelBrowser.gridx = 0;
-        gbc_panelBrowser.gridy = 2;
-        frameGroupBrowser.getContentPane().add(panelBrowser, gbc_panelBrowser);
-        GridBagLayout gbl_panelBrowser = new GridBagLayout();
-        gbl_panelBrowser.columnWidths = new int[] { 2, 0 };
-        gbl_panelBrowser.rowHeights = new int[] { 2, 0 };
-        gbl_panelBrowser.columnWeights = new double[] { 1.0, Double.MIN_VALUE };
-        gbl_panelBrowser.rowWeights = new double[] { 1.0, Double.MIN_VALUE };
-        panelBrowser.setLayout(gbl_panelBrowser);
+        frameGroupBrowser.getContentPane().add(panelBrowser,
+                UIUilt.createGridBagConstraints(GridBagConstraints.BOTH, -1, new Insets(0, 0, 5, 0), 0, 2));
+        panelBrowser.setLayout(UIUilt.createGridBagLayout(new int[] { 2, 0 }, new int[] { 2, 0 },
+                new double[] { 1.0, Double.MIN_VALUE }, new double[] { 1.0, Double.MIN_VALUE }));
 
         panelGroupAll = new JPanel();
         panelGroupAll.setBackground(Color.WHITE);
-        GridBagConstraints gbc_panelGroupAll = new GridBagConstraints();
-        gbc_panelGroupAll.anchor = GridBagConstraints.NORTH;
-        gbc_panelGroupAll.insets = new Insets(0, 0, 0, 5);
-        gbc_panelGroupAll.fill = GridBagConstraints.BOTH;
-        gbc_panelGroupAll.gridx = 0;
-        gbc_panelGroupAll.gridy = 0;
-        GridBagLayout gbl_panelGroupAll = new GridBagLayout();
-        gbl_panelGroupAll.columnWidths = new int[] { 0 };
-        gbl_panelGroupAll.rowHeights = new int[] { 0 };
-        gbl_panelGroupAll.columnWeights = new double[] { 1.0 };
-        gbl_panelGroupAll.rowWeights = new double[] { 0.0, 1.0 };
-        panelGroupAll.setLayout(gbl_panelGroupAll);
+        panelGroupAll.setLayout(
+                UIUilt.createGridBagLayout(new int[] { 0 }, new int[] { 0 }, new double[] { 1.0 }, new double[] { 0.0, 1.0 }));
 
         JScrollPane scrollPane = new JScrollPane(panelGroupAll);
         scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-        GridBagConstraints gbc_scrollPane = new GridBagConstraints();
-        gbc_scrollPane.fill = GridBagConstraints.BOTH;
-        gbc_scrollPane.gridx = 0;
-        gbc_scrollPane.gridy = 0;
         // panelBrowser.add(panelGroupAll, gbc_panelGroupAll);
-        panelBrowser.add(scrollPane, gbc_scrollPane);
+        panelBrowser.add(scrollPane, UIUilt.createGridBagConstraints(GridBagConstraints.BOTH, -1, null, 0, 0));
         scrollPane.getVerticalScrollBar().setUnitIncrement(16);
 
         JPanel panelStatus = new JPanel();
         GridBagConstraints gbc_panelStatus = new GridBagConstraints();
-        gbc_panelStatus.insets = new Insets(0, 0, 5, 0);
-        gbc_panelStatus.anchor = GridBagConstraints.NORTH;
-        gbc_panelStatus.fill = GridBagConstraints.HORIZONTAL;
-        gbc_panelStatus.gridx = 0;
-        gbc_panelStatus.gridy = 3;
-        frameGroupBrowser.getContentPane().add(panelStatus, gbc_panelStatus);
-        GridBagLayout gbl_panelStatus = new GridBagLayout();
-        gbl_panelStatus.columnWidths = new int[] { 269 };
-        gbl_panelStatus.rowHeights = new int[] { 14, 0 };
-        gbl_panelStatus.columnWeights = new double[] { 1.0 };
-        gbl_panelStatus.rowWeights = new double[] { 0.0, Double.MIN_VALUE };
-        panelStatus.setLayout(gbl_panelStatus);
+        frameGroupBrowser.getContentPane().add(panelStatus, UIUilt.createGridBagConstraints(GridBagConstraints.HORIZONTAL,
+                GridBagConstraints.NORTH, new Insets(0, 0, 5, 0), 0, 3));
+        panelStatus.setLayout(UIUilt.createGridBagLayout(new int[] { 269 }, new int[] { 14, 0 }, new double[] { 1.0 },
+                new double[] { 0.0, Double.MIN_VALUE }));
 
         progressBar = new JProgressBar();
         progressBar.setValue(0);
-        GridBagConstraints gbc_progressBar = new GridBagConstraints();
-        gbc_progressBar.fill = GridBagConstraints.BOTH;
-        gbc_progressBar.gridx = 0;
-        gbc_progressBar.gridy = 0;
-        panelStatus.add(progressBar, gbc_progressBar);
+        panelStatus.add(progressBar, UIUilt.createGridBagConstraints(GridBagConstraints.BOTH, -1, null, 0, 0));
     }
 
     private void createAddressBar() {
         JPanel panelAddress = new JPanel();
-        GridBagConstraints gbc_panelAddress = new GridBagConstraints();
-        gbc_panelAddress.anchor = GridBagConstraints.NORTH;
-        gbc_panelAddress.insets = new Insets(0, 0, 5, 0);
-        gbc_panelAddress.fill = GridBagConstraints.HORIZONTAL;
-        gbc_panelAddress.gridx = 0;
-        gbc_panelAddress.gridy = 1;
-        frameGroupBrowser.getContentPane().add(panelAddress, gbc_panelAddress);
-        GridBagLayout gbl_panelAddress = new GridBagLayout();
-        gbl_panelAddress.columnWidths = new int[] { 86, 0, 0 };
-        gbl_panelAddress.rowHeights = new int[] { 23, 0 };
-        gbl_panelAddress.columnWeights = new double[] { 1.0, 0.0, Double.MIN_VALUE };
-        gbl_panelAddress.rowWeights = new double[] { 0.0, Double.MIN_VALUE };
-        panelAddress.setLayout(gbl_panelAddress);
+        frameGroupBrowser.getContentPane().add(panelAddress, UIUilt.createGridBagConstraints(GridBagConstraints.HORIZONTAL,
+                GridBagConstraints.NORTH, new Insets(0, 0, 5, 0), 0, 1));
+        panelAddress.setLayout(UIUilt.createGridBagLayout(new int[] { 86, 0, 0 }, new int[] { 23, 0 },
+                new double[] { 1.0, 0.0, Double.MIN_VALUE }, new double[] { 0.0, Double.MIN_VALUE }));
 
         // JLabel lblFolder = new JLabel("Photo folder ");
         // GridBagConstraints gbc_lblFolder = new GridBagConstraints();
@@ -368,14 +313,9 @@ public class GroupBrowser {
             }
         });
         btnFolder.setIcon(folderIcon);
-        GridBagConstraints gbc_btnFolder = new GridBagConstraints();
-        gbc_btnFolder.insets = new Insets(0, 0, 0, 5);
-        gbc_btnFolder.gridx = 1;
-        gbc_btnFolder.gridy = 0;
-
         int size = (int) btnFolder.getPreferredSize().getHeight();
         btnFolder.setPreferredSize(new Dimension(size, size));
-        panelAddress.add(btnFolder, gbc_btnFolder);
+        panelAddress.add(btnFolder, UIUilt.createGridBagConstraints(-1, -1, new Insets(0, 0, 0, 5), 1, 0));
 
         JButton btnBrowse = new JButton(Messages.getString("GroupBrowser.browse")); //$NON-NLS-1$
         int width = (int) btnBrowse.getPreferredSize().getWidth();
@@ -387,11 +327,7 @@ public class GroupBrowser {
                 browseFolder();
             }
         });
-        GridBagConstraints gbc_btnBrowse = new GridBagConstraints();
-        gbc_btnBrowse.anchor = GridBagConstraints.NORTHWEST;
-        gbc_btnBrowse.gridx = 2;
-        gbc_btnBrowse.gridy = 0;
-        panelAddress.add(btnBrowse, gbc_btnBrowse);
+        panelAddress.add(btnBrowse, UIUilt.createGridBagConstraints(-1, GridBagConstraints.NORTHWEST, null, 2, 0));
 
         textFieldFolder = new JTextFieldAddress();
         textFieldFolder.setText(""); //$NON-NLS-1$
@@ -406,12 +342,8 @@ public class GroupBrowser {
                 }
             }
         });
-        GridBagConstraints gbc_textFieldFolder = new GridBagConstraints();
-        gbc_textFieldFolder.fill = GridBagConstraints.HORIZONTAL;
-        gbc_textFieldFolder.insets = new Insets(0, 0, 0, 5);
-        gbc_textFieldFolder.gridx = 0;
-        gbc_textFieldFolder.gridy = 0;
-        panelAddress.add(textFieldFolder, gbc_textFieldFolder);
+        panelAddress.add(textFieldFolder,
+                UIUilt.createGridBagConstraints(GridBagConstraints.HORIZONTAL, -1, new Insets(0, 0, 0, 5), 0, 0));
         textFieldFolder.setColumns(10);
     }
 
@@ -435,27 +367,14 @@ public class GroupBrowser {
 
     private void createToolbar() {
         JPanel panelToolbar = new JPanel();
-        GridBagConstraints gbc_panelToolbar = new GridBagConstraints();
-        gbc_panelToolbar.anchor = GridBagConstraints.NORTH;
-        gbc_panelToolbar.insets = new Insets(0, 0, 5, 0);
-        gbc_panelToolbar.fill = GridBagConstraints.HORIZONTAL;
-        gbc_panelToolbar.gridx = 0;
-        gbc_panelToolbar.gridy = 0;
-        frameGroupBrowser.getContentPane().add(panelToolbar, gbc_panelToolbar);
-        GridBagLayout gbl_panelToolbar = new GridBagLayout();
-        gbl_panelToolbar.columnWidths = new int[] { 0, 0, 0 };
-        gbl_panelToolbar.rowHeights = new int[] { 0, 0 };
-        gbl_panelToolbar.columnWeights = new double[] { 0.0, 0.0, Double.MIN_VALUE };
-        gbl_panelToolbar.rowWeights = new double[] { 0.0, Double.MIN_VALUE };
-        panelToolbar.setLayout(gbl_panelToolbar);
+        frameGroupBrowser.getContentPane().add(panelToolbar, UIUilt.createGridBagConstraints(GridBagConstraints.HORIZONTAL,
+                GridBagConstraints.NORTH, new Insets(0, 0, 5, 0), 0, 0));
+        panelToolbar.setLayout(UIUilt.createGridBagLayout(new int[] { 0, 0, 0 }, new int[] { 0, 0 },
+                new double[] { 0.0, 0.0, Double.MIN_VALUE }, new double[] { 0.0, Double.MIN_VALUE }));
 
         JToolBar toolBarSetting = new JToolBar();
         toolBarSetting.setFloatable(false);
-        GridBagConstraints gbc_toolBarSetting = new GridBagConstraints();
-        gbc_toolBarSetting.insets = new Insets(0, 0, 0, 5);
-        gbc_toolBarSetting.gridx = 0;
-        gbc_toolBarSetting.gridy = 0;
-        panelToolbar.add(toolBarSetting, gbc_toolBarSetting);
+        panelToolbar.add(toolBarSetting, UIUilt.createGridBagConstraints(-1, -1, new Insets(0, 0, 0, 5), 0, 0));
 
         btnProfile = new JButton(Messages.getString("GroupBrowser.profile")); //$NON-NLS-1$
         btnProfile.setIcon(profileIcon);
@@ -527,17 +446,15 @@ public class GroupBrowser {
 
     private void createFrame() {
         frameGroupBrowser = new JFrame();
-        frameGroupBrowser.setBounds(100, 100, (PREVIEW_SIZE + PHOTO_GAP * 2) * 5 + 50, 700);
+        int calWidth = (PREVIEW_SIZE + PHOTO_GAP * 2) * 5 + 60;
+        int calHeight = (int) (calWidth * 0.8);
+        frameGroupBrowser.setBounds(100, 100, calWidth, calHeight);
         frameGroupBrowser.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frameGroupBrowser.setTitle(Messages.getString("GroupBrowser.title")); //$NON-NLS-1$
         frameGroupBrowser.setIconImage(lemonIcon.getImage());
         frameGroupBrowser.setLocationByPlatform(true);
-        GridBagLayout gridBagLayout = new GridBagLayout();
-        gridBagLayout.columnWidths = new int[] { 0, 0 };
-        gridBagLayout.rowHeights = new int[] { 0, 0, 1, 0, 0 };
-        gridBagLayout.columnWeights = new double[] { 1.0, Double.MIN_VALUE };
-        gridBagLayout.rowWeights = new double[] { 0.0, 0.0, 1.0, 0.0, 0.0 };
-        frameGroupBrowser.getContentPane().setLayout(gridBagLayout);
+        frameGroupBrowser.getContentPane().setLayout(UIUilt.createGridBagLayout(new int[] { 0, 0 }, new int[] { 0, 0, 1, 0, 0 },
+                new double[] { 1.0, Double.MIN_VALUE }, new double[] { 0.0, 0.0, 1.0, 0.0, 0.0 }));
     }
 
     private void createMenu() {
@@ -684,21 +601,11 @@ public class GroupBrowser {
     private void createImageGroup(String title, List<File> files) {
         JPanel panelGroup1 = new JPanel();
         // panelGroup1.setBorder(new LineBorder(new Color(0, 0, 0)));
-        GridBagConstraints gbc_panelGroup1 = new GridBagConstraints();
-        gbc_panelGroup1.fill = GridBagConstraints.HORIZONTAL;
-        gbc_panelGroup1.anchor = GridBagConstraints.NORTH;
-        gbc_panelGroup1.insets = new Insets(0, 0, 5, 0);
-        gbc_panelGroup1.gridx = 0;
-        // gbc_panelGroup1.gridy = 0;
-        panelGroupAll.add(panelGroup1, gbc_panelGroup1);
+        panelGroupAll.add(panelGroup1, UIUilt.createGridBagConstraints(GridBagConstraints.HORIZONTAL, GridBagConstraints.NORTH,
+                new Insets(0, 0, 5, 0), 0, -1));
 
-        GridBagLayout gbl_panelGroup3 = new GridBagLayout();
-        gbl_panelGroup3.columnWidths = new int[] { 0, 0 };
-        gbl_panelGroup3.rowHeights = new int[] { 0, 0 };
-        gbl_panelGroup3.columnWeights = new double[] { 1.0, Double.MIN_VALUE };
-        gbl_panelGroup3.rowWeights = new double[] { 0.0, 0.0 };
-
-        panelGroup1.setLayout(gbl_panelGroup3);
+        panelGroup1.setLayout(UIUilt.createGridBagLayout(new int[] { 0, 0 }, new int[] { 0, 0 },
+                new double[] { 1.0, Double.MIN_VALUE }, new double[] { 0.0, 0.0 }));
 
         // JButton btnDate_1 = new JButton(oneGroup.getKey() + " (" + oneGroup.getValue().size() + ")");
         // btnDate_1.setHorizontalAlignment(AbstractButton.LEFT);
@@ -710,11 +617,8 @@ public class GroupBrowser {
 
         JToolBar toolBar = new JToolBar();
         toolBar.setFloatable(false);
-        GridBagConstraints gbc_toolBar = new GridBagConstraints();
-        gbc_toolBar.fill = GridBagConstraints.HORIZONTAL;
-        gbc_toolBar.gridx = 0;
-        gbc_toolBar.gridy = 0;
-        panelGroup1.add(toolBar, gbc_toolBar);
+
+        panelGroup1.add(toolBar, UIUilt.createGridBagConstraints(GridBagConstraints.HORIZONTAL, -1, null, 0, 0));
 
         JButton btnExpand = new JButton();
         btnExpand.setIcon(upIcon);
@@ -750,20 +654,13 @@ public class GroupBrowser {
 
         JPanel panelFlow = new JPanel();
         panelFlow.setBorder(new EmptyBorder(0, 0, 0, 0));
-        WrapLayout wl_panelFlow = new WrapLayout();
-        wl_panelFlow.setAlignment(FlowLayout.LEFT);
-        wl_panelFlow.setHgap(PHOTO_GAP);
-        wl_panelFlow.setVgap(PHOTO_GAP);
-        panelFlow.setLayout(wl_panelFlow);
+        panelFlow.setLayout(WRAP_LAYOUT_FLOW);
         // panelFlow.setBorder(new LineBorder(new Color(0, 0, 0)));
         panelFlow.setBackground(Color.WHITE);
         // FlowLayout flowLayout = (FlowLayout) panelFlow.getLayout();
         // flowLayout.setAlignment(FlowLayout.LEFT);
-        GridBagConstraints gbc_panelFlow = new GridBagConstraints();
-        gbc_panelFlow.fill = GridBagConstraints.HORIZONTAL;
-        gbc_panelFlow.gridx = 0;
-        gbc_panelFlow.gridy = 1;
-        panelGroup1.add(panelFlow, gbc_panelFlow);
+
+        panelGroup1.add(panelFlow, UIUilt.createGridBagConstraints(GridBagConstraints.HORIZONTAL, -1, null, 0, 1));
 
         btnExpand.addActionListener(new ActionListener() {
 
@@ -811,12 +708,8 @@ public class GroupBrowser {
     private void addImagePanel(JPanel panelFlow, File photo) {
         JPanel panel = new JPanel();
         panel.setBorder(IMAGE_PANEL_BORDER);
-        GridBagLayout gbl_panel = new GridBagLayout();
-        gbl_panel.columnWidths = new int[] { 0 };
-        gbl_panel.rowHeights = new int[] { 23, 23 };
-        gbl_panel.columnWeights = new double[] { 0.0 };
-        gbl_panel.rowWeights = new double[] { 0.0, 0.0 };
-        panel.setLayout(gbl_panel);
+        panel.setLayout(UIUilt.createGridBagLayout(new int[] { 0 }, new int[] { 23, 23 }, new double[] { 0.0 },
+                new double[] { 0.0, 0.0 }));
         panelFlow.add(panel);
 
         JLabel labelImg = new JLabel();
@@ -867,22 +760,14 @@ public class GroupBrowser {
                 }
             }
         });
-        GridBagConstraints gbc_label = new GridBagConstraints();
-        gbc_label.anchor = GridBagConstraints.NORTHWEST;
-        gbc_label.gridx = 0;
-        gbc_label.gridy = 0;
-        panel.add(labelImg, gbc_label);
+        panel.add(labelImg, UIUilt.createGridBagConstraints(-1, GridBagConstraints.NORTHWEST, null, 0, 0));
 
         JLabel labelName = new JLabel(photo.getName());
         // labelName.setBorder(new EmptyBorder(0, 0, 0, 0));
         labelName.setToolTipText(photo.getName());
         // int height = labelName.getHeight();
         labelName.setPreferredSize(new Dimension(PREVIEW_SIZE, 20));
-        GridBagConstraints gbc_labelName = new GridBagConstraints();
-        gbc_labelName.anchor = GridBagConstraints.NORTHWEST;
-        gbc_labelName.gridx = 0;
-        gbc_labelName.gridy = 1;
-        panel.add(labelName, gbc_labelName);
+        panel.add(labelName, UIUilt.createGridBagConstraints(-1, GridBagConstraints.NORTHWEST, null, 0, 1));
 
     }
 

@@ -61,10 +61,6 @@ public class UpdateManager {
         return latestVersion;
     }
 
-    public static void main(String[] args) throws Exception {
-        new UpdateManager().init();
-    }
-
     public String getDownloadURL() {
         return downloadURL;
     }

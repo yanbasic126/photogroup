@@ -3,7 +3,6 @@ package com.photogroup.ui.dialog;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
@@ -91,188 +90,103 @@ public class SettingDialog extends JDialog {
         getContentPane().setLayout(new BorderLayout());
         contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
         getContentPane().add(contentPanel, BorderLayout.CENTER);
-        GridBagLayout gbl_contentPanel = new GridBagLayout();
-        gbl_contentPanel.columnWidths = new int[] { 0, 0 };
-        gbl_contentPanel.rowHeights = new int[] { 0, 0 };
-        gbl_contentPanel.columnWeights = new double[] { 1.0, Double.MIN_VALUE };
-        gbl_contentPanel.rowWeights = new double[] { 1.0, Double.MIN_VALUE };
-        contentPanel.setLayout(gbl_contentPanel);
+        contentPanel.setLayout(UIUilt.createGridBagLayout(new int[] { 0, 0 }, new int[] { 0, 0 },
+                new double[] { 1.0, Double.MIN_VALUE }, new double[] { 1.0, Double.MIN_VALUE }));
         {
 
             JTabbedPane tabUIPane = new JTabbedPane();
             tabUIPane.setTabPlacement(JTabbedPane.LEFT);
 
             JPanel groupingPanel = new JPanel();
-            GridBagConstraints gbc_panel = new GridBagConstraints();
-            gbc_panel.fill = GridBagConstraints.BOTH;
-            gbc_panel.gridx = 0;
-            gbc_panel.gridy = 0;
 
             tabUIPane.add(Messages.getString("SettingDialog.group_tab"), groupingPanel); //$NON-NLS-1$
-            GridBagConstraints gbc_tabUIPane = new GridBagConstraints();
-            gbc_tabUIPane.anchor = GridBagConstraints.NORTHWEST;
-            contentPanel.add(tabUIPane, gbc_tabUIPane);
+            contentPanel.add(tabUIPane, UIUilt.createGridBagConstraints(-1, GridBagConstraints.NORTHWEST, null, -1, -1));
 
             JPanel keysPanel = new JPanel();
             tabUIPane.add(Messages.getString("SettingDialog.key_tab"), keysPanel); //$NON-NLS-1$
-            GridBagLayout gbl_keysPanel = new GridBagLayout();
-            gbl_keysPanel.columnWidths = new int[] { 0, 526, 0, 0 };
-            gbl_keysPanel.rowHeights = new int[] { 0, 0, 0, 0, 0 };
-            gbl_keysPanel.columnWeights = new double[] { 0.0, 0.0, 1.0, Double.MIN_VALUE };
-            gbl_keysPanel.rowWeights = new double[] { 0.0, 0.0, 0.0, 1.0, Double.MIN_VALUE };
-            keysPanel.setLayout(gbl_keysPanel);
+            keysPanel.setLayout(UIUilt.createGridBagLayout(new int[] { 0, 526, 0, 0 }, new int[] { 0, 0, 0, 0, 0 },
+                    new double[] { 0.0, 0.0, 1.0, Double.MIN_VALUE }, new double[] { 0.0, 0.0, 0.0, 1.0, Double.MIN_VALUE }));
 
             JLabel lblBaidu = new JLabel(Messages.getString("SettingDialog.lblBaidu.text_1")); //$NON-NLS-1$
-            GridBagConstraints gbc_lblBaidu = new GridBagConstraints();
-            gbc_lblBaidu.insets = new Insets(0, 0, 5, 5);
-            gbc_lblBaidu.gridx = 0;
-            gbc_lblBaidu.gridy = 0;
-            keysPanel.add(lblBaidu, gbc_lblBaidu);
+            keysPanel.add(lblBaidu, UIUilt.createGridBagConstraints(-1, -1, new Insets(0, 0, 5, 5), 0, 0));
 
             textFieldBaidu = new JTextField();
             textFieldBaidu.setText(SettingStore.getSettingStore().getBaiduKey());
-            GridBagConstraints gbc_textFieldBaidu = new GridBagConstraints();
-            gbc_textFieldBaidu.fill = GridBagConstraints.HORIZONTAL;
-            gbc_textFieldBaidu.insets = new Insets(0, 0, 5, 5);
-            gbc_textFieldBaidu.gridx = 1;
-            gbc_textFieldBaidu.gridy = 0;
-            keysPanel.add(textFieldBaidu, gbc_textFieldBaidu);
+            keysPanel.add(textFieldBaidu,
+                    UIUilt.createGridBagConstraints(GridBagConstraints.HORIZONTAL, -1, new Insets(0, 0, 5, 5), 1, 0));
             textFieldBaidu.setColumns(10);
 
             JLabel lblForBaiduAdress = UIUilt.createSimpleLinkLabel(Messages.getString("SettingDialog.lblForChineseAdress.text"), //$NON-NLS-1$
                     Messages.getString("SettingDialog.lblBaidu.url")); //$NON-NLS-1$
-            GridBagConstraints gbc_lblForChineseAdress = new GridBagConstraints();
-            gbc_lblForChineseAdress.anchor = GridBagConstraints.WEST;
-            gbc_lblForChineseAdress.insets = new Insets(0, 0, 5, 0);
-            gbc_lblForChineseAdress.gridx = 2;
-            gbc_lblForChineseAdress.gridy = 0;
-            keysPanel.add(lblForBaiduAdress, gbc_lblForChineseAdress);
+            keysPanel.add(lblForBaiduAdress,
+                    UIUilt.createGridBagConstraints(-1, GridBagConstraints.WEST, new Insets(0, 0, 5, 0), 2, 0));
 
             JLabel lblBing = new JLabel(Messages.getString("SettingDialog.lblBing.text")); //$NON-NLS-1$
-            GridBagConstraints gbc_lblBing = new GridBagConstraints();
-            gbc_lblBing.insets = new Insets(0, 0, 5, 5);
-            gbc_lblBing.gridx = 0;
-            gbc_lblBing.gridy = 1;
-            keysPanel.add(lblBing, gbc_lblBing);
+            keysPanel.add(lblBing, UIUilt.createGridBagConstraints(-1, -1, new Insets(0, 0, 5, 5), 0, 1));
 
             textFieldBing = new JTextField();
             textFieldBing.setText(SettingStore.getSettingStore().getBingKey());
-            GridBagConstraints gbc_textFieldBing = new GridBagConstraints();
-            gbc_textFieldBing.fill = GridBagConstraints.HORIZONTAL;
-            gbc_textFieldBing.insets = new Insets(0, 0, 5, 5);
-            gbc_textFieldBing.gridx = 1;
-            gbc_textFieldBing.gridy = 1;
-            keysPanel.add(textFieldBing, gbc_textFieldBing);
+            keysPanel.add(textFieldBing,
+                    UIUilt.createGridBagConstraints(GridBagConstraints.HORIZONTAL, -1, new Insets(0, 0, 5, 5), 1, 1));
             textFieldBing.setColumns(10);
 
             JLabel lblBingAddress = UIUilt.createSimpleLinkLabel(Messages.getString("SettingDialog.lblEnglishAddress.text"), //$NON-NLS-1$
                     Messages.getString("SettingDialog.lblBing.url")); //$NON-NLS-1$
-            GridBagConstraints gbc_lblEnglishAddress = new GridBagConstraints();
-            gbc_lblEnglishAddress.anchor = GridBagConstraints.WEST;
-            gbc_lblEnglishAddress.insets = new Insets(0, 0, 5, 0);
-            gbc_lblEnglishAddress.gridx = 2;
-            gbc_lblEnglishAddress.gridy = 1;
-            keysPanel.add(lblBingAddress, gbc_lblEnglishAddress);
+            keysPanel.add(lblBingAddress,
+                    UIUilt.createGridBagConstraints(-1, GridBagConstraints.WEST, new Insets(0, 0, 5, 0), 2, 1));
 
             JLabel lblGoogle = new JLabel(Messages.getString("SettingDialog.lblGoogle.text")); //$NON-NLS-1$
-            GridBagConstraints gbc_lblGoogle = new GridBagConstraints();
-            gbc_lblGoogle.insets = new Insets(0, 0, 5, 5);
-            gbc_lblGoogle.gridx = 0;
-            gbc_lblGoogle.gridy = 2;
-            keysPanel.add(lblGoogle, gbc_lblGoogle);
+            keysPanel.add(lblGoogle, UIUilt.createGridBagConstraints(-1, -1, new Insets(0, 0, 5, 5), 0, 2));
 
             textFieldGoogle = new JTextField();
             textFieldGoogle.setText(SettingStore.getSettingStore().getGoogleKey());
-            GridBagConstraints gbc_textFieldGoogle = new GridBagConstraints();
-            gbc_textFieldGoogle.fill = GridBagConstraints.HORIZONTAL;
-            gbc_textFieldGoogle.insets = new Insets(0, 0, 5, 5);
-            gbc_textFieldGoogle.gridx = 1;
-            gbc_textFieldGoogle.gridy = 2;
-            keysPanel.add(textFieldGoogle, gbc_textFieldGoogle);
+            keysPanel.add(textFieldGoogle,
+                    UIUilt.createGridBagConstraints(GridBagConstraints.HORIZONTAL, -1, new Insets(0, 0, 5, 5), 1, 2));
             textFieldGoogle.setColumns(10);
 
             JLabel lblNewLabel = new JLabel(Messages.getString("SettingDialog.lblNewLabel.text")); //$NON-NLS-1$
-            GridBagConstraints gbc_lblNewLabel = new GridBagConstraints();
-            gbc_lblNewLabel.anchor = GridBagConstraints.WEST;
-            gbc_lblNewLabel.insets = new Insets(0, 0, 5, 0);
-            gbc_lblNewLabel.gridx = 2;
-            gbc_lblNewLabel.gridy = 2;
-            keysPanel.add(lblNewLabel, gbc_lblNewLabel);
+            keysPanel.add(lblNewLabel,
+                    UIUilt.createGridBagConstraints(-1, GridBagConstraints.WEST, new Insets(0, 0, 5, 0), 2, 2));
 
             JPanel panel_2 = new JPanel();
             // panel_2.setBorder(new TitledBorder(Messages.getString("PhotoGroupWindow.7"))); //$NON-NLS-1$
-            GridBagLayout gbl_panel_2 = new GridBagLayout();
-            gbl_panel_2.columnWidths = new int[] { 0, 0, 0, 5 };
-            gbl_panel_2.rowHeights = new int[] { 30, 30, 30, 30, 30, 30, 30, 30, 30 };
-            gbl_panel_2.columnWeights = new double[] { 0.0, 0.0, 1.0, Double.MIN_VALUE };
-            gbl_panel_2.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE };
-            panel_2.setLayout(gbl_panel_2);
+            panel_2.setLayout(UIUilt.createGridBagLayout(new int[] { 0, 0, 0, 5 },
+                    new int[] { 30, 30, 30, 30, 30, 30, 30, 30, 30 }, new double[] { 0.0, 0.0, 1.0, Double.MIN_VALUE },
+                    new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE }));
 
             JLabel lblNewLabel_1 = new JLabel(Messages.getString("PhotoGroupWindow.8")); //$NON-NLS-1$
-            GridBagConstraints gbc_lblNewLabel_1 = new GridBagConstraints();
-            gbc_lblNewLabel_1.insets = new Insets(0, 0, 5, 5);
-            gbc_lblNewLabel_1.gridx = 0;
-            gbc_lblNewLabel_1.gridy = 0;
-            panel_2.add(lblNewLabel_1, gbc_lblNewLabel_1);
+            panel_2.add(lblNewLabel_1, UIUilt.createGridBagConstraints(-1, -1, new Insets(0, 0, 5, 5), 0, 0));
 
             SpinnerModel model = new SpinnerNumberModel(1, 1, 100, 1);
             spinnerThreshold = new JSpinner(model);
             spinnerThreshold.setValue(SettingStore.getSettingStore().getThreshold());
-            GridBagConstraints gbc_spinner = new GridBagConstraints();
-            gbc_spinner.anchor = GridBagConstraints.WEST;
-            gbc_spinner.insets = new Insets(0, 0, 5, 5);
-            gbc_spinner.gridx = 1;
-            gbc_spinner.gridy = 0;
-            panel_2.add(spinnerThreshold, gbc_spinner);
+            panel_2.add(spinnerThreshold,
+                    UIUilt.createGridBagConstraints(-1, GridBagConstraints.WEST, new Insets(0, 0, 5, 5), 1, 0));
 
             JLabel lblNewLabel_2 = new JLabel(Messages.getString("PhotoGroupWindow.9")); //$NON-NLS-1$
-            GridBagConstraints gbc_lblNewLabel_2 = new GridBagConstraints();
-            gbc_lblNewLabel_2.anchor = GridBagConstraints.WEST;
-            gbc_lblNewLabel_2.insets = new Insets(0, 0, 5, 0);
-            gbc_lblNewLabel_2.gridx = 2;
-            gbc_lblNewLabel_2.gridy = 0;
-            panel_2.add(lblNewLabel_2, gbc_lblNewLabel_2);
+            panel_2.add(lblNewLabel_2,
+                    UIUilt.createGridBagConstraints(-1, GridBagConstraints.WEST, new Insets(0, 0, 5, 0), 2, 0));
 
             JLabel lblNewLabel_3 = new JLabel(Messages.getString("PhotoGroupWindow.10")); //$NON-NLS-1$
-            GridBagConstraints gbc_lblNewLabel_3 = new GridBagConstraints();
-            gbc_lblNewLabel_3.insets = new Insets(0, 0, 5, 5);
-            gbc_lblNewLabel_3.gridx = 0;
-            gbc_lblNewLabel_3.gridy = 1;
-            panel_2.add(lblNewLabel_3, gbc_lblNewLabel_3);
+            panel_2.add(lblNewLabel_3, UIUilt.createGridBagConstraints(-1, -1, new Insets(0, 0, 5, 5), 0, 1));
 
             comboBoxFormat = new JComboBox();
             comboBoxFormat.setModel(new DefaultComboBoxModel(new String[] { "yyyy.M.d", "yyyy.MM.dd", "M.d", "MM.dd" })); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
             comboBoxFormat.setEditable(true);
             comboBoxFormat.setSelectedItem(SettingStore.getSettingStore().getFormat());
-            GridBagConstraints gbc_comboBox = new GridBagConstraints();
-            gbc_comboBox.anchor = GridBagConstraints.WEST;
-            gbc_comboBox.insets = new Insets(0, 0, 5, 5);
-            gbc_comboBox.gridx = 1;
-            gbc_comboBox.gridy = 1;
-            panel_2.add(comboBoxFormat, gbc_comboBox);
+            panel_2.add(comboBoxFormat,
+                    UIUilt.createGridBagConstraints(-1, GridBagConstraints.WEST, new Insets(0, 0, 5, 5), 1, 1));
 
             JLabel lblNewLabel_4 = new JLabel(Messages.getString("PhotoGroupWindow.15")); //$NON-NLS-1$
-            GridBagConstraints gbc_lblNewLabel_4 = new GridBagConstraints();
-            gbc_lblNewLabel_4.anchor = GridBagConstraints.WEST;
-            gbc_lblNewLabel_4.insets = new Insets(0, 0, 5, 0);
-            gbc_lblNewLabel_4.gridx = 2;
-            gbc_lblNewLabel_4.gridy = 1;
-            panel_2.add(lblNewLabel_4, gbc_lblNewLabel_4);
+            panel_2.add(lblNewLabel_4,
+                    UIUilt.createGridBagConstraints(-1, GridBagConstraints.WEST, new Insets(0, 0, 5, 0), 2, 1));
 
             JLabel lblNewLabel_5 = new JLabel(Messages.getString("PhotoGroupWindow.16")); //$NON-NLS-1$
-            GridBagConstraints gbc_lblNewLabel_5 = new GridBagConstraints();
-            gbc_lblNewLabel_5.insets = new Insets(0, 0, 5, 5);
-            gbc_lblNewLabel_5.gridx = 0;
-            gbc_lblNewLabel_5.gridy = 2;
-            panel_2.add(lblNewLabel_5, gbc_lblNewLabel_5);
+            panel_2.add(lblNewLabel_5, UIUilt.createGridBagConstraints(-1, -1, new Insets(0, 0, 5, 5), 0, 2));
 
             JPanel panel_4 = new JPanel();
             GridBagConstraints gbc_panel_4 = new GridBagConstraints();
-            gbc_panel_4.anchor = GridBagConstraints.WEST;
-            gbc_panel_4.insets = new Insets(0, 0, 5, 5);
-            gbc_panel_4.gridx = 1;
-            gbc_panel_4.gridy = 2;
-            panel_2.add(panel_4, gbc_panel_4);
+            panel_2.add(panel_4, UIUilt.createGridBagConstraints(-1, GridBagConstraints.WEST, new Insets(0, 0, 5, 5), 1, 2));
             panel_4.setLayout(new GridLayout(1, 1, 0, 0));
 
             JRadioButton rdbtn1 = new JRadioButton("1"); //$NON-NLS-1$
@@ -298,74 +212,37 @@ public class SettingDialog extends JDialog {
             btnGrpModel.add(rdbtn3);
 
             JLabel lblNewLabel_6 = new JLabel(Messages.getString("PhotoGroupWindow.20")); //$NON-NLS-1$
-            GridBagConstraints gbc_lblNewLabel_6 = new GridBagConstraints();
-            gbc_lblNewLabel_6.anchor = GridBagConstraints.WEST;
-            gbc_lblNewLabel_6.insets = new Insets(0, 0, 5, 0);
-            gbc_lblNewLabel_6.gridx = 2;
-            gbc_lblNewLabel_6.gridy = 2;
-            panel_2.add(lblNewLabel_6, gbc_lblNewLabel_6);
+            panel_2.add(lblNewLabel_6,
+                    UIUilt.createGridBagConstraints(-1, GridBagConstraints.WEST, new Insets(0, 0, 5, 0), 2, 2));
 
             JLabel lblNewLabel_7 = new JLabel(Messages.getString("PhotoGroupWindow.21")); //$NON-NLS-1$
-            GridBagConstraints gbc_lblNewLabel_7 = new GridBagConstraints();
-            gbc_lblNewLabel_7.fill = GridBagConstraints.VERTICAL;
-            gbc_lblNewLabel_7.insets = new Insets(0, 0, 5, 5);
-            gbc_lblNewLabel_7.gridx = 0;
-            gbc_lblNewLabel_7.gridy = 3;
-            panel_2.add(lblNewLabel_7, gbc_lblNewLabel_7);
-
+            panel_2.add(lblNewLabel_7,
+                    UIUilt.createGridBagConstraints(GridBagConstraints.VERTICAL, -1, new Insets(0, 0, 5, 5), 0, 3));
             chckbxGuess = new JCheckBox();
             chckbxGuess.setSelected(SettingStore.getSettingStore().isGuess());
-            GridBagConstraints gbc_chckbxNewCheckBox = new GridBagConstraints();
-            gbc_chckbxNewCheckBox.anchor = GridBagConstraints.WEST;
-            gbc_chckbxNewCheckBox.fill = GridBagConstraints.VERTICAL;
-            gbc_chckbxNewCheckBox.insets = new Insets(0, 0, 5, 5);
-            gbc_chckbxNewCheckBox.gridx = 1;
-            gbc_chckbxNewCheckBox.gridy = 3;
-            panel_2.add(chckbxGuess, gbc_chckbxNewCheckBox);
+            panel_2.add(chckbxGuess, UIUilt.createGridBagConstraints(GridBagConstraints.VERTICAL, GridBagConstraints.WEST,
+                    new Insets(0, 0, 5, 5), 1, 3));
 
             JLabel lblNewLabel_8 = new JLabel(Messages.getString("PhotoGroupWindow.22")); //$NON-NLS-1$
-            GridBagConstraints gbc_lblNewLabel_8 = new GridBagConstraints();
-            gbc_lblNewLabel_8.anchor = GridBagConstraints.WEST;
-            gbc_lblNewLabel_8.fill = GridBagConstraints.VERTICAL;
-            gbc_lblNewLabel_8.insets = new Insets(0, 0, 5, 0);
-            gbc_lblNewLabel_8.gridx = 2;
-            gbc_lblNewLabel_8.gridy = 3;
-            panel_2.add(lblNewLabel_8, gbc_lblNewLabel_8);
+            panel_2.add(lblNewLabel_8, UIUilt.createGridBagConstraints(GridBagConstraints.VERTICAL, GridBagConstraints.WEST,
+                    new Insets(0, 0, 5, 0), 2, 3));
 
             JLabel lblNewLabel_9 = new JLabel(Messages.getString("PhotoGroupWindow.23")); //$NON-NLS-1$
-            GridBagConstraints gbc_lblNewLabel_9 = new GridBagConstraints();
-            gbc_lblNewLabel_9.fill = GridBagConstraints.VERTICAL;
-            gbc_lblNewLabel_9.insets = new Insets(0, 0, 5, 5);
-            gbc_lblNewLabel_9.gridx = 0;
-            gbc_lblNewLabel_9.gridy = 4;
-            panel_2.add(lblNewLabel_9, gbc_lblNewLabel_9);
+            panel_2.add(lblNewLabel_9,
+                    UIUilt.createGridBagConstraints(GridBagConstraints.VERTICAL, -1, new Insets(0, 0, 5, 5), 0, 4));
 
             chckbxGPS = new JCheckBox();
             chckbxGPS.setSelected(SettingStore.getSettingStore().isGps());
-            GridBagConstraints gbc_chckbxNewCheckBox_1 = new GridBagConstraints();
-            gbc_chckbxNewCheckBox_1.anchor = GridBagConstraints.WEST;
-            gbc_chckbxNewCheckBox_1.fill = GridBagConstraints.VERTICAL;
-            gbc_chckbxNewCheckBox_1.insets = new Insets(0, 0, 5, 5);
-            gbc_chckbxNewCheckBox_1.gridx = 1;
-            gbc_chckbxNewCheckBox_1.gridy = 4;
-            panel_2.add(chckbxGPS, gbc_chckbxNewCheckBox_1);
+            panel_2.add(chckbxGPS, UIUilt.createGridBagConstraints(GridBagConstraints.VERTICAL, GridBagConstraints.WEST,
+                    new Insets(0, 0, 5, 5), 1, 4));
 
             JLabel lblNewLabel_10 = new JLabel(Messages.getString("PhotoGroupWindow.24")); //$NON-NLS-1$
-            GridBagConstraints gbc_lblNewLabel_10 = new GridBagConstraints();
-            gbc_lblNewLabel_10.anchor = GridBagConstraints.WEST;
-            gbc_lblNewLabel_10.fill = GridBagConstraints.VERTICAL;
-            gbc_lblNewLabel_10.insets = new Insets(0, 0, 5, 0);
-            gbc_lblNewLabel_10.gridx = 2;
-            gbc_lblNewLabel_10.gridy = 4;
-            panel_2.add(lblNewLabel_10, gbc_lblNewLabel_10);
+            panel_2.add(lblNewLabel_10, UIUilt.createGridBagConstraints(GridBagConstraints.VERTICAL, GridBagConstraints.WEST,
+                    new Insets(0, 0, 5, 0), 2, 4));
 
             JLabel lblNewLabel_11 = new JLabel(Messages.getString("PhotoGroupWindow.25")); //$NON-NLS-1$
-            GridBagConstraints gbc_lblNewLabel_11 = new GridBagConstraints();
-            gbc_lblNewLabel_11.fill = GridBagConstraints.VERTICAL;
-            gbc_lblNewLabel_11.insets = new Insets(0, 0, 5, 5);
-            gbc_lblNewLabel_11.gridx = 0;
-            gbc_lblNewLabel_11.gridy = 5;
-            panel_2.add(lblNewLabel_11, gbc_lblNewLabel_11);
+            panel_2.add(lblNewLabel_11,
+                    UIUilt.createGridBagConstraints(GridBagConstraints.VERTICAL, -1, new Insets(0, 0, 5, 5), 0, 5));
 
             // chckbxReport = new JCheckBox();
             // chckbxReport.setSelected(SettingStore.getSettingStore().isReport());
@@ -378,68 +255,34 @@ public class SettingDialog extends JDialog {
             // panel_2.add(chckbxReport, gbc_chckbxReport);
 
             JLabel lblNewLabel_12 = new JLabel(Messages.getString("PhotoGroupWindow.26")); //$NON-NLS-1$
-            GridBagConstraints gbc_lblNewLabel_12 = new GridBagConstraints();
-            gbc_lblNewLabel_12.insets = new Insets(0, 0, 5, 0);
-            gbc_lblNewLabel_12.anchor = GridBagConstraints.WEST;
-            gbc_lblNewLabel_12.fill = GridBagConstraints.VERTICAL;
-            gbc_lblNewLabel_12.gridx = 2;
-            gbc_lblNewLabel_12.gridy = 5;
-            panel_2.add(lblNewLabel_12, gbc_lblNewLabel_12);
-            GridBagConstraints gbc_panel_2 = new GridBagConstraints();
-            gbc_panel_2.anchor = GridBagConstraints.NORTH;
-            gbc_panel_2.fill = GridBagConstraints.HORIZONTAL;
-            gbc_panel_2.insets = new Insets(0, 0, 5, 0);
-            gbc_panel_2.gridx = 0;
-            gbc_panel_2.gridy = 2;
-            groupingPanel.add(panel_2, gbc_panel_2);
+            panel_2.add(lblNewLabel_12, UIUilt.createGridBagConstraints(GridBagConstraints.VERTICAL, GridBagConstraints.WEST,
+                    new Insets(0, 0, 5, 0), 2, 5));
+            groupingPanel.add(panel_2, UIUilt.createGridBagConstraints(GridBagConstraints.HORIZONTAL, GridBagConstraints.NORTH,
+                    new Insets(0, 0, 5, 0), 0, 2));
 
             JLabel lblIsSubLabel = new JLabel(Messages.getString("SettingDialog.lblIsSubLabel.text")); //$NON-NLS-1$
-            GridBagConstraints gbc_lblGoo = new GridBagConstraints();
-            gbc_lblGoo.anchor = GridBagConstraints.SOUTH;
-            gbc_lblGoo.insets = new Insets(0, 0, 5, 5);
-            gbc_lblGoo.gridx = 0;
-            gbc_lblGoo.gridy = 6;
-            panel_2.add(lblIsSubLabel, gbc_lblGoo);
+            panel_2.add(lblIsSubLabel,
+                    UIUilt.createGridBagConstraints(-1, GridBagConstraints.SOUTH, new Insets(0, 0, 5, 5), 0, 6));
 
             chckbxSubfolder = new JCheckBox(""); //$NON-NLS-1$
             chckbxSubfolder.setSelected(SettingStore.getSettingStore().isIncludeSubFolder());
-            GridBagConstraints gbc_chckbxSubfolderBox = new GridBagConstraints();
-            gbc_chckbxSubfolderBox.anchor = GridBagConstraints.WEST;
-            gbc_chckbxSubfolderBox.insets = new Insets(0, 0, 5, 5);
-            gbc_chckbxSubfolderBox.gridx = 1;
-            gbc_chckbxSubfolderBox.gridy = 6;
-            panel_2.add(chckbxSubfolder, gbc_chckbxSubfolderBox);
+            panel_2.add(chckbxSubfolder,
+                    UIUilt.createGridBagConstraints(-1, GridBagConstraints.WEST, new Insets(0, 0, 5, 5), 1, 6));
 
             JLabel lblSubfolderLabel = new JLabel(Messages.getString("SettingDialog.lblSubfolderLabel.text")); //$NON-NLS-1$
-            GridBagConstraints gbc_lblNewLabel_13 = new GridBagConstraints();
-            gbc_lblNewLabel_13.insets = new Insets(0, 0, 5, 0);
-            gbc_lblNewLabel_13.anchor = GridBagConstraints.WEST;
-            gbc_lblNewLabel_13.gridx = 2;
-            gbc_lblNewLabel_13.gridy = 6;
-            panel_2.add(lblSubfolderLabel, gbc_lblNewLabel_13);
+            panel_2.add(lblSubfolderLabel,
+                    UIUilt.createGridBagConstraints(-1, GridBagConstraints.WEST, new Insets(0, 0, 5, 0), 2, 6));
 
             JLabel lblUsethumbnail = new JLabel(Messages.getString("SettingDialog.lblUsethumbnail.text")); //$NON-NLS-1$
-            GridBagConstraints gbc_lblUsethumbnail = new GridBagConstraints();
-            gbc_lblUsethumbnail.insets = new Insets(0, 0, 0, 5);
-            gbc_lblUsethumbnail.gridx = 0;
-            gbc_lblUsethumbnail.gridy = 7;
-            panel_2.add(lblUsethumbnail, gbc_lblUsethumbnail);
+            panel_2.add(lblUsethumbnail, UIUilt.createGridBagConstraints(-1, -1, new Insets(0, 0, 0, 5), 0, 7));
 
             chckbxThumbnail = new JCheckBox();
             chckbxThumbnail.setSelected(SettingStore.getSettingStore().isUseThumbnail());
-            GridBagConstraints gbc_chckbxThumbnail = new GridBagConstraints();
-            gbc_chckbxThumbnail.anchor = GridBagConstraints.WEST;
-            gbc_chckbxThumbnail.insets = new Insets(0, 0, 0, 5);
-            gbc_chckbxThumbnail.gridx = 1;
-            gbc_chckbxThumbnail.gridy = 7;
-            panel_2.add(chckbxThumbnail, gbc_chckbxThumbnail);
+            panel_2.add(chckbxThumbnail,
+                    UIUilt.createGridBagConstraints(-1, GridBagConstraints.WEST, new Insets(0, 0, 0, 5), 1, 7));
 
             JLabel lblShowThumnail = new JLabel(Messages.getString("SettingDialog.lblShowThumnail.text")); //$NON-NLS-1$
-            GridBagConstraints gbc_lblShowThumnail = new GridBagConstraints();
-            gbc_lblShowThumnail.anchor = GridBagConstraints.WEST;
-            gbc_lblShowThumnail.gridx = 2;
-            gbc_lblShowThumnail.gridy = 7;
-            panel_2.add(lblShowThumnail, gbc_lblShowThumnail);
+            panel_2.add(lblShowThumnail, UIUilt.createGridBagConstraints(-1, GridBagConstraints.WEST, null, 2, 7));
 
             JPanel panel_3 = new JPanel();
             panel_3.setLayout(new GridLayout(0, 1, 0, 0));

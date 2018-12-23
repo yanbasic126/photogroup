@@ -5,7 +5,6 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.Insets;
 import java.awt.image.BufferedImage;
@@ -31,6 +30,7 @@ import com.drew.imaging.ImageProcessingException;
 import com.photogroup.groupby.metadata.MetadataReader;
 import com.photogroup.ui.SettingStore;
 import com.photogroup.ui.layout.WrapLayout;
+import com.photogroup.ui.util.UIUilt;
 
 public class FileListAccessory extends JPanel implements PropertyChangeListener {
 
@@ -49,44 +49,24 @@ public class FileListAccessory extends JPanel implements PropertyChangeListener 
         this.chooser = chooser;
         setBorder(new LineBorder(UIManager.getColor("activeCaptionBorder")));
 
-        GridBagLayout gridBagLayout = new GridBagLayout();
-        gridBagLayout.columnWidths = new int[] { 0, 0 };
-        gridBagLayout.rowHeights = new int[] { 0, 0, 1 };
-        gridBagLayout.columnWeights = new double[] { 1.0, Double.MIN_VALUE };
-        gridBagLayout.rowWeights = new double[] { 0.0, 1.0, Double.MIN_VALUE };
-        setLayout(gridBagLayout);
+        setLayout(UIUilt.createGridBagLayout(new int[] { 0, 0 }, new int[] { 0, 0, 1 }, new double[] { 1.0, Double.MIN_VALUE },
+                new double[] { 0.0, 1.0, Double.MIN_VALUE }));
 
         chooser.addPropertyChangeListener(this);
 
         setPreferredSize(new Dimension((PREVIEW_SIZE + 2) * 4, 0));
 
         JPanel panelPreview = new JPanel();
-        GridBagConstraints gbc_panelPreview = new GridBagConstraints();
-        gbc_panelPreview.insets = new Insets(0, 0, 5, 5);
-        gbc_panelPreview.gridx = 0;
-        gbc_panelPreview.gridy = 0;
-        add(panelPreview, gbc_panelPreview);
+        add(panelPreview, UIUilt.createGridBagConstraints(-1, -1, new Insets(0, 0, 5, 5), 0, 0));
 
-        GridBagLayout gbl_panel = new GridBagLayout();
-        gbl_panel.columnWidths = new int[] { 0, 0, 0 };
-        gbl_panel.rowHeights = new int[] { 0, 0 };
-        gbl_panel.columnWeights = new double[] { 0.0, 0.0, Double.MIN_VALUE };
-        gbl_panel.rowWeights = new double[] { 0.0, Double.MIN_VALUE };
-        panelPreview.setLayout(gbl_panel);
+        panelPreview.setLayout(UIUilt.createGridBagLayout(new int[] { 0, 0, 0 }, new int[] { 0, 0 },
+                new double[] { 0.0, 0.0, Double.MIN_VALUE }, new double[] { 0.0, Double.MIN_VALUE }));
 
         JLabel labelhead = new JLabel("Content Preview");
-        GridBagConstraints gbc_labelhead = new GridBagConstraints();
-        gbc_labelhead.insets = new Insets(0, 0, 5, 5);
-        // gbc_labelhead.fill = GridBagConstraints.BOTH;
-        gbc_labelhead.gridx = 0;
-        gbc_labelhead.gridy = 0;
-        panelPreview.add(labelhead, gbc_labelhead);
+        panelPreview.add(labelhead, UIUilt.createGridBagConstraints(-1, -1, new Insets(0, 0, 5, 5), 0, 0));
 
         chckbxPreview = new JCheckBox();
-        GridBagConstraints gbc_chckbxNewCheckBox = new GridBagConstraints();
-        gbc_chckbxNewCheckBox.gridx = 1;
-        gbc_chckbxNewCheckBox.gridy = 0;
-        panelPreview.add(chckbxPreview, gbc_chckbxNewCheckBox);
+        panelPreview.add(chckbxPreview, UIUilt.createGridBagConstraints(-1, -1, null, 1, 0));
         chckbxPreview.setSelected(true);
 
         panelFlow = new JPanel();
@@ -97,11 +77,7 @@ public class FileListAccessory extends JPanel implements PropertyChangeListener 
         panelFlow.setLayout(wl_panelFlow);
         // panelFlow.setBorder(new LineBorder(UIManager.getColor("activeCaptionBorder")));
         panelFlow.setBackground(Color.WHITE);
-        GridBagConstraints gbc_panelFlow = new GridBagConstraints();
-        gbc_panelFlow.fill = GridBagConstraints.BOTH;
-        gbc_panelFlow.gridx = 0;
-        gbc_panelFlow.gridy = 1;
-        add(panelFlow, gbc_panelFlow);
+        add(panelFlow, UIUilt.createGridBagConstraints(GridBagConstraints.BOTH, -1, null, 0, 1));
     }
 
     public void propertyChange(PropertyChangeEvent e) {
@@ -136,12 +112,8 @@ public class FileListAccessory extends JPanel implements PropertyChangeListener 
     private void addImagePanel(JPanel panelFlow, File file) {
         JPanel panel = new JPanel();
         panel.setBackground(Color.WHITE);
-        GridBagLayout gbl_panel = new GridBagLayout();
-        gbl_panel.columnWidths = new int[] { 0 };
-        gbl_panel.rowHeights = new int[] { 23, 23 };
-        gbl_panel.columnWeights = new double[] { 0.0 };
-        gbl_panel.rowWeights = new double[] { 0.0, 0.0 };
-        panel.setLayout(gbl_panel);
+        panel.setLayout(UIUilt.createGridBagLayout(new int[] { 0 }, new int[] { 23, 23 }, new double[] { 0.0 },
+                new double[] { 0.0, 0.0 }));
         panelFlow.add(panel);
 
         JLabel labelImg = new JLabel();
@@ -190,22 +162,14 @@ public class FileListAccessory extends JPanel implements PropertyChangeListener 
             }
             labelImg.setIcon(imageIcon);
         }
-        GridBagConstraints gbc_label = new GridBagConstraints();
-        gbc_label.anchor = GridBagConstraints.NORTHWEST;
-        gbc_label.gridx = 0;
-        gbc_label.gridy = 0;
-        panel.add(labelImg, gbc_label);
+        panel.add(labelImg, UIUilt.createGridBagConstraints(-1, GridBagConstraints.NORTHWEST, null, 0, 0));
 
         JLabel labelName = new JLabel(file.getName());
         // labelName.setBorder(new EmptyBorder(0, 0, 0, 0));
         labelName.setToolTipText(file.getName());
         // int height = labelName.getHeight();
         labelName.setPreferredSize(new Dimension(PREVIEW_SIZE, 20));
-        GridBagConstraints gbc_labelName = new GridBagConstraints();
-        gbc_labelName.anchor = GridBagConstraints.NORTHWEST;
-        gbc_labelName.gridx = 0;
-        gbc_labelName.gridy = 1;
-        panel.add(labelName, gbc_labelName);
+        panel.add(labelName, UIUilt.createGridBagConstraints(-1, GridBagConstraints.NORTHWEST, null, 0, 1));
 
     }
 
