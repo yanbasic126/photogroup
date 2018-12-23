@@ -39,7 +39,8 @@
     2018-12-21: add test cases.
     2018-12-21: license update.
     2018-12-22: fix codacy issues.
-    2018-12-23: zero warning.</description>
+    2018-12-23: zero warning.
+    2018-12-23: fix getDescription.</description>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>

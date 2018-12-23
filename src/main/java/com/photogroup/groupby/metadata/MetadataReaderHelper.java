@@ -1,15 +1,13 @@
 package com.photogroup.groupby.metadata;
 
 import com.drew.metadata.Directory;
-import com.drew.metadata.exif.GpsDirectory;
 
 public class MetadataReaderHelper {
 
     private static final String EMPTY = "";
 
     public static String getDescription(Directory directory, int tagType) {
-        return directory.getDescription(GpsDirectory.TAG_LONGITUDE) == null ? EMPTY
-                : directory.getDescription(GpsDirectory.TAG_LONGITUDE).trim();
+        return directory.getDescription(tagType) == null ? EMPTY : directory.getDescription(tagType).trim();
     }
 
     public static Double convertGpsToDegree(String stringDMS, String stringRef) {
