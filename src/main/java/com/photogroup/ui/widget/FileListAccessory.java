@@ -34,6 +34,8 @@ import com.photogroup.ui.util.UIUilt;
 
 public class FileListAccessory extends JPanel implements PropertyChangeListener {
 
+    private static final long serialVersionUID = 1L;
+
     private static final int PREVIEW_SIZE = 64;
 
     private static final Map<String, ImageIcon> iconCache = new HashMap<String, ImageIcon>();

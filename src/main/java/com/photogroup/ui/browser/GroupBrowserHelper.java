@@ -58,6 +58,7 @@ public class GroupBrowserHelper {
 
         Iterator<?> it = photoGroup.entrySet().iterator();
         while (it.hasNext()) {
+            @SuppressWarnings("unchecked")
             Map.Entry<String, List<File>> pair = (Entry<String, List<File>>) it.next();
             sortTitles.add(pair.getKey());
         }

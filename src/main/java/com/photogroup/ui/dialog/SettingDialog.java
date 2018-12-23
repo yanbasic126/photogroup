@@ -35,13 +35,17 @@ import com.photogroup.util.ImageUtil;
 
 public class SettingDialog extends JDialog {
 
+    private static final long serialVersionUID = 1L;
+
+    private static final String[] FORMAT_TYPES = new String[] { "yyyy.M.d", "yyyy.MM.dd", "M.d", "MM.dd" };
+
     private final JPanel contentPanel = new JPanel();
 
     private JSpinner spinnerThreshold;
 
     private ButtonGroup btnGrpModel;
 
-    private JComboBox comboBoxFormat;
+    private JComboBox<String> comboBoxFormat;
 
     private JCheckBox chckbxGuess;
 
@@ -170,8 +174,8 @@ public class SettingDialog extends JDialog {
             JLabel lblNewLabel_3 = new JLabel(Messages.getString("PhotoGroupWindow.10")); //$NON-NLS-1$
             panel_2.add(lblNewLabel_3, UIUilt.createGridBagConstraints(-1, -1, new Insets(0, 0, 5, 5), 0, 1));
 
-            comboBoxFormat = new JComboBox();
-            comboBoxFormat.setModel(new DefaultComboBoxModel(new String[] { "yyyy.M.d", "yyyy.MM.dd", "M.d", "MM.dd" })); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+            comboBoxFormat = new JComboBox<String>();
+            comboBoxFormat.setModel(new DefaultComboBoxModel<String>(FORMAT_TYPES));
             comboBoxFormat.setEditable(true);
             comboBoxFormat.setSelectedItem(SettingStore.getSettingStore().getFormat());
             panel_2.add(comboBoxFormat,

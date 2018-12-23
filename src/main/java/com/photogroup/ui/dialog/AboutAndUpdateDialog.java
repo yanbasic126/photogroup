@@ -27,6 +27,8 @@ import com.photogroup.util.FileUtil;
 
 public class AboutAndUpdateDialog extends JDialog {
 
+    private static final long serialVersionUID = 1L;
+
     private static final String LICENSE_URL = "https://raw.githubusercontent.com/yanbasic126/photogroup/master/LICENSE";
 
     private static final String LICENST_TYPE = "License";

@@ -149,6 +149,7 @@ public class PhotoGroup implements Runnable {
         DateTimeFormatter pattern = DateTimeFormatter.ofPattern(format);
         Iterator<?> it = photosDate.entrySet().iterator();
         while (it.hasNext()) {
+            @SuppressWarnings("unchecked")
             Map.Entry<LocalDate, List<File>> pair = (Entry<LocalDate, List<File>>) it.next();
             List<File> photos = pair.getValue();
 

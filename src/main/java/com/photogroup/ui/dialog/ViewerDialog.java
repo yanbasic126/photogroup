@@ -27,6 +27,8 @@ import com.photogroup.ui.util.UIUilt;
 
 public class ViewerDialog extends JFrame {
 
+    private static final long serialVersionUID = 1L;
+
     private JLabel labelImage;
 
     private boolean componentResizing = false;
@@ -59,6 +61,8 @@ public class ViewerDialog extends JFrame {
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "Cancel"); //$NON-NLS-1$
         getRootPane().getActionMap().put("Cancel", new AbstractAction() { //$NON-NLS-1$
+
+            private static final long serialVersionUID = 1L;
 
             public void actionPerformed(ActionEvent e) {
                 dispose();
