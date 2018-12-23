@@ -185,7 +185,6 @@ public class SettingDialog extends JDialog {
             panel_2.add(lblNewLabel_5, UIUilt.createGridBagConstraints(-1, -1, new Insets(0, 0, 5, 5), 0, 2));
 
             JPanel panel_4 = new JPanel();
-            GridBagConstraints gbc_panel_4 = new GridBagConstraints();
             panel_2.add(panel_4, UIUilt.createGridBagConstraints(-1, GridBagConstraints.WEST, new Insets(0, 0, 5, 5), 1, 2));
             panel_4.setLayout(new GridLayout(1, 1, 0, 0));
 

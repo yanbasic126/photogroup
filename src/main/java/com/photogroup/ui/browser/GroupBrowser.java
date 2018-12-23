@@ -278,7 +278,6 @@ public class GroupBrowser {
         scrollPane.getVerticalScrollBar().setUnitIncrement(16);
 
         JPanel panelStatus = new JPanel();
-        GridBagConstraints gbc_panelStatus = new GridBagConstraints();
         frameGroupBrowser.getContentPane().add(panelStatus, UIUilt.createGridBagConstraints(GridBagConstraints.HORIZONTAL,
                 GridBagConstraints.NORTH, new Insets(0, 0, 5, 0), 0, 3));
         panelStatus.setLayout(UIUilt.createGridBagLayout(new int[] { 269 }, new int[] { 14, 0 }, new double[] { 1.0 },
