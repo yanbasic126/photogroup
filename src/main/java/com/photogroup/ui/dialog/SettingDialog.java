@@ -7,13 +7,11 @@ import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
 import java.util.Enumeration;
 
 import javax.swing.AbstractButton;
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -30,8 +28,8 @@ import javax.swing.border.EmptyBorder;
 
 import com.photogroup.ui.Messages;
 import com.photogroup.ui.SettingStore;
+import com.photogroup.ui.util.ResourceUtil;
 import com.photogroup.ui.util.UIUilt;
-import com.photogroup.util.ImageUtil;
 
 public class SettingDialog extends JDialog {
 
@@ -82,12 +80,7 @@ public class SettingDialog extends JDialog {
     public SettingDialog() {
 
         setTitle(Messages.getString("SettingDialog.this.title")); //$NON-NLS-1$
-        try {
-            ImageIcon lemonIcon = ImageUtil.getImageFromSystemResource(Messages.getString("SettingDialog.0")); //$NON-NLS-1$
-            setIconImage(lemonIcon.getImage());
-        } catch (IOException e1) {
-            e1.printStackTrace();
-        }
+        setIconImage(ResourceUtil.lemonIcon.getImage());
         setModal(true);
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         setBounds(100, 100, 900, 400);

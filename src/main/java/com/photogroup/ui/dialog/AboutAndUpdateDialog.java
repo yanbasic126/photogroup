@@ -12,7 +12,6 @@ import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
 
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
@@ -21,6 +20,7 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import com.photogroup.ui.Messages;
+import com.photogroup.ui.util.ResourceUtil;
 import com.photogroup.ui.util.UIUilt;
 import com.photogroup.update.UpdateManager;
 import com.photogroup.util.FileUtil;
@@ -79,7 +79,7 @@ public class AboutAndUpdateDialog extends JDialog {
                         new double[] { 0.0, Double.MIN_VALUE }, new double[] { 1.0, Double.MIN_VALUE }));
                 {
                     JLabel lblNewLabel = new JLabel();
-                    lblNewLabel.setIcon(new ImageIcon(AboutAndUpdateDialog.class.getResource("/icon/lemon_32.png")));
+                    lblNewLabel.setIcon(ResourceUtil.lemonIcon);
                     panelImage.add(lblNewLabel, UIUilt.createGridBagConstraints(-1, GridBagConstraints.NORTHWEST, null, 0, 0));
                     lblNewLabel.addMouseListener(new MouseAdapter() {
 

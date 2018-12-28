@@ -1,25 +1,15 @@
 package com.photogroup.ui.browser;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.EventQueue;
-import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Image;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -31,13 +21,10 @@ import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -51,45 +38,30 @@ import javax.swing.JToolBar;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.LineBorder;
 import javax.swing.text.DefaultCaret;
 
-import com.drew.imaging.ImageProcessingException;
 import com.photogroup.exception.ExceptionHandler;
 import com.photogroup.groupby.PhotoGroup;
-import com.photogroup.groupby.metadata.MetadataReader;
 import com.photogroup.setting.HistoryDirectory;
 import com.photogroup.ui.Messages;
 import com.photogroup.ui.SettingStore;
 import com.photogroup.ui.dialog.AboutAndUpdateDialog;
 import com.photogroup.ui.dialog.SettingDialog;
-import com.photogroup.ui.layout.WrapLayout;
+import com.photogroup.ui.util.ResourceUtil;
 import com.photogroup.ui.util.UIUilt;
 import com.photogroup.ui.widget.FileListAccessory;
 import com.photogroup.ui.widget.JTextAreaLog;
 import com.photogroup.ui.widget.JTextFieldAddress;
+import com.photogroup.ui.widget.ResultPanel;
 import com.photogroup.util.FileUtil;
-import com.photogroup.util.ImageUtil;
 
 public class GroupBrowser {
-
-    private static final EmptyBorder EMPTY_BORDER = new EmptyBorder(0, 0, 0, 0);
 
     private static final int MENU_DIR_LEN = 30;
 
     private static final int PHOTO_GAP = 1;
 
-    private static final int PREVIEW_SIZE = 168;
-
     private static final List<String> SYSTEM_LOG_OUTPUT = Collections.synchronizedList(new ArrayList<String>());
-
-    private static final LineBorder IMAGE_PANEL_BORDER = new LineBorder(UIManager.getColor("Panel.background"), 2); //$NON-NLS-1$
-
-    private static final LineBorder IMAGE_PANEL_SELECTED_BORDER = new LineBorder(UIManager.getColor("Table.selectionBackground"), //$NON-NLS-1$
-            2);
-
-    private static final WrapLayout WRAP_LAYOUT_FLOW = new WrapLayout();
 
     private static boolean systemLogThreadStart = false;
 
@@ -101,29 +73,7 @@ public class GroupBrowser {
 
     private JProgressBar progressBar;
 
-    private JPanel panelGroupAll;
-
-    private ImageIcon documentEmptyImageIcon;
-
-    private ImageIcon downIcon;
-
-    private ImageIcon upIcon;
-
-    // private ImageIcon renameIcon;
-
-    private ImageIcon lemonIcon;
-
-    private ImageIcon lemonSmallIcon;
-
-    // private ImageIcon debugIcon;
-
-    private ImageIcon profileIcon;
-
-    private ImageIcon settingIcon;
-
-    private ImageIcon saveIcon;
-
-    private ImageIcon folderIcon;
+    private ResultPanel resultPanel;
 
     private JButton btnProfile;
 
@@ -132,12 +82,6 @@ public class GroupBrowser {
     private JTextAreaLog txtDebugLog;
 
     private JPanel panelDebug;
-
-    private JPanel panelSelectedImage;
-
-    private List<JPanel> panelFlowList = new ArrayList<JPanel>();
-
-    private List<JButton> btnExpandList = new ArrayList<JButton>();
 
     private Map<JTextField, String> textFieldTitleMap = new HashMap<JTextField, String>();
 
@@ -186,37 +130,10 @@ public class GroupBrowser {
                 SYSTEM_LOG_OUTPUT.add(new String(b, off, len));
             }
         });
-        System.setErr(systemOutRedirect);
-        System.setOut(systemOutRedirect);
+        // System.setErr(systemOutRedirect);
+        // System.setOut(systemOutRedirect);
 
-        try {
-            downIcon = ImageUtil.getImageFromSystemResource("icon/down_16.png"); //$NON-NLS-1$
-            upIcon = ImageUtil.getImageFromSystemResource("icon/up_16.png"); //$NON-NLS-1$
-            // renameIcon = ImageUtil.getImageIconFromSystemResource("icon/Blue_tag.png");
-            lemonIcon = ImageUtil.getImageFromSystemResource("icon/lemon_32.png"); //$NON-NLS-1$
-            lemonSmallIcon = ImageUtil.getImageFromSystemResource("icon/lemon_16.png"); //$NON-NLS-1$
-            // debugIcon = ImageUtil.getImageFromSystemResource("icon/debug_16.png"); //$NON-NLS-1$
-            profileIcon = ImageUtil.getImageFromSystemResource("icon/profile_32.png"); //$NON-NLS-1$
-            settingIcon = ImageUtil.getImageFromSystemResource("icon/settings_32.png"); //$NON-NLS-1$
-            saveIcon = ImageUtil.getImageFromSystemResource("icon/save_32.png"); //$NON-NLS-1$
-            folderIcon = ImageUtil.getImageFromSystemResource("icon/folder_16.png"); //$NON-NLS-1$
-
-            // documentEmptyImageIcon
-            BufferedImage scaleImage = new BufferedImage(PREVIEW_SIZE, PREVIEW_SIZE, Image.SCALE_FAST);
-            scaleImage.getGraphics().drawImage(ImageUtil.getImageFromSystemResource("icon/file_64.png").getImage(), 52, 52, null); //$NON-NLS-1$
-            documentEmptyImageIcon = new ImageIcon(scaleImage);
-        } catch (IOException e) {
-            e.printStackTrace();
-            ExceptionHandler.logError(e.getMessage());
-        }
-        createWrapLayout();
         initialize();
-    }
-
-    private void createWrapLayout() {
-        WRAP_LAYOUT_FLOW.setAlignment(FlowLayout.LEFT);
-        WRAP_LAYOUT_FLOW.setHgap(PHOTO_GAP);
-        WRAP_LAYOUT_FLOW.setVgap(PHOTO_GAP);
     }
 
     /**
@@ -268,12 +185,9 @@ public class GroupBrowser {
         panelBrowser.setLayout(UIUilt.createGridBagLayout(new int[] { 2, 0 }, new int[] { 2, 0 },
                 new double[] { 1.0, Double.MIN_VALUE }, new double[] { 1.0, Double.MIN_VALUE }));
 
-        panelGroupAll = new JPanel();
-        panelGroupAll.setBackground(Color.WHITE);
-        panelGroupAll.setLayout(
-                UIUilt.createGridBagLayout(new int[] { 0 }, new int[] { 0 }, new double[] { 1.0 }, new double[] { 0.0, 1.0 }));
+        resultPanel = new ResultPanel();
 
-        JScrollPane scrollPane = new JScrollPane(panelGroupAll);
+        JScrollPane scrollPane = new JScrollPane(resultPanel);
         scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         // panelBrowser.add(panelGroupAll, gbc_panelGroupAll);
         panelBrowser.add(scrollPane, UIUilt.createGridBagConstraints(GridBagConstraints.BOTH, -1, null, 0, 0));
@@ -313,7 +227,7 @@ public class GroupBrowser {
                 GroupBrowserHelper.openFolder(textFieldFolder.getText());
             }
         });
-        btnFolder.setIcon(folderIcon);
+        btnFolder.setIcon(ResourceUtil.folderIcon);
         int size = (int) btnFolder.getPreferredSize().getHeight();
         btnFolder.setPreferredSize(new Dimension(size, size));
         panelAddress.add(btnFolder, UIUilt.createGridBagConstraints(-1, -1, new Insets(0, 0, 0, 5), 1, 0));
@@ -378,7 +292,7 @@ public class GroupBrowser {
         panelToolbar.add(toolBarSetting, UIUilt.createGridBagConstraints(-1, -1, new Insets(0, 0, 0, 5), 0, 0));
 
         btnProfile = new JButton(Messages.getString("GroupBrowser.profile")); //$NON-NLS-1$
-        btnProfile.setIcon(profileIcon);
+        btnProfile.setIcon(ResourceUtil.profileIcon);
 
         btnProfile.addActionListener(new ActionListener() {
 
@@ -388,7 +302,7 @@ public class GroupBrowser {
         });
 
         JButton btnSetting = new JButton(Messages.getString("GroupBrowser.seetings")); //$NON-NLS-1$
-        btnSetting.setIcon(settingIcon);
+        btnSetting.setIcon(ResourceUtil.settingIcon);
 
         btnSetting.addActionListener(new ActionListener() {
 
@@ -399,7 +313,7 @@ public class GroupBrowser {
         });
 
         btnSave = new JButton(Messages.getString("GroupBrowser.save")); //$NON-NLS-1$
-        btnSave.setIcon(saveIcon);
+        btnSave.setIcon(ResourceUtil.saveIcon);
         btnSave.setEnabled(false);
         btnSave.addActionListener(new ActionListener() {
 
@@ -414,22 +328,6 @@ public class GroupBrowser {
                 }
             }
         });
-
-        // JToggleButton btnLogs = new JToggleButton("Log");
-        // btnLogs.addActionListener(new ActionListener() {
-        //
-        // public void actionPerformed(ActionEvent e) {
-        // panelDebug.setVisible(!panelDebug.isVisible());
-        // }
-        // });
-
-        // try {
-        // BufferedImage bufferedImage = ImageIO.read(ClassLoader.getSystemResource("icon/debug_32.png"));
-        // btnLogs.setIcon(new ImageIcon(bufferedImage));
-        // } catch (IOException e) {
-        // e.printStackTrace();
-        // ExceptionHandler.logError(e.getMessage());
-        // }
 
         JSeparator separator_1 = new JSeparator();
         separator_1.setOrientation(SwingConstants.VERTICAL);
@@ -447,12 +345,12 @@ public class GroupBrowser {
 
     private void createFrame() {
         frameGroupBrowser = new JFrame();
-        int calWidth = (PREVIEW_SIZE + PHOTO_GAP * 2) * 5 + 60;
+        int calWidth = (ResourceUtil.PREVIEW_SIZE + PHOTO_GAP * 2) * 5 + 60;
         int calHeight = (int) (calWidth * 0.8);
         frameGroupBrowser.setBounds(100, 100, calWidth, calHeight);
         frameGroupBrowser.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frameGroupBrowser.setTitle(Messages.getString("GroupBrowser.title")); //$NON-NLS-1$
-        frameGroupBrowser.setIconImage(lemonIcon.getImage());
+        frameGroupBrowser.setIconImage(ResourceUtil.lemonIcon.getImage());
         frameGroupBrowser.setLocationByPlatform(true);
         frameGroupBrowser.getContentPane().setLayout(UIUilt.createGridBagLayout(new int[] { 0, 0 }, new int[] { 0, 0, 1, 0, 0 },
                 new double[] { 1.0, Double.MIN_VALUE }, new double[] { 0.0, 0.0, 1.0, 0.0, 0.0 }));
@@ -469,32 +367,22 @@ public class GroupBrowser {
         mnWindowMenu.setMnemonic(KeyEvent.VK_W);
         // mnWindowMenu.setAccelerator(KeyStroke.getKeyStroke('W', InputEvent.ALT_MASK));
         JMenuItem mntmCollapseItem = new JMenuItem(Messages.getString("GroupBrowser.menu_coll_all")); //$NON-NLS-1$
-        mntmCollapseItem.setIcon(upIcon);
+        mntmCollapseItem.setIcon(ResourceUtil.upIcon);
         mnWindowMenu.add(mntmCollapseItem);
         mntmCollapseItem.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                for (JButton btnExpand : btnExpandList) {
-                    btnExpand.setIcon(downIcon);
-                }
-                for (JPanel panelFlow : panelFlowList) {
-                    panelFlow.setVisible(false);
-                }
+                resultPanel.collapseAll();
             }
         });
 
         JMenuItem mntmExpandItem = new JMenuItem(Messages.getString("GroupBrowser.menu_exp_all")); //$NON-NLS-1$
-        mntmExpandItem.setIcon(downIcon);
+        mntmExpandItem.setIcon(ResourceUtil.downIcon);
         mnWindowMenu.add(mntmExpandItem);
         mntmExpandItem.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                for (JButton btnExpand : btnExpandList) {
-                    btnExpand.setIcon(upIcon);
-                }
-                for (JPanel panelFlow : panelFlowList) {
-                    panelFlow.setVisible(true);
-                }
+                resultPanel.expandAll();
             }
         });
 
@@ -524,7 +412,7 @@ public class GroupBrowser {
         });
 
         JMenuItem mntmAboutItem = new JMenuItem(Messages.getString("GroupBrowser.menu_about")); //$NON-NLS-1$
-        mntmAboutItem.setIcon(lemonSmallIcon);
+        mntmAboutItem.setIcon(ResourceUtil.lemonSmallIcon);
         mntmAboutItem.setMnemonic(KeyEvent.VK_A);
         mnHelpMenu.add(mntmAboutItem);
         mntmAboutItem.addActionListener(new ActionListener() {
@@ -599,127 +487,6 @@ public class GroupBrowser {
         dialog.setVisible(true);
     }
 
-    private void createImageGroup(String title, List<File> files) {
-        JPanel panelGroup1 = new JPanel();
-        // panelGroup1.setBorder(new LineBorder(new Color(0, 0, 0)));
-        panelGroupAll.add(panelGroup1, UIUilt.createGridBagConstraints(GridBagConstraints.HORIZONTAL, GridBagConstraints.NORTH,
-                new Insets(0, 0, 5, 0), 0, -1));
-
-        panelGroup1.setLayout(UIUilt.createGridBagLayout(new int[] { 0, 0 }, new int[] { 0, 0 },
-                new double[] { 1.0, Double.MIN_VALUE }, new double[] { 0.0, 0.0 }));
-
-        JToolBar toolBar = new JToolBar();
-        toolBar.setFloatable(false);
-
-        panelGroup1.add(toolBar, UIUilt.createGridBagConstraints(GridBagConstraints.HORIZONTAL, -1, null, 0, 0));
-
-        JButton btnExpand = new JButton();
-        btnExpand.setIcon(upIcon);
-        toolBar.add(btnExpand);
-
-        JTextField textFieldTitle = new JTextField(title);
-        toolBar.add(textFieldTitle);
-        textFieldTitle.setBorder(EMPTY_BORDER);
-
-        textFieldTitleMap.put(textFieldTitle, title);
-
-        JPanel panelFlow = new JPanel();
-        panelFlow.setBorder(EMPTY_BORDER);
-        panelFlow.setLayout(WRAP_LAYOUT_FLOW);
-        // panelFlow.setBorder(new LineBorder(new Color(0, 0, 0)));
-        panelFlow.setBackground(Color.WHITE);
-        // FlowLayout flowLayout = (FlowLayout) panelFlow.getLayout();
-        // flowLayout.setAlignment(FlowLayout.LEFT);
-
-        panelGroup1.add(panelFlow, UIUilt.createGridBagConstraints(GridBagConstraints.HORIZONTAL, -1, null, 0, 1));
-
-        btnExpand.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                if (panelFlow.isVisible()) {
-                    btnExpand.setIcon(downIcon);
-                    panelFlow.setVisible(false);
-                } else {
-                    btnExpand.setIcon(upIcon);
-                    panelFlow.setVisible(true);
-                }
-            }
-        });
-
-        panelFlowList.add(panelFlow);
-        btnExpandList.add(btnExpand);
-
-        for (File photo : files) {
-            addImagePanel(panelFlow, photo);
-        }
-    }
-
-    private void addImagePanel(JPanel panelFlow, File photo) {
-        JPanel panel = new JPanel();
-        panel.setBorder(IMAGE_PANEL_BORDER);
-        panel.setLayout(UIUilt.createGridBagLayout(new int[] { 0 }, new int[] { 23, 23 }, new double[] { 0.0 },
-                new double[] { 0.0, 0.0 }));
-        panelFlow.add(panel);
-
-        JLabel labelImg = new JLabel();
-        // labelImg.setBorder(new EmptyBorder(0, 0, 0, 0));
-        labelImg.setPreferredSize(new Dimension(PREVIEW_SIZE, PREVIEW_SIZE));
-        BufferedImage bufferedImage = null;
-        byte[] thumbnailData = null;
-        if (SettingStore.getSettingStore().isUseThumbnail()) {
-            try {
-                thumbnailData = MetadataReader.thumbnailData(photo);
-            } catch (ImageProcessingException | IOException e) {
-                e.printStackTrace();
-            }
-        }
-        try {
-            if (thumbnailData != null) {
-                InputStream thumbByteStream = new ByteArrayInputStream(thumbnailData);
-                bufferedImage = ImageIO.read(thumbByteStream);
-            } else {
-                bufferedImage = ImageIO.read(photo);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        boolean buffered = true;
-        if (bufferedImage != null) {
-            ImageIcon icon = new ImageIcon(GroupBrowserHelper.resizeImageToPreviewIPhone(bufferedImage, PREVIEW_SIZE));
-            labelImg.setIcon(icon);
-        } else {
-            buffered = false;
-            labelImg.setIcon(documentEmptyImageIcon);
-        }
-        final boolean isImage = buffered;
-        panel.addMouseListener(new MouseAdapter() {
-
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                if (e.getButton() == 1 && e.getClickCount() == 1) {
-                    if (panelSelectedImage != null) {
-                        panelSelectedImage.setBorder(IMAGE_PANEL_BORDER);
-                    }
-                    panel.setBorder(IMAGE_PANEL_SELECTED_BORDER);
-                    panelSelectedImage = panel;
-                } else if (e.getButton() == 1 && e.getClickCount() == 2) {
-                    GroupBrowserHelper.openToPreview(photo, isImage);
-                } else if (e.getButton() == 2 && e.getClickCount() == 1) {
-                    GroupBrowserHelper.openToPreview(photo, isImage);
-                }
-            }
-        });
-        panel.add(labelImg, UIUilt.createGridBagConstraints(-1, GridBagConstraints.NORTHWEST, null, 0, 0));
-
-        JLabel labelName = new JLabel(photo.getName());
-        // labelName.setBorder(new EmptyBorder(0, 0, 0, 0));
-        labelName.setToolTipText(photo.getName());
-        // int height = labelName.getHeight();
-        labelName.setPreferredSize(new Dimension(PREVIEW_SIZE, 20));
-        panel.add(labelName, UIUilt.createGridBagConstraints(-1, GridBagConstraints.NORTHWEST, null, 0, 1));
-
-    }
-
     // private BufferedImage resizeImageToPreview(BufferedImage originalImage) {
     // int type = originalImage.getType() == 0 ? BufferedImage.TYPE_INT_ARGB : originalImage.getType();
     //
@@ -776,22 +543,13 @@ public class GroupBrowser {
                     // }
                     // });
                 }
-                panelGroupAll.removeAll();
-                final List<String> sortTitles = GroupBrowserHelper.getGroupTitlesByDate(photoGroup);
-
-                for (String title : sortTitles) {
-                    createImageGroup(title, photoGroup.get(title));
+                resultPanel.setResultData(photoGroup);
+                resultPanel.updateResultPanel(false);
+                btnProfile.setEnabled(true);
+                if (photoGroup.size() > 0) {
+                    btnSave.setEnabled(true);
                 }
-                layoutGroupPanel();
                 progressBar.setValue(100);
-                // EventQueue.invokeLater(new Runnable() {
-                //
-                // public void run() {
-                // }
-                // });
-                // if ("OK".equals(showResultDialog(photoGroup))) {
-                // FileUtil.movePhotos(threshold, textField.getText(), photoGroup);
-                // }
             }
         }).start();
 
@@ -799,25 +557,6 @@ public class GroupBrowser {
 
         exe.execute(groupThread);
         exe.shutdown();
-        // new Thread(new Runnable() {
-        //
-        // @Override
-        // public void run() {
-        // btnRun.setText("Running");
-        // btnRun.setEnabled(false);
-        // Map<String, List<File>> groups = group.getPhotoGroup();
-        // try {
-        // GroupResultDialog dialog = new GroupResultDialog(groups);
-        // dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-        // dialog.setVisible(true);
-        // } catch (Exception e) {
-        // e.printStackTrace();
-        // }
-        // FileUtil.movePhotos(threshold, textField.getText(), groups);
-        // btnRun.setEnabled(true);
-        // btnRun.setText("Run");
-        // }
-        // }).start();
     }
 
     private void startLogMonitor() {
@@ -863,26 +602,4 @@ public class GroupBrowser {
         FileUtil.movePhotos(textFieldFolder.getText(), photoGroup);
         btnSave.setEnabled(false);
     }
-
-    private void layoutGroupPanel() {
-        double[] rowWeights;
-        if (photoGroup.size() > 1) {
-            rowWeights = new double[photoGroup.size()];
-            for (int i = 0; i < rowWeights.length - 1; i++) {
-                rowWeights[i] = 0.0;
-            }
-            rowWeights[rowWeights.length - 1] = 1.0;
-        } else {
-            rowWeights = new double[] { 1.0 };
-        }
-        GridBagLayout panelGroupAllGridBagLayout = (GridBagLayout) panelGroupAll.getLayout();
-        panelGroupAllGridBagLayout.rowWeights = rowWeights;
-        panelGroupAll.setVisible(false);
-        panelGroupAll.setVisible(true);
-        btnProfile.setEnabled(true);
-        if (photoGroup.size() > 0) {
-            btnSave.setEnabled(true);
-        }
-    }
-
 }

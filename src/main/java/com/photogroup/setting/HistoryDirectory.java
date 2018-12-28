@@ -41,7 +41,7 @@ public enum HistoryDirectory {
     }
 
     public void addDirectory(String fileDirectory) {
-        historyList.add(fileDirectory);
+        historyList.add(new String(fileDirectory.getBytes(), StandardCharsets.UTF_8));
         try {
             Files.write(historyFile.toPath(), historyList, StandardCharsets.UTF_8);
         } catch (IOException e1) {
