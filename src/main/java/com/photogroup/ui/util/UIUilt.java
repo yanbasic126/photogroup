@@ -37,6 +37,13 @@ public class UIUilt {
         return labelWithLink;
     }
 
+    public static JLabel createSimpleLinkLabel(String text, MouseAdapter adapter) {
+        JLabel labelWithLink = new JLabel(
+                Messages.getString("UIUilt.linkheader") + text + Messages.getString("UIUilt.linkfooter")); //$NON-NLS-1$ //$NON-NLS-2$
+        labelWithLink.addMouseListener(adapter);
+        return labelWithLink;
+    }
+
     public static GridBagConstraints createGridBagConstraints(int fill, int anchor, Insets insets, int gridx, int gridy) {
         GridBagConstraints gbc_panelGroup = new GridBagConstraints();
         if (fill != -1) {
