@@ -860,7 +860,16 @@ public class GroupBrowser {
             }
         }
 
-        FileUtil.movePhotos(textFieldFolder.getText(), photoGroup);
+        List<File> failed = FileUtil.movePhotos(textFieldFolder.getText(), photoGroup);
+        if (0 == failed.size()) {
+            JOptionPane.showMessageDialog(frameGroupBrowser, Messages.getString("GroupBrowser.dosave_done"), //$NON-NLS-1$
+                    Messages.getString("GroupBrowser.dosave_done_title"), //$NON-NLS-1$
+                    JOptionPane.INFORMATION_MESSAGE, lemonIcon);
+        } else {
+            JOptionPane.showMessageDialog(frameGroupBrowser, Messages.getString("GroupBrowser.dosave_error"), //$NON-NLS-1$
+                    Messages.getString("GroupBrowser.dosave_error_title"), //$NON-NLS-1$
+                    JOptionPane.ERROR_MESSAGE, lemonIcon);
+        }
         btnSave.setEnabled(false);
     }
 

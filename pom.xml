@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.lemonphoto</groupId>
     <artifactId>lemonphoto</artifactId>
-    <version>4.9.1</version>
+    <version>5.0.0</version>
     <name>Lemon Photo</name>
     <description>move photos by taken date
     2018-8-23: add sort photo before add gps address.
@@ -40,7 +40,8 @@
     2018-12-21: license update.
     2018-12-22: fix codacy issues.
     2018-12-23: zero warning.
-    2018-12-23: fix getDescription.</description>
+    2018-12-23: fix getDescription.
+    2019-4-2: feat:show result after save #8.</description>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>

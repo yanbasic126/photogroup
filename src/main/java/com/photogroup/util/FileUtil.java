@@ -11,6 +11,7 @@ import java.math.BigDecimal;
 import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -23,8 +24,13 @@ public class FileUtil {
 
     public static final String LEMONPHOTO_PATH = "/.lemonphoto";
 
-    public static void movePhotos(String photosPath, Map<String, List<File>> group) {
+    /**
+     * Move images by the photosPath and group name as the folder name
+     * @return 
+     */
+    public static List<File> movePhotos(String photosPath, Map<String, List<File>> group) {
         int threshold = SettingStore.getSettingStore().getThreshold();
+        List<File> failedList = new ArrayList<File>();
         Iterator<?> it = group.entrySet().iterator();
         while (it.hasNext()) {
             @SuppressWarnings("unchecked")
@@ -37,11 +43,14 @@ public class FileUtil {
                 for (File photo : pair.getValue()) {
                     if (photo.exists()) {
                         File targetPhoto = new File(dateFolder, photo.getName());
-                        photo.renameTo(targetPhoto);
+                        if(!photo.renameTo(targetPhoto)) {
+                            failedList.add(photo);
+                        }
                     }
                 }
             }
         }
+        return failedList;
     }
 
     public static String getBuildVersion() {
