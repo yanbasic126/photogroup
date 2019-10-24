@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.lemonphoto</groupId>
     <artifactId>lemonphoto</artifactId>
-    <version>5.0.0</version>
+    <version>5.0.0-SNAPSHOT</version>
     <name>Lemon Photo</name>
     <description>move photos by taken date
     2018-8-23: add sort photo before add gps address.
@@ -56,6 +56,10 @@
         </snapshotRepository>
     </distributionManagement>
 
+  <scm>
+    <developerConnection>scm:git:https://github.com/yanbasic126/photogroup.git</developerConnection>
+  </scm>
+  
     <dependencies>
 		<dependency>
 			<groupId>com.googlecode.json-simple</groupId>
@@ -205,6 +209,7 @@
 					</execution>
                 </executions>
             </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
