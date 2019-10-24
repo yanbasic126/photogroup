@@ -57,8 +57,8 @@
     </distributionManagement>
 	<scm>
 		<url>https://github.com/yanbasic126/photogroup</url>
-		<connection>scm:git:ssh://git@github.com/yanbasic126/photogroup.git</connection>
-		<developerConnection>scm:git:ssh://git@github.com/yanbasic126/photogroup.git</developerConnection>
+		<connection>scm:git:ssh://yanbasic-126@github.com/yanbasic126/photogroup.git</connection>
+		<developerConnection>scm:git:ssh://yanbasic-126@github.com/yanbasic126/photogroup.git</developerConnection>
 	</scm>
     <dependencies>
 		<dependency>
