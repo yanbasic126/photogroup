@@ -40,7 +40,8 @@
     2018-12-22: fix codacy issues.
     2018-12-23: zero warning.
     2018-12-23: fix getDescription.
-    2019-4-2: feat:show result after save #8.</description>
+    2019-4-2: feat:show result after save #8.
+	2019-10-24: feat:show result after save #8.</description>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.scm.id>yanbasic-126-scm</project.scm.id>
@@ -210,6 +211,14 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.22.0</version>
             </plugin>
+			<plugin>
+			   <groupId>org.apache.maven.plugins</groupId>
+			   <artifactId>maven-javadoc-plugin</artifactId>
+			   <version>3.1.1</version>
+			   <configuration>
+				 <skip>true</skip>
+			   </configuration>
+			</plugin>
         </plugins>
         <extensions>
             <extension>
