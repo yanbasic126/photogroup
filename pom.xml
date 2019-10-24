@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.lemonphoto</groupId>
     <artifactId>lemonphoto</artifactId>
-    <version>5.0.1-SNAPSHOT</version>
+    <version>5.0.1</version>
     <name>Lemon Photo</name>
     <description>move photos by taken date
     2018-8-23: add sort photo before add gps address.
@@ -58,7 +58,7 @@
     </distributionManagement>
 	<scm>
 		<developerConnection>scm:git:https://github.com/yanbasic126/photogroup.git</developerConnection>
-		<tag>HEAD</tag>
+		<tag>lemonphoto-5.0.1</tag>
 	</scm>
     <dependencies>
 		<dependency>
