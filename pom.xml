@@ -43,6 +43,7 @@
     2019-4-2: feat:show result after save #8.</description>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.scm.id>yanbasic-126</project.scm.id>
 	</properties>
     <distributionManagement>
         <repository>
