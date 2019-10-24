@@ -59,6 +59,7 @@
 		<url>https://github.com/yanbasic126/photogroup</url>
 		<connection>scm:git:ssh://github.com/yanbasic126/photogroup.git</connection>
 		<developerConnection>scm:git:ssh://github.com/yanbasic126/photogroup.git</developerConnection>
+		<tag>HEAD</tag>
 	</scm>
     <dependencies>
 		<dependency>
