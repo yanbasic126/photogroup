@@ -23,30 +23,6 @@ public class TestPostionHelper {
         SettingStore.getSettingStore().setBaiduKey("");
     }
 
-    @Test
-    public void testQueryPostion1053() throws Exception {
-        assertEquals(getBaiduAddress("image/IMG_1053.JPG"), "王府井银泰in88");
-    }
-
-    @Test
-    public void testQueryPostion1210() throws Exception {
-        assertEquals(getBaiduAddress("image/IMG_1210.JPG"), "光明楼小区");
-    }
-
-    @Test
-    public void testQueryPostion1240() throws Exception {
-        assertEquals(getBaiduAddress("image/IMG_1240.JPG"), "南新园社区");
-    }
-
-    @Test
-    public void testQueryPostion1197() throws Exception {
-        assertEquals(getBaiduAddress("image/IMG_1197.JPG"), "公司");
-    }
-
-    @Test
-    public void testQueryPostion1188() throws Exception {
-        assertEquals(getBaiduAddress("image/IMG_1188.JPG"), "北京王府井天主教堂");
-    }
 
     public static String getBaiduAddress(String imagePath) throws Exception {
         File image = FileUtilForTest.createTempFileFromResource(imagePath);
