@@ -57,7 +57,7 @@
     </distributionManagement>
 
   <scm>
-    <developerConnection>scm:git:https://github.com/yanbasic126/photogroup.git</developerConnection>
+    <developerConnection>scm:git:https://yanbasic-126@github.com/yanbasic126/photogroup.git</developerConnection>
     <tag>lemonphoto-5.0.0</tag>
   </scm>
   
