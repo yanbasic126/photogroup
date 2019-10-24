@@ -55,12 +55,11 @@
             <url>packagecloud+https://packagecloud.io/yanbasic/photogroup</url>
         </snapshotRepository>
     </distributionManagement>
-
-  <scm>
-    <developerConnection>scm:git:https://yanbasic-126@github.com/yanbasic126/photogroup.git</developerConnection>
-    <tag>lemonphoto-5.0.0</tag>
-  </scm>
-  
+	<scm>
+		<url>https://github.com/yanbasic126/photogroup</url>
+		<connection>scm:git:ssh://git@github.com/yanbasic126/photogroup.git</connection>
+		<developerConnection>scm:git:ssh://git@github.com/yanbasic126/photogroup.git</developerConnection>
+	</scm>
     <dependencies>
 		<dependency>
 			<groupId>com.googlecode.json-simple</groupId>
